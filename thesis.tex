@@ -10,7 +10,7 @@
 \usepackage{commath}
 %\usepackage{booktabs}
 %\usepackage[flushmargin,ragged]{footmisc}
-%\usepackage{graphicx}
+\usepackage{graphicx}
 %\usepackage{ifthen}
 %\usepackage{lastpage}
 \usepackage{nag}
@@ -29,15 +29,17 @@
 \newcommand{\vcc}[1]{\textbf{#1}}
 \newcommand{\mat}[1]{\bm{#1}}
 \newcommand{\T}{^{\top}}
+\newcommand{\e}{\mathrm e}
 \DeclareMathOperator*{\argmax}{argmax}
 \DeclareMathOperator{\cov}{cov}
+\DeclareMathOperator{\diag}{diag}
 \DeclareMathOperator*{\mslim}{mslim}
 
 \newcommand{\newterm}[1]{\emph{#1}}
 
 \addbibresource{references.bib}
 
-\title{TODO}
+\title{Gaussian Processes for Plume Distribution Estimation with UAVs}
 \author{Jan Gosmann}
 \makeatletter
 % FIXME
@@ -53,6 +55,57 @@
 \maketitle
 
 \chapter{Introduction}
+Environmental monitoring is important in various ways. It is needed to ensure 
+water and air pollution levels are in compliance with regulations like 
+\textcite{Anonymous:1996ui}, to monitor ozone concentrations and climate change,  
+as well as surveillance of industrial facilities for leakages of pollutants to 
+just name a few applications.
+
+In many of these scenarios it is feasible to have a static sensor network and 
+there is already existing research on how to optimally utilize sensors at fixed 
+locations \parencite[e.g.][]{Osborne:2008hi, Guestrin:2005cq, Wang:kz}.  
+However, better results may be obtainable using mobile robots which can move to 
+and acquire more precise data in interesting areas. Moreover, in some scenarios 
+like disaster response where timely information is needed it might not be 
+possible to first deploy an extensive sensor network. Mobile robots allow here 
+to quickly identify the interesting regions and gather data primarily in those.  
+The problem of autonomously choosing the interesting locations for data 
+acquisition is known as \newterm{active learning}. \textcite{Marchant:2012wb} 
+also used the term \newterm{Intelligent Environmental Monitoring} (IEM) 
+
+In this work I focus on a scenario proposed as part of the CompLACS project in 
+\textcite{denardi2013rn}: One or more sources emit gaseous substance or aerosol 
+which is dispersed by a constant wind. The resulting plume distribution has to 
+be estimated with autonomously controlled unmanned aerial vehicles (UAVs). The 
+rather steep concentration gradients and small spatial extend orthogonal to the 
+dispersion direction especially add to the difficulty of this problem.  With few 
+UAVs it is not possible to cover the whole volume of investigation densely 
+enough using a regular pattern in a timely manner. It is necessary to focus 
+measurement to specific areas. Furthermore, measurement noise has to be taken in 
+consideration.
+
+In previous work swarms of robots have been used to localize the source of 
+a plume \parencite{Jatmiko:2007df, Zarzhitsky:2005tz}. These approaches, 
+however, do not allow the usage of only one robot and do not provide one with an 
+estimation of the plume dispersion. Such an estimation might be important for 
+various reasons such as determining areas in which a threshold is exceeded or 
+a contamination occurred. As \textcite{Reggente:2009ti} noted, though one could 
+try to model the actual fluid dynamics to obtain these information, such 
+computational fluid dynamics models become intractable for real world 
+applications with inaccurate data.  Instead they propose to build a statistical 
+model with the gas concentration measurements as random variables.
+
+A widely used statistical model for spatial or spatio-temporal data are 
+\newterm{Gaussian processes}\footnote{In geospatial statistics the modelling 
+    with Gaussian processes is also known as \newterm{kriging}.}. In several 
+works \parencite[e.g.][]{Stachniss:2008vz, Marchant:2012wb} the modelled data 
+were actually gas concentrations. Also, there exists some prior work on actively 
+selecting the sampling locations. \Textcite{Stranders:2008wl} do this for 
+discrete locations; \textcite{Singh:2010wt} and \textcite{Marchant:2012wb} for 
+continuous locations. However, none of these approaches is optimal for plume 
+dispersions.
+
+TODO overview over chapters
 
 \chapter{Gaussian Processes}
 A vast number of regression methods has been proposed in the machine learning 
@@ -106,8 +159,10 @@ the predictive distribution for $\vc f_*$ as
 \begin{align}
     \vc f_* | X, \vc y, X_* &\sim \mathcal{N}(\bar{\vc f_*}, \cov(\vc 
     f_*))\text{, with}\\
-    \bar{\vc f_*} &= K(X_*, X)\tilde{\mat K}^{-1} \vc y\text{,} \\
-    \cov(\vc f_*) &= K(X_*, X_*) - K(X_*, X)\tilde{\mat K}^{-1}K(X, X_*)\text{.}
+    \bar{\vc f_*} &= \mu(X_*) = K(X_*, X)\tilde{\mat K}^{-1} \vc y\text{,} \\
+    \cov(\vc f_*) &= K(X_*, X_*) - K(X_*, X)\tilde{\mat K}^{-1}K(X, X_*) 
+    \\
+    \sigma^2(X_*) &= \diag(\cov(\vc f_*)) \text{.}
 \end{align}
 
 Even though, $K$ is a symmetric, positive-definite matrix it can be 
@@ -307,6 +362,9 @@ use gradient-based optimizers. In an active learning scenario, moreover, there
 is a limited amount of data in the beginning making the correct estimation of 
 parameters like the source position virtually impossible.
 
+TODO: read and maybe include non-stationary papers
+TODO: non-stationary not agnostic to structure.
+
 \section{Hyper-parameter Selection}
 Though Gaussian processes are non-parametric, the choice of covariance function 
 will introduce hyper-parameters $\vc \theta$ like the length-scale which have to 
@@ -364,7 +422,125 @@ each update of the hyper-parameters $\tilde{\mat K}^{-1}$ has to be newly
 calculated. Thus, in an online setting it is far more efficient to keep the 
 hyper-parameters fixed or only update them occasionally.
 
-\section{Active Learning with UCB}
+TODO: Gaussian Process Mixtures? Efficiency in case of parallel calculation?
+How is the selection happening? Error or likelihood?
+
+\section{Active Learning}
+A setting in which a learning algorithm can freely choose the next training 
+input is called \newterm{active learning}. A general introduction in the topic 
+is provided by \textcite{Settles:2009vo}. Here, I will focus on how to realize 
+active learning in the context of Gaussian processes.
+
+In general, one defines a \newterm{utility} or \newterm{acquisition} function 
+$u(\vc x)$ indicating the expected benefit for choosing $\vc x$ as next training 
+sample. Hence, the optimal choice is $\argmax_{\vc x} u(\vc x)$. Equivalently, 
+it is possible to use the negative of a loss function $u(\vc x) = - \lambda(\vc 
+x)$.
+
+The choice of $u(\vc x)$ influences the exploration-exploitation trade-off and 
+on which areas of the input space the learning will be focussed. In the 
+estimation of a plume distribution samples should be acquired mostly at places 
+with high concentrations, but once such an area is well estimated further 
+exploration should follow to possibly find further sources.
+
+\Textcite{Marchant:2012wb} proposed the \newterm{distance-based upper confidence 
+    bound} (DUCB) for a similar scenario of environmental monitoring where ozone 
+concentrations over US territory were to be measured:
+\begin{equation}
+    u_{\text{DUCB}}(\vc x) = \mu(\vc x) + \kappa \cdot \sigma^2(\vc x) + \gamma 
+    \cdot d(\vc x, \vc x')
+\end{equation}
+The mean prediction $\mu(\vc x)$ and the predictive variance $\sigma^2(\vc x)$ 
+are obtained directly from the Gaussian process, $d(\vc x, \vc x')$ denotes the 
+Euclidean distance of $\vc x$ to the last sample location $\vc x'$. The 
+parameter $\kappa$ controls the exploration-exploitation balance. Higher values 
+give more importance to decreasing the predictive variance and lead to more 
+exploration. The parameter $\gamma \leq 0$ adjusts the distance penalty.  
+Favoring location near to the current UAV position might decrease the distance 
+travelled and save energy as well as time.
+
+Though, the scenario above appears to be quite similar to the problem at hand 
+one should note a certain difference. The ozone concentration is a quite smooth 
+distribution as \textcite{Marchant:2012wb} used the squared exponential 
+covariance function to obtain reasonable results. In opposite to that, the 
+spatial distribution of a gas plume is much more localized \parencite[][this was 
+also noted by]{Stachniss:2008vz}. Thus, I propose \newterm{plume distance-based 
+    upper confidence bound} (PDUCB) acquisition function inspired by DUCB, but 
+adjusted:
+\begin{equation}
+    u_{\text{PDUCB}}(\vc x) = \del{1 - a} \cdot \ln\del{\mu_+(\vc x) 
+        + \varepsilon} + a \cdot \ln \varepsilon + \kappa \cdot \sigma^2(\vc x) 
+    + \gamma \cdot d^2(\vc x, \vc x')
+\end{equation}
+with
+\begin{align}
+    a &= \e^{-\mu_+(\vc x) / \varepsilon} \\
+    \mu_+(\vc x) &= \max\cbr{0, \mu(\vc x)}
+\end{align}
+Using the logarithm of the prediction mean makes this utility function sensitive 
+for small concentrations which can hint towards areas with higher concentration.  
+Being sensitive to the same absolute change for high concentrations is not as 
+important. As the concentration might be equal to zero strict positiveness has 
+to be explicitly ensured by a small $\varepsilon > 0$. The predictive standard 
+deviation $\sigma(\vc x)$ in comparison to the variance $\sigma^2(\vc x)$ should 
+put more weight on also reducing the uncertainty in areas where it is already 
+reduced (but non-zero) instead of primarily focus on the areas with maximum 
+uncertainty. Similarly, the squaring of the distance will reduce the penalty 
+around $\vc x'$ (while increasing it further away). This should be advantageous 
+as the unsquared distance function tends to force $\vc x$ much closer to $\vc 
+x'$, but the next sample though it should be near to $\vc x'$ should not be too 
+close to $\vc x'$. Otherwise, not much new information would be gained.
+
+Apart from some explicit values, \textcite{Marchant:2012wb} do not discuss how 
+to choose the parameters $\kappa$ and $\gamma$. Nevertheless, some observations 
+can be made for both DUCB and PDUCB. Firstly, one should choose $\kappa \cdot 
+\max \sigma^2(\vc x) > \max \mu(\vc x)$. Otherwise, one can get stuck in a local 
+maximum as the mean prediction term might get larger than the predictive 
+variance anywhere in the input space. Even though, it can be a good strategy to 
+exploit maxima first exploration should continue once the distribution around 
+the maximum is accurately known. A too large $\kappa$ is also problematic as it 
+prevents any exploitation. Secondly, $\abs{\gamma}$ should not be too large or 
+the distance penalty would dominate and also lead to one getting stuck in one 
+position $\vc x = \vc x'$. Thirdly, $\varepsilon$ influences the sensitivity for 
+low concentrations and should therefore be small, but large enough too prevent 
+numerical problems in the evaluation of the logarithm. A value of $\varepsilon 
+= 10^{-30}$ seems to work well (see section TODO).
+
+Typically, one knows the spatial dimensions of the input space which allows to 
+estimate a reasonable $\gamma$. However, the maximal $\vc y$ determining $\max 
+\mu(\vc x)$ might not be known in advance. Thus, it would be helpful to set 
+$\kappa$ automatically from $\vc y$, the data seen so far. This can be done by 
+setting $\kappa = \kappa_{\text{DUCB}}(\vc y)$ (for DUCB) and $\kappa 
+= \kappa_{\text{PDUCB}}(\vc y)$ (for PDUCB) respectively with
+\begin{align}
+    \kappa_{\text{DUCB}}(\vc y) &= \kappa' \cdot \max \vc y \\
+    \kappa_{\text{PDUCB}}(\vc y) &= \kappa' \cdot \del{\ln(\max \vc 
+        y + \varepsilon) - \ln \varepsilon}
+\end{align}
+and a new parameter $\kappa'$ which controls the exploration-exploitation 
+trade-off independent of $\max \vc y$. Probably, a good choice for $\kappa'$ is 
+a value a little bit larger than one.
+
+TODO correct PDUCB approach
+TODO discuss differentiability
+TODO GP for Global Optimization approach
+\the\textwidth
+
+\begin{figure}
+    \centering
+    \includegraphics{plots/acqfns}
+    \caption{TODO blab lorem ipsum}
+\end{figure}
+
+% TODO 1d example
+
+
+\chapter{TODO}
+- concrete scenarios
+- error measures
+- sampling
+- discussion of implementation: Python, Numpy, Scipy, TCP protocol, QRSim, 
+lbfgsb for optimization
 
 \printbibliography
 
