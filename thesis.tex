@@ -12,19 +12,21 @@
 %\usepackage[flushmargin,ragged]{footmisc}
 \usepackage{graphicx}
 %\usepackage{ifthen}
-%\usepackage{lastpage}
-\usepackage{nag}
-%\usepackage{ngerman}
 \usepackage{enumerate}
 %\usepackage{hhline}
-%\usepackage{listings}
-%\usepackage{xr-hyper}
 \usepackage{hyperref}
-%\usepackage{units}
+%\usepackage{lastpage}
+%\usepackage{listings}
+\usepackage{nag}
+%\usepackage{ngerman}
+\usepackage{siunitx}
 \usepackage{upgreek}
 %\usepackage{xcolor}
+%\usepackage{xr-hyper}
 
 %\lstset{basicstyle=\fontfamily{pcr}\selectfont, keywordstyle=\bfseries, language=C++}
+\sisetup{per-mode=symbol}
+
 \newcommand{\vc}[1]{\bm{#1}}
 \newcommand{\vcc}[1]{\textbf{#1}}
 \newcommand{\mat}[1]{\bm{#1}}
@@ -34,6 +36,8 @@
 \DeclareMathOperator{\cov}{cov}
 \DeclareMathOperator{\diag}{diag}
 \DeclareMathOperator*{\mslim}{mslim}
+
+\newcommand{\ped}[1]{_{\mathrm{#1}}}
 
 \newcommand{\newterm}[1]{\emph{#1}}
 
@@ -53,6 +57,7 @@
 
 \begin{document}
 \maketitle
+\tableofcontents
 
 \chapter{Introduction}
 Environmental monitoring is important in various ways. It is needed to ensure 
@@ -107,6 +112,90 @@ dispersions.
 
 TODO overview over chapters
 
+\chapter{The QRSim Plume Modelling Scenarios}
+The general plume modelling scenario as tackeled in this thesis is part of the 
+QRSim quadrotors simulator \parencite{denardi2013rn}. Several task variations 
+were proposed from which I chose a selection and to which I added some own 
+modifications.  The variations can be classified along four dimensions: type of 
+dispersion (G, D), presence of sensor noise (NF, SN), single or multiple 
+pollutant sources (SS, MS), single or multiple vehicles (SV, MV).
+
+As long as not otherwise noted locations vectors are in the NED (north, east, 
+down) reference frame in the following. Hence, the height of a location $\vc 
+x = (x_1, x_2, x_3)\T$ is given by $-x_3$.
+
+The most simple scenario is a Gaussian (G) plume without wind. The pollutant is 
+emited at a constant rate resulting in a three-dimensional (potentially 
+non-isotropic) Gaussian plume distribution. Given a source location $\vc s$, 
+covariance matrix $\mat \varSigma$, and emission rate $Q 
+= \SI{1}{\gram\per\second}$ the concentration $c(\vc x)$ at location $\vc x$ is 
+given as
+\begin{equation}
+    c(\vc x) = Q \cdot \si{\second\per\meter^3} \cdot \exp\!\del{-\frac{1}{2} 
+        \cdot \si{\meter^{-2}} \cdot (\vc x - \vc s)\T \mat \varSigma^{-1} (\vc 
+        x - \vc s)}.
+\end{equation}
+
+A Gaussian dispersion (D) is obtained when considering a constant wind parallel 
+to the ground with velocity $u$ at \SI{6}{\meter} above the ground. The plume 
+will be dispersed and form a cone-like distribution along the wind direction.  
+Making a few more assumptions (constant $Q$, steady-state, isotropic diffusion, 
+no ground penetration, and neglegible variation in topography) the analytic 
+expression
+\begin{multline}
+    c(\vc x') = \frac{Q}{2\uppi ua(x'_1 - s'_1)^b} \exp\!\del{-\frac{(x'_2 
+            - s'_2)^2}{2a(x'_1 - s'_1)^b}} \\ \sbr{\exp\!\del{-\frac{(x'_3 
+                - s'_3)^2}{2a(x'_1 - s'_1)^b}} + \exp\!\del{\frac{(x'_3 
+                + s'_3)^2}{2a(x'_1 - s'_1)^b}}}
+\end{multline}
+can be derived for the concentration \parencite{Stockie:2011fd}. Note that the 
+coordinates $\vc x'$ and $\vc s'$ are expressed in the wind frame of reference. 
+The wind speed is set to $u = \SI{3}{\meter\per\second}$ and the diffusion 
+parameters to $a = \SI{0.33}{\meter\tothe{2 - \mathit{b}}}$ and $b = 0.86$.  The 
+emission rate $Q$ is randomly and uniformly distributed chosen from the interval 
+\SIrange{0.1}{2.5}{\gram\per\second}.
+
+Sensor noise (SN) of the plume sensor is assumed to be additive and distributed 
+according to $\mathcal{N}(0, \sigma\ped{noise}^2)$. In the noise free (NF) 
+scenarios no noise was added to the measurements. The standard deviation 
+$\sigma\ped{noise}$ was set to $10^{-4}$ in the scenarios including noise. The 
+QRSim default scenarios set it to $10^{-2}$. But given the low default plume 
+concentration this would require roughly averaging of 1600 samples from one 
+single location to reduce the magnitude of the noise to the same level as the 
+plume concentration values (see appendix TODO). Hence, the default scenario is 
+not solvable in a feasible amount of simulation time.
+
+The overall concentration $c(\vc x)$ for $n$ sources is obtained by summing the 
+individual contributions $c_i(\vc x)$ for each source:
+\begin{equation}
+    c(\vc x) = \sum_{i = 1}^n c_i(\vc x)
+\end{equation}
+In the scenarios with multiple sources (MS) $n$ is chosen uniformly out of the 
+range from \numrange{1}{5}. With a single source it is fixed to $n = 1$. In both 
+cases the source locations will be randomly chosen from a uniform distribution 
+over the simulated volume.
+
+The starting locations of the UAVs are also chosen randomly and uniformly in the 
+simulated area, but the height is initially set to a starting height of $x_3 
+= \SI{-10}{meter}$. Either a single UAV (SV) or three UAVs (MV) were used.
+
+This gives a number of possible scenarios from which I focussed on the following 
+in this work:
+\begin{itemize}
+    \item In chapter TODO I discuss the noise free, single vehicles scenarios 
+        G-NF-SS-SV, D-NF-SS-SV, and D-NF-MS-SV\@. The first is equivalent to the 
+        scenario 3A in \textcite{denardi2013rn}.
+    \item In chapter TODO I consider the dispersion scenarios with noise 
+        D-SN-SS-SV and D-SN-MS-SV\@. Except for the amount of noise these 
+        correspond to scenario 3B and 3C in \textcite{denardi2013rn}.
+    \item Finally, I will take a look at the usage of multiple vehicles with the 
+        scenario D-SN-MS-MV corresponding to scenario 3D in 
+        \textcite{denardi2013rn}.
+\end{itemize}
+
+TODO mention error measures?
+TODO figures
+
 \chapter{Gaussian Processes}
 A vast number of regression methods has been proposed in the machine learning 
 literature. In this work I use Gaussian Processes as these have been 
@@ -124,8 +213,8 @@ Process regression. A more thorough introduction can be found in
 
 Let $\mathcal{D} = \{(\vc{x}_i, y_i) | i = 1, \dots, N\}$ a set of training data 
 with inputs $\vc x$ and outputs $y = f(\vc x) + \eta$ with additive noise $\eta 
-\sim \mathcal{N}(0, \sigma_{\text{n}}^2)$. We want to learn the function $f(\vc 
-x)$ from this training data.
+\sim \mathcal{N}(0, \sigma\ped{n}^2)$. We want to learn the function $f(\vc x)$ 
+from this training data.
 
 A Gaussian Process
 \begin{equation}
@@ -146,14 +235,14 @@ training targets and the predicted values $\vc f_*$ at unseen locations $X_*$
     \left[ \begin{array}{c}\vc y \\ \vc f_* \end{array} \right]
     \sim \mathcal{N}\left(\vc 0,
         \left[ \begin{array}{cc}
-            K(X, X) + \sigma_{\text{n}}^2 \mat I & K(X, X_*) \\ K(X_*, X) 
-            & K(X_*, X_*)
+            K(X, X) + \sigma\ped{n}^2 \mat I & K(X, X_*) \\ K(X_*, X) & K(X_*, 
+            X_*)
         \end{array} \right]
     \right)
 \end{equation}
 Here $K(X, X')$ are matrices with the elements $(i, j)$ being the covariances 
 $k(\vc x_i, \vc x'_j)$ evaluated for all pairs $\vc x_i \in X$ and $\vc x'_j \in 
-X'$. In the following I will use $\tilde{\mat K} = K(X, X) + \sigma_{\text{n}}^2 
+X'$. In the following I will use $\tilde{\mat K} = K(X, X) + \sigma\ped{n}^2 
 \mat I$ as a shorter notation. By conditioning on the observations one obtains 
 the predictive distribution for $\vc f_*$ as
 \begin{align}
@@ -186,7 +275,7 @@ a well conditioned $\tilde{\mat K}$ can be ensured by adding a nugget $g > 0$
 (also known as jitter) to the diagonal of the covariance matrix. This will 
 increase all eigenvalues by the same value and thus improve the condition.  The 
 addition of a nugget can also be seen as increasing the noise variance 
-$\sigma_{\text{n}}^2$ and thus allowing the Gaussian Process to match the target 
+$\sigma\ped{n}^2$ and thus allowing the Gaussian Process to match the target 
 less precisely and to become smoother.
 
 % TODO some example images
@@ -206,7 +295,7 @@ will be
 \begin{equation} \label{eqn:tilde_K_prime}
     \tilde{\mat K}' = \left[ \begin{array}{cc}
             \tilde{\mat K} & K(X, X') \\ K(X', X) & K(X', X') 
-            + \sigma_{\text{n}}^2\mat I
+            + \sigma\ped{n}^2\mat I
         \end{array}
     \right]\text{.}
 \end{equation}
@@ -233,8 +322,8 @@ FIXME: the L is used for two different sized matrices!
 \begin{align}
     \mat A &= \mat L \\
     \mat B &= K(X', X) (\mat L\T)^{-1} \\
-    \mat C \mat C\T &= K(X', X') + \sigma_{\text{n}}^2\mat I - K(X', 
-    X)\tilde{\mat K}^{-1}K(X, X')
+    \mat C \mat C\T &= K(X', X') + \sigma\ped{n}^2\mat I - K(X', X)\tilde{\mat 
+        K}^{-1}K(X, X')
 \end{align}
 As $\mat C \mat C\T$ is symmetric, positive-definite it is possible to obtain 
 $\mat C$ by a Cholesky decomposition.
@@ -306,7 +395,7 @@ $\vc 0$.
 A common default choice is the \newterm{squared exponential} (SE) kernel defined 
 as
 \begin{equation}
-    k_{\text{SE}}(r) = \sigma_k^2 \exp\del{-\frac{r^2}{-2\ell^2}}
+    k\ped{SE}(r) = \sigma_k^2 \exp\del{-\frac{r^2}{-2\ell^2}}
 \end{equation}
 with the desired process variance $\sigma_k^2$ and length-scale $\ell$. It 
 produces infinitely MS differentiable Gaussian processes. This can, actually, be 
@@ -374,10 +463,10 @@ With the \newterm{test set method} all data available $\mathcal{D}$ will be
 split into two sets $\mathcal{D}_0$ and $\mathcal{D}_*$. The first one 
 $\mathcal{D}_0$ is used to train Gaussian processes with different covariance 
 functions and hyper-parameters. For each model the generalization error 
-$E_{\text{G}}$ over the test set $\mathcal{D}_*$ will be evaluated and one 
-choses the parameters with the minimal generalization error. The error measure 
-can be chosen freely, with the root mean square error being a typical choice 
-(see also section TODO).
+$E\ped{G}$ over the test set $\mathcal{D}_*$ will be evaluated and one choses 
+the parameters with the minimal generalization error. The error measure can be 
+chosen freely, with the root mean square error being a typical choice (see also 
+section TODO).
 
 If the amount of data available is low, it is common to use \newterm{$k$-fold 
     cross validation} where $\mathcal{D}$ is split into $k$ disjoint subsets 
@@ -447,7 +536,7 @@ exploration should follow to possibly find further sources.
     bound} (DUCB) for a similar scenario of environmental monitoring where ozone 
 concentrations over US territory were to be measured:
 \begin{equation}
-    u_{\text{DUCB}}(\vc x) = \mu(\vc x) + \kappa \cdot \sigma^2(\vc x) + \gamma 
+    u\ped{DUCB}(\vc x) = \mu(\vc x) + \kappa \cdot \sigma^2(\vc x) + \gamma 
     \cdot d(\vc x, \vc x')
 \end{equation}
 The mean prediction $\mu(\vc x)$ and the predictive variance $\sigma^2(\vc x)$ 
@@ -468,37 +557,42 @@ also noted by]{Stachniss:2008vz}. Thus, I propose \newterm{plume distance-based
     upper confidence bound} (PDUCB) acquisition function inspired by DUCB, but 
 adjusted:
 \begin{equation}
-    u_{\text{PDUCB}}(\vc x) = \del{1 - a} \cdot \ln\del{\mu_+(\vc x) 
-        + \varepsilon} + a \cdot \ln \varepsilon + \kappa \cdot \sigma^2(\vc x) 
-    + \gamma \cdot d^2(\vc x, \vc x')
+    u\ped{PDUCB}(\vc x) = \del{1 - a} \cdot \ln\del{\mu_+(\vc x) + \varepsilon} 
+    + a \cdot \ln \varepsilon + \kappa \cdot \sigma^2(\vc x) + \gamma \cdot 
+    d^2(\vc x, \vc x')
 \end{equation}
 with
 \begin{align}
     a &= \e^{-\mu_+(\vc x) / \varepsilon} \\
     \mu_+(\vc x) &= \max\cbr{0, \mu(\vc x)}
 \end{align}
+
 Using the logarithm of the prediction mean makes this utility function sensitive 
 for small concentrations which can hint towards areas with higher concentration.  
 Being sensitive to the same absolute change for high concentrations is not as 
 important. As the concentration might be equal to zero strict positiveness has 
-to be explicitly ensured by a small $\varepsilon > 0$. The predictive standard 
-deviation $\sigma(\vc x)$ in comparison to the variance $\sigma^2(\vc x)$ should 
-put more weight on also reducing the uncertainty in areas where it is already 
-reduced (but non-zero) instead of primarily focus on the areas with maximum 
-uncertainty. Similarly, the squaring of the distance will reduce the penalty 
-around $\vc x'$ (while increasing it further away). This should be advantageous 
-as the unsquared distance function tends to force $\vc x$ much closer to $\vc 
-x'$, but the next sample though it should be near to $\vc x'$ should not be too 
-close to $\vc x'$. Otherwise, not much new information would be gained.
+to be explicitly ensured by a small $\varepsilon > 0$. Also, strict positiveness 
+of the predictive mean has to be ensured. It is desirable to have differentiable 
+acquisition functions to be able to used gradient based optimizers. However, due 
+to the logarithm the function would not be differentiable for $\mu(\vc x) 
+\rightarrow 0$. Thus, it is weighted with $(1 - a)$ and faded out to $\ln 
+\varepsilon$ to restore differentiability (proof in appendix TODO).
+
+A further change in PDUCB compared to DUCB is the squaring of the distance which 
+will reduce the penalty around $\vc x'$ (while increasing it further away).  
+This should be advantageous as the unsquared distance function tends to force 
+$\vc x$ much closer to $\vc x'$, but the next sample though it should be near to 
+$\vc x'$ should not be too close to $\vc x'$.  Otherwise, not much new 
+information would be gained.
 
 Apart from some explicit values, \textcite{Marchant:2012wb} do not discuss how 
 to choose the parameters $\kappa$ and $\gamma$. Nevertheless, some observations 
-can be made for both DUCB and PDUCB. Firstly, one should choose $\kappa \cdot 
+can be made for both DUCB and PDUCB\@. Firstly, one should choose $\kappa \cdot 
 \max \sigma^2(\vc x) > \max \mu(\vc x)$. Otherwise, one can get stuck in a local 
 maximum as the mean prediction term might get larger than the predictive 
 variance anywhere in the input space. Even though, it can be a good strategy to 
 exploit maxima first exploration should continue once the distribution around 
-the maximum is accurately known. A too large $\kappa$ is also problematic as it 
+the maximum is accurately known. A too small $\kappa$ is also problematic as it 
 prevents any exploitation. Secondly, $\abs{\gamma}$ should not be too large or 
 the distance penalty would dominate and also lead to one getting stuck in one 
 position $\vc x = \vc x'$. Thirdly, $\varepsilon$ influences the sensitivity for 
@@ -507,33 +601,191 @@ numerical problems in the evaluation of the logarithm. A value of $\varepsilon
 = 10^{-30}$ seems to work well (see section TODO).
 
 Typically, one knows the spatial dimensions of the input space which allows to 
-estimate a reasonable $\gamma$. However, the maximal $\vc y$ determining $\max 
-\mu(\vc x)$ might not be known in advance. Thus, it would be helpful to set 
-$\kappa$ automatically from $\vc y$, the data seen so far. This can be done by 
-setting $\kappa = \kappa_{\text{DUCB}}(\vc y)$ (for DUCB) and $\kappa 
-= \kappa_{\text{PDUCB}}(\vc y)$ (for PDUCB) respectively with
+estimate a reasonable $\gamma$ in relation to $\kappa$ as the maximual 
+predictive variance is given by $\sigma\ped{n} + \sigma\ped{k}$.  However, the 
+maximal $\vc y$ determining $\max \mu(\vc x)$ which is important for the 
+absolute values of $\gamma$ and $\kappa$ might not be known in advance.  Thus, 
+it would be helpful to set these parameters automatically from $\vc y$, the data 
+seen so far.  This can be done by setting
 \begin{align}
-    \kappa_{\text{DUCB}}(\vc y) &= \kappa' \cdot \max \vc y \\
-    \kappa_{\text{PDUCB}}(\vc y) &= \kappa' \cdot \del{\ln(\max \vc 
-        y + \varepsilon) - \ln \varepsilon}
+    \kappa &= s(\vc y) \cdot \kappa' \\
+    \gamma &= s(\vc y) \cdot \gamma'
 \end{align}
-and a new parameter $\kappa'$ which controls the exploration-exploitation 
-trade-off independent of $\max \vc y$. Probably, a good choice for $\kappa'$ is 
-a value a little bit larger than one.
+with a scaling factor $s(\vc y)$ defined for the respective acquisition 
+functions as
+\begin{align}
+    s\ped{DUCB}(\vc y) &= \max \vc y \\
+    s\ped{PDUCB}(\vc y) &= \ln(\max \vc y + \varepsilon) - \ln \varepsilon 
+    \text{.}
+\end{align}
+The new parameters $\kappa'$ and $\gamma'$ can then be set independent of the 
+actual values of $\vc y$.
 
-TODO correct PDUCB approach
-TODO discuss differentiability
-TODO GP for Global Optimization approach
-\the\textwidth
+A third potential acquisition function, also balancing exploration and 
+exploitation, can be derived from the work by \textcite{Osborne:2009tn}. They 
+introduce a Bayesian approach for global optimization. Adopting their approach 
+for a one-step look-ahead one first defines a loss function equal to the 
+negative of the newly observed maximum
+\begin{equation}
+    \lambda\ped{GO} (y_*) = \left\{ \begin{array}{ll}-y_* & y_* > \eta \\ -\eta 
+            & y_* \leq \eta \end{array} \right.
+\end{equation}
+with $\eta = \max \vc y$. From this the expected loss can be determined as
+\begin{equation}\begin{split}
+    \varLambda\ped{GO}(\vc x) &= \int \lambda\ped{GO}(y_*) p(y_* | \vc x, X, \vc 
+    y) \dif y_* \\
+    &= -\eta - \del{\mu(\vc x) - \eta} \varPhi\!\del{\eta; \mu(\vc x), 
+        \sigma^2(\vc x)} - \sigma^2(\vc x) N\!\del{\eta; \mu(\vc x), 
+        \sigma^2(\vc x)}
+    \text{.}
+\end{split}\end{equation}
+In this equation $N(x; \mu, \sigma^2)$ and $\varPhi(x; \mu, \sigma^2)$ are the 
+Gaussian probability density and respectively the Gaussian cummulutative 
+distribution function with mean $\mu$ and variance $\sigma^2$. Adding a distance 
+penalty term to the negative of $\varLambda\ped{GO}(\vc x)$ gives the final 
+utility function
+\begin{equation}\begin{split}
+    u\ped{GO}(\vc x) &= -\varLambda\ped{GO}(\vc x) + \gamma' \cdot d^2(\vc x, 
+    \vc x') \\
+    &= \eta + \del{\mu(\vc x) - \eta} \varPhi\!\del{\eta; \mu(\vc x), 
+        \sigma^2(\vc x)} + \sigma^2(\vc x) N\!\del{\eta; \mu(\vc x), 
+        \sigma^2(\vc x)} + \gamma' \cdot d^2(\vc x, \vc x')
+    \text{.}
+\end{split}\end{equation}
+TODO include multi-step look-ahead? process mixtures?
 
 \begin{figure}
     \centering
     \includegraphics{plots/acqfns}
-    \caption{TODO blab lorem ipsum}
+    \caption{Visualization of acquisition functions. The columns of the plot 
+        matrix correspond to the three different acquisition functions (DUCB, 
+        PDUCB, GO) and the rows show the state after 3, 10, and 20 iterations.  
+        The parameters used for these plots were $\kappa' = 1.25$, $\gamma' 
+        = -0.0002$, $\varepsilon = 10^{-30}$, $s\ped{DUCB} = 1$, and 
+        $s\ped{PDUCB} = 70$. The inital sample was always chosen at $x_0 = -7$.}
+    \label{fig:acqfns}
 \end{figure}
+In Figure~\ref{fig:acqfns} a grapihcal comparison of the proposed utility 
+functions is given for a one-dimensional example. It can be seen that DUCB 
+heavily focusses on the function maximum without much exploration in other 
+areas. The GO acquisition function also acquires more samples around the 
+maximum, but reduces the uncertainty more equally over the domain. In comparison 
+to these to functions PDUCB seems also to focus around the maxima, but with 
+a wider exploration around those. In Chapter TODO I will more closely look on 
+how well these functions work to estimate a plume dispersion with different 
+arameter choices.
 
-% TODO 1d example
+\chapter{Error Measures}
+To be able to compare different statistical models some kind of performance 
+measure, usually in the form of an error measure, is needed. In the plume 
+modelling task one is interested in the deviation of the predicted 
+concentrations $\mu(\vc x)$ from the true ones $c(\vc x)$. When using the $L^2$ 
+norm and integrating over the complete task volume $V$ the root mean integrated 
+square error (RMISE)
+\begin{equation}
+    E\ped{RMISE} = \sqrt{\frac{1}{v} \int_V \del{c(\vc x) - \mu(\vc x)}^2 
+        \dif\vc x}
+\end{equation}
+with
+\begin{equation}
+    v = \int_V \dif\vc x
+\end{equation}
+is obtained. However, it can be assumed that accurate predictions are more 
+important where the concentrations is actually high 
+\parencite[c.p.][]{Marchant:2012wb}. Thus, it might be beneficial to introduce 
+a weighting factor $w(\vc x)$ to
+\begin{equation}
+    E\ped{WRMISE} = \sqrt{\frac{1}{v} \int_V \del{c(\vc x) - \mu(\vc x)}^2 w(\vc 
+        x) \dif\vc x} \text{,}
+\end{equation}
+the weighted root mean integrated square error (WRMISE), with
+\begin{equation}
+    w(\vc x) = \frac{c(\vc x) - \min c(\vc x')}{\max c(\vc x') - \min c(\vc x')} 
+    \text{.}
+\end{equation}
+Note that in areas with an almost or even exactly zero concentration the WISE 
+will always be close to zero and thus allowing the model to make highly 
+inaccurate predictions. Therefore, the WISE should not be used as sole measure 
+in plume modelling. Using both errors it is possible to ensure an good overall 
+fit of the prediction without large inaccuracies and to compare which model has 
+the better fit in the interesting areas.
 
+Unfortunately, the ISE and WISE cannot easily be calculated analytically and one 
+has to restrain to approximating the integral from a set $\{\vc x_i | i = 1, 
+\dots, n\}$ of finite size $n$. If the $x_i$ are distributed according to the 
+probability density function $p(\vc x)$, the discrete approximation has the form
+\begin{align}
+    \hat E\ped{RMISE} &= \sqrt{\frac{1}{vZ} \sum_{i=1}^n \frac{\del{c(\vc x_i) 
+                - \mu(\vc x_i)}^2}{p(\vc x_i)}} \\
+    \hat E\ped{WRMISE} &= \sqrt{\frac{1}{vZ} \sum_{i=1}^n \frac{\del{c(\vc x_i) 
+                - \mu(\vc x_i)}^2 w(\vc x_i)}{p(\vc x_i)}} \text{.}
+\end{align}
+The normalization constant $Z$ is given by
+\begin{equation}
+    Z = \sum_{i=1}^n \frac{1}{p(\vc x_i)} \text{.}
+\end{equation}
+
+The probability density $p(\vc x)$ can be estimated using Gaussian kernel 
+density estimation (KDE). (TODO ref) There exist different methods to determine 
+the bandwidth parameter of the KDE\@. I used in this work Scott's Rule (TODO 
+ref).
+
+\section{Selecting Samples for Error Approximation}
+Up to now it is still open how to select the $x_i$ for approximating the error 
+measures.  Using a regularly spaced grid is either likely to miss the important 
+areas as the plume is quite localized or it is so fine grained that the 
+evaluation of the error takes a long time. Also, sampling uniformly from the 
+volume is likely to miss the interesting areas.  Thus, I used a slightly 
+modified Metropolis-Hastings algorithm to concentrate samples in areas with 
+a high concentration.
+
+The standard Metropolis-Hastings (TODO ref) is used to sample from a probability 
+distribution $P(\vc x)$ given only a function $f(\vc x)$ proportional to $P(\vc 
+x)$. It starts at a random location $\vc x_1$.  Then in each iteration $i > 0$ 
+a new candidate location $\vc x_*$ is picked from a symmetric\footnote{$Q(\vc 
+    a | \vc b) = Q(\vc b | \vc a)$} proposal distribution and an acceptance 
+ratio $r = f(\vc x_*) / f(\vc x_i)$ is calculated. The candidate $\vc x_*$ is 
+accepted as $\vc x_{i + 1} = \vc x_*$ with probability $r$ ($r \geq 1$ 
+automatically accepts). If it is rejected, $\vc x_{i + 1} = \vc x_i$ will be 
+used.
+
+To select the samples for the error approximation this algorithm can be used 
+with the true concentrations $f(\vc x) = c(\vc x)$. For this purpose it is not 
+necessary that the samples follow a specific probability distribution. That 
+makes it possible to make a few adoptions for better results.
+
+First of all, $\vc x_*$ gets always added to the set of samples independent of 
+acceptance or rejection.  This makes each location unique (as long as the same 
+location does not get proposed twice).  Having multiple instance of the same 
+location within the samples would not increase the accuracy of the error 
+approximation. Also, this leads to a few more samples towards the concentration 
+tails where the concentration is already low but close to high concentrations.  
+Thus, the approximation around the concentration slope can be expected to be 
+better.
+
+The second change concerns the initial location $\vc x_1$. Choosing at randomly 
+might place it in an area with zero concentration which renders the acceptance 
+ratio $r$ undefined. Hence, it is better base the initial location on the source 
+locations. Unfortunately, given a plume dispersion (TODO ref eq) the plume 
+concentration is undefined at the source location (TODO appendix). To circumvent 
+this, the initial location $\vc x_1$ should be excluded from the samples.
+
+In case of multiple sources it should be started from each source location and 
+the resulting sets should be joined. The concentration between sources can be 
+rather low making it unlikely to switch from one plume to another. Also, the 
+Metropolis-Hastings algorithm is unlikely to sample in low concentration areas, 
+especially in some distance to the plumes. Thus, a number of uniformly sampled 
+locations should be added.
+
+To ``smooth'' out the samples around the plumes even more one can use the 
+samples of the Metropolis-Hastings algorithm as center of Gaussian distributions 
+and draw a number of further samples from these.
+
+TODO pics
+
+\section{QRSim Reward}
+
+\chapter{Implementation}
 
 \chapter{TODO}
 - concrete scenarios
@@ -541,6 +793,9 @@ TODO GP for Global Optimization approach
 - sampling
 - discussion of implementation: Python, Numpy, Scipy, TCP protocol, QRSim, 
 lbfgsb for optimization
+
+\appendix
+\chapter{PDUCB Differentiability}
 
 \printbibliography
 
