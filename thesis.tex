@@ -1,7 +1,7 @@
 \documentclass[11pt,a4paper]{scrreprt}
 
-\usepackage[utf8]{inputenc}
-\usepackage[T1]{fontenc}
+%\usepackage[utf8]{inputenc}
+%\usepackage[T1]{fontenc}
 %\usepackage{scrpage2}
 \usepackage{amssymb}
 \usepackage{amsmath}
@@ -784,15 +784,74 @@ and draw a number of further samples from these.
 TODO pics
 
 \section{QRSim Reward}
+The plume modelling scenario in \textcite{denardi2013rn} them self define 
+a reward
+\begin{equation}
+    R = - \sum_{i = 1}^n \del{c(\vc x) - \mu(\vc x)}^2
+\end{equation}
+as a performance measure. This is essentially the negative of $\hat 
+E\ped{RMISE}^2$ without normalization. Thus, with a non uniform sampling this 
+reward will give a biased estimate attributing more importance to areas with 
+more sample locations.
 
-\chapter{Implementation}
+The set of $\vc x_i$ used to calculate the reward in QRSim consists ouf of two 
+parts. One-fifth is sampled uniformly over the whole volume whereas the 
+remaining samples are taken uniformly from the areas where the concentration 
+exceeds the limit $c\ped{min} = Q \cdot 10^{-3} \cdot 
+\si{\second\per\meter\cubed}$.
+
+The bias introduced by that towards the interesting regions is not necessarily 
+bad. The same is done in the weighted root mean integrated square error.  
+Unfortunately, the sampling strategy will not sample at the low side of 
+a (steep) concentration boundary and will give an bad estimate of the reward 
+around those boundaries. Especially the reward (respectively error) around those 
+boundaries is interesting as it tells us how well the fast changing components 
+of the plume distribution are estimated.
+
+TODO pic
+
+\chapter{Technical Details}
+To implement the discussed algorithms in a functioning system some further 
+details have to be taken in consideration. I will discuss these in this chapter 
+after giving short general overview of the implementation.
+
+\section{Implementation}
+All simulations were performed with QRSim \parencite{denardi2013rn}, a simulator 
+developed specifically to test high level tasks. It supports multiple UAVs which 
+are simulated with realistic dynamics of the platform. Also, equipped sensors 
+(e.g.  GPS, IMU) are simulated with different sources of inaccuracies..This 
+includes wind influencing the vehicles as well as the plume dispersions.
+
+I decided to implement the algorithms (i.e. Gaussian processes, acquisition 
+functions) in Python because of its high-level programming constructs and 
+excellent scientific computing support of NumPy and SciPy 
+\parencite{Oliphant:2007dm}. Communication between the Python part and QRSim 
+were done with a TCP interface based on Google protocol buffers.
+
+Though there exist several Gaussian process implementations for Python like for 
+example Scikit-learn \parencite[i.e.][]{scikit-learn}, none supports online 
+updates to my knowledge.  For that reason I used an own implementation.
+
+\section{Function optimization}
+To find the maximum of the acquisition function the SciPy wrapper for the 
+FORTRAN Implementation of the L\_BFGS\_B algorithm \parencite{Byrd:2006iv, 
+    Zhu:1997br} was used. As gradient based optimizer with the possibility to 
+constrain the search space to the task volume it is well suited for the task.
+
+To choose the starting location $\vc x_0$ the utility function was evaluated for 
+a coarse $5 \times 5 \times 5$ grid and the location with the maximal value was 
+chosen. The convergence parameters were set to $\mathit{pgtol} = 10^{-10}$ and 
+$\mathit{factr} = 100$. The rather flat DUCB gradient required this strict 
+settings. For the other acquisition functions a good convergence was also 
+possible with higher values (i.e.~$\mathit{pgtol} = 10^{-5}$ and $\mathit{factr} 
+= 10^7$).  Nevertheless, the same parameters were used for all utility 
+functions.
+
+\section{Velocity Control}
+
 
 \chapter{TODO}
-- concrete scenarios
-- error measures
-- sampling
-- discussion of implementation: Python, Numpy, Scipy, TCP protocol, QRSim, 
-lbfgsb for optimization
+- surround area first
 
 \appendix
 \chapter{PDUCB Differentiability}
