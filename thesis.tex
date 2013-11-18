@@ -1,11 +1,11 @@
-\documentclass[11pt,a4paper]{scrreprt}
+\documentclass[11pt,a4paper,twoside,BCOR=15mm]{scrreprt}
 
 %\usepackage[utf8]{inputenc}
 %\usepackage[T1]{fontenc}
 %\usepackage{scrpage2}
 \usepackage{amssymb}
 \usepackage{amsmath}
-\usepackage[style=authoryear,backend=biber]{biblatex}
+\usepackage[style=authoryear,backend=biber,language=american]{biblatex}
 \usepackage{bm}
 \usepackage{commath}
 %\usepackage{booktabs}
@@ -18,11 +18,16 @@
 %\usepackage{lastpage}
 %\usepackage{listings}
 \usepackage{nag}
+\usepackage{polyglossia}
 %\usepackage{ngerman}
 \usepackage{siunitx}
+\usepackage{subfigure}
 \usepackage{upgreek}
 %\usepackage{xcolor}
 %\usepackage{xr-hyper}
+
+\setdefaultlanguage{english}
+\setotherlanguages{german}
 
 %\lstset{basicstyle=\fontfamily{pcr}\selectfont, keywordstyle=\bfseries, language=C++}
 \sisetup{per-mode=symbol}
@@ -30,8 +35,8 @@
 \newcommand{\vc}[1]{\bm{#1}}
 \newcommand{\vcc}[1]{\textbf{#1}}
 \newcommand{\mat}[1]{\bm{#1}}
-\newcommand{\T}{^{\top}}
-\newcommand{\e}{\mathrm e}
+\newcommand{\Tr}{^{\top}}
+\newcommand{\e}{\mathrm{e}}
 \DeclareMathOperator*{\argmax}{argmax}
 \DeclareMathOperator{\cov}{cov}
 \DeclareMathOperator{\diag}{diag}
@@ -46,166 +51,71 @@
 \title{Gaussian Processes for Plume Distribution Estimation with UAVs}
 \author{Jan Gosmann}
 \makeatletter
-% FIXME
-%\hypersetup{
-  %pdftitle={\@title},
-  %pdfauthor={\@author},
-  %pdfsubject={},
-  %pdfkeywords={}
-%}
+\hypersetup{
+  pdftitle={\@title},
+  pdfauthor={\@author}
+}
 \makeatother
 
 \begin{document}
-\maketitle
+\maketitle % TODO title page
+
+\thispagestyle{empty}
+\begin{german}
+    \vspace*{\fill}
+    \noindent Hiemit erkläre ich, dass ich die vorliegende Arbeit selbstständig 
+    und eigenhändig sowie ohne unerlaubte fremde Hilfe und ausschließlich unter 
+    Verwendung der aufgeführten Quellen und Hilfsmittel angefertigt habe.
+
+    \vspace{\intextsep}
+    \noindent Berlin, den \today
+
+    \vspace{\intextsep}
+    \vspace{\intextsep}
+    \noindent Jan Gosmann
+    \vspace*{\fill}
+    \vspace*{\fill}
+\end{german}
+
+\cleardoublepage\thispagestyle{empty}
+\vspace*{\fill}
+\section*{\abstractname}
+% TODO
+Lorem ipsum dolor sit amet, consectetur adipisici elit, sed eiusmod tempor 
+incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis 
+nostrud exercitation ullamco laboris nisi ut aliquid ex ea commodi 
+consequat. Quis aute iure reprehenderit in voluptate velit esse cillum 
+dolore eu fugiat nulla pariatur. Excepteur sint obcaecat cupiditat non 
+proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+\begin{german}
+\section*{\abstractname}
+% TODO
+Lorem ipsum dolor sit amet, consectetur adipisici elit, sed eiusmod tempor 
+incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis 
+nostrud exercitation ullamco laboris nisi ut aliquid ex ea commodi 
+consequat. Quis aute iure reprehenderit in voluptate velit esse cillum 
+dolore eu fugiat nulla pariatur. Excepteur sint obcaecat cupiditat non 
+proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+\end{german}
+\vspace*{\fill}
+
 \tableofcontents
 
-\chapter{Introduction}
-Environmental monitoring is important in various ways. It is needed to ensure 
-water and air pollution levels are in compliance with regulations like 
-\textcite{Anonymous:1996ui}, to monitor ozone concentrations and climate change,  
-as well as surveillance of industrial facilities for leakages of pollutants to 
-just name a few applications.
-
-In many of these scenarios it is feasible to have a static sensor network and 
-there is already existing research on how to optimally utilize sensors at fixed 
-locations \parencite[e.g.][]{Osborne:2008hi, Guestrin:2005cq, Wang:kz}.  
-However, better results may be obtainable using mobile robots which can move to 
-and acquire more precise data in interesting areas. Moreover, in some scenarios 
-like disaster response where timely information is needed it might not be 
-possible to first deploy an extensive sensor network. Mobile robots allow here 
-to quickly identify the interesting regions and gather data primarily in those.  
-The problem of autonomously choosing the interesting locations for data 
-acquisition is known as \newterm{active learning}. \textcite{Marchant:2012wb} 
-also used the term \newterm{Intelligent Environmental Monitoring} (IEM) 
-
-In this work I focus on a scenario proposed as part of the CompLACS project in 
-\textcite{denardi2013rn}: One or more sources emit gaseous substance or aerosol 
-which is dispersed by a constant wind. The resulting plume distribution has to 
-be estimated with autonomously controlled unmanned aerial vehicles (UAVs). The 
-rather steep concentration gradients and small spatial extend orthogonal to the 
-dispersion direction especially add to the difficulty of this problem.  With few 
-UAVs it is not possible to cover the whole volume of investigation densely 
-enough using a regular pattern in a timely manner. It is necessary to focus 
-measurement to specific areas. Furthermore, measurement noise has to be taken in 
-consideration.
-
-In previous work swarms of robots have been used to localize the source of 
-a plume \parencite{Jatmiko:2007df, Zarzhitsky:2005tz}. These approaches, 
-however, do not allow the usage of only one robot and do not provide one with an 
-estimation of the plume dispersion. Such an estimation might be important for 
-various reasons such as determining areas in which a threshold is exceeded or 
-a contamination occurred. As \textcite{Reggente:2009ti} noted, though one could 
-try to model the actual fluid dynamics to obtain these information, such 
-computational fluid dynamics models become intractable for real world 
-applications with inaccurate data.  Instead they propose to build a statistical 
-model with the gas concentration measurements as random variables.
-
-A widely used statistical model for spatial or spatio-temporal data are 
-\newterm{Gaussian processes}\footnote{In geospatial statistics the modelling 
-    with Gaussian processes is also known as \newterm{kriging}.}. In several 
-works \parencite[e.g.][]{Stachniss:2008vz, Marchant:2012wb} the modelled data 
-were actually gas concentrations. Also, there exists some prior work on actively 
-selecting the sampling locations. \Textcite{Stranders:2008wl} do this for 
-discrete locations; \textcite{Singh:2010wt} and \textcite{Marchant:2012wb} for 
-continuous locations. However, none of these approaches is optimal for plume 
-dispersions.
-
-TODO overview over chapters
-
-\chapter{The QRSim Plume Modelling Scenarios}
-The general plume modelling scenario as tackeled in this thesis is part of the 
-QRSim quadrotors simulator \parencite{denardi2013rn}. Several task variations 
-were proposed from which I chose a selection and to which I added some own 
-modifications.  The variations can be classified along four dimensions: type of 
-dispersion (G, D), presence of sensor noise (NF, SN), single or multiple 
-pollutant sources (SS, MS), single or multiple vehicles (SV, MV).
-
-As long as not otherwise noted locations vectors are in the NED (north, east, 
-down) reference frame in the following. Hence, the height of a location $\vc 
-x = (x_1, x_2, x_3)\T$ is given by $-x_3$.
-
-The most simple scenario is a Gaussian (G) plume without wind. The pollutant is 
-emited at a constant rate resulting in a three-dimensional (potentially 
-non-isotropic) Gaussian plume distribution. Given a source location $\vc s$, 
-covariance matrix $\mat \varSigma$, and emission rate $Q 
-= \SI{1}{\gram\per\second}$ the concentration $c(\vc x)$ at location $\vc x$ is 
-given as
-\begin{equation}
-    c(\vc x) = Q \cdot \si{\second\per\meter^3} \cdot \exp\!\del{-\frac{1}{2} 
-        \cdot \si{\meter^{-2}} \cdot (\vc x - \vc s)\T \mat \varSigma^{-1} (\vc 
-        x - \vc s)}.
-\end{equation}
-
-A Gaussian dispersion (D) is obtained when considering a constant wind parallel 
-to the ground with velocity $u$ at \SI{6}{\meter} above the ground. The plume 
-will be dispersed and form a cone-like distribution along the wind direction.  
-Making a few more assumptions (constant $Q$, steady-state, isotropic diffusion, 
-no ground penetration, and neglegible variation in topography) the analytic 
-expression
-\begin{multline}
-    c(\vc x') = \frac{Q}{2\uppi ua(x'_1 - s'_1)^b} \exp\!\del{-\frac{(x'_2 
-            - s'_2)^2}{2a(x'_1 - s'_1)^b}} \\ \sbr{\exp\!\del{-\frac{(x'_3 
-                - s'_3)^2}{2a(x'_1 - s'_1)^b}} + \exp\!\del{\frac{(x'_3 
-                + s'_3)^2}{2a(x'_1 - s'_1)^b}}}
-\end{multline}
-can be derived for the concentration \parencite{Stockie:2011fd}. Note that the 
-coordinates $\vc x'$ and $\vc s'$ are expressed in the wind frame of reference. 
-The wind speed is set to $u = \SI{3}{\meter\per\second}$ and the diffusion 
-parameters to $a = \SI{0.33}{\meter\tothe{2 - \mathit{b}}}$ and $b = 0.86$.  The 
-emission rate $Q$ is randomly and uniformly distributed chosen from the interval 
-\SIrange{0.1}{2.5}{\gram\per\second}.
-
-Sensor noise (SN) of the plume sensor is assumed to be additive and distributed 
-according to $\mathcal{N}(0, \sigma\ped{noise}^2)$. In the noise free (NF) 
-scenarios no noise was added to the measurements. The standard deviation 
-$\sigma\ped{noise}$ was set to $10^{-4}$ in the scenarios including noise. The 
-QRSim default scenarios set it to $10^{-2}$. But given the low default plume 
-concentration this would require roughly averaging of 1600 samples from one 
-single location to reduce the magnitude of the noise to the same level as the 
-plume concentration values (see appendix TODO). Hence, the default scenario is 
-not solvable in a feasible amount of simulation time.
-
-The overall concentration $c(\vc x)$ for $n$ sources is obtained by summing the 
-individual contributions $c_i(\vc x)$ for each source:
-\begin{equation}
-    c(\vc x) = \sum_{i = 1}^n c_i(\vc x)
-\end{equation}
-In the scenarios with multiple sources (MS) $n$ is chosen uniformly out of the 
-range from \numrange{1}{5}. With a single source it is fixed to $n = 1$. In both 
-cases the source locations will be randomly chosen from a uniform distribution 
-over the simulated volume.
-
-The starting locations of the UAVs are also chosen randomly and uniformly in the 
-simulated area, but the height is initially set to a starting height of $x_3 
-= \SI{-10}{meter}$. Either a single UAV (SV) or three UAVs (MV) were used.
-
-This gives a number of possible scenarios from which I focussed on the following 
-in this work:
-\begin{itemize}
-    \item In chapter TODO I discuss the noise free, single vehicles scenarios 
-        G-NF-SS-SV, D-NF-SS-SV, and D-NF-MS-SV\@. The first is equivalent to the 
-        scenario 3A in \textcite{denardi2013rn}.
-    \item In chapter TODO I consider the dispersion scenarios with noise 
-        D-SN-SS-SV and D-SN-MS-SV\@. Except for the amount of noise these 
-        correspond to scenario 3B and 3C in \textcite{denardi2013rn}.
-    \item Finally, I will take a look at the usage of multiple vehicles with the 
-        scenario D-SN-MS-MV corresponding to scenario 3D in 
-        \textcite{denardi2013rn}.
-\end{itemize}
-
-TODO mention error measures?
-TODO figures
+\include{intro}
+\include{scenarios}
 
 \chapter{Gaussian Processes}
 A vast number of regression methods has been proposed in the machine learning 
 literature. In this work I use Gaussian Processes as these have been 
-successfully used in a number of studies related to environmental monitoring and 
-modelling of gas distributions (TODO refs). Gaussian Processes exhibit a number 
-of desirable features. They are non-parametric, non-linear and therefore do not 
-require any assumptions about the underlying functions or limitations of the 
-search space. Also, they provide one with an estimate of the predictive 
-uncertainties which can be used for a natural exploration-exploitation 
-trade-off.
+successfully used in a number of studies related to spatial and environmental 
+monitoring including the modelling of gas distributions 
+\parencite[e.g.][]{Stranders:2008wl, Marchant:2012wb, Stachniss:2008vz}.  
+Gaussian Processes exhibit a number of desirable features. They are 
+non-parametric, non-linear and therefore do not require any assumptions about 
+the underlying functions or limitations of the search space.  Also, they provide 
+one with an estimate of the predictive uncertainties which can be used for 
+a natural exploration-exploitation trade-off.
 
 In the remainder of the chapter I will discuss the essentials of Gaussian 
 Process regression. A more thorough introduction can be found in 
@@ -226,7 +136,7 @@ function $k(\vc x, \vc x')$. Usually, though not necessary, the mean function is
 taken to be zero. In most scenarios the choice of the covariance function is 
 much more interesting as it controls features like smoothness of the predicted 
 underlying function. I will discuss this topic regarding the modelling problem 
-on hand in chapter TODO.
+on hand in Section~\ref{sec:covfn}.
 
 We can now formulate the joint Gaussian prior distribution of the observed 
 training targets and the predicted values $\vc f_*$ at unseen locations $X_*$ 
@@ -267,18 +177,23 @@ modelling here.
 There are two commonly implemented approaches to counteract the problem of 
 ill-conditioning \parencite[cp.]{Sacks:1989cv, Neal:1997tj, Booker:1999wz, 
     Gramacy:2008es}. Firstly, instead of using a general matrix inversion 
-algorithm one can utilize the symmetry and positive-definiteness of $\tilde{\mat 
-    K}$ by doing a Cholesky decomposition. That yields a lower, triangular 
-matrix $L$ satisfying $\tilde{\mat K} = \mat L\mat L\T$. The inverse can the be 
-calculated as $\tilde{\mat K}^{-1} = (\mat L^{-1})\T \mat L^{-1}$. Secondly, 
-a well conditioned $\tilde{\mat K}$ can be ensured by adding a nugget $g > 0$ 
-(also known as jitter) to the diagonal of the covariance matrix. This will 
-increase all eigenvalues by the same value and thus improve the condition.  The 
-addition of a nugget can also be seen as increasing the noise variance 
+algorithm one can utilize the symmetry and positive-definiteness of 
+$\tilde{\mat{K}}$ by doing a Cholesky decomposition. That yields a lower, 
+triangular matrix $L$ satisfying $\tilde{\mat K} = \mat L\mat L\Tr$. The inverse 
+can the be calculated as $\tilde{\mat K}^{-1} = (\mat L^{-1})\Tr \mat L^{-1}$.  
+Secondly, a well conditioned $\tilde{\mat K}$ can be ensured by adding a nugget 
+$g > 0$ (also known as jitter) to the diagonal of the covariance matrix. This 
+will increase all eigenvalues by the same value and thus improve the condition.  
+The addition of a nugget can also be seen as increasing the noise variance 
 $\sigma\ped{n}^2$ and thus allowing the Gaussian Process to match the target 
 less precisely and to become smoother.
 
-% TODO some example images
+\begin{figure}
+    \centering
+    \subfigure[]{\includegraphics{plots/gp}}%
+    \subfigure[]{\includegraphics{plots/gp_sample}}
+    \caption[TODO]{TODO}
+\end{figure}
 
 \section{Online Updates}
 A naive implementation requires a $O(N^3)$ matrix inversion whenever new data 
@@ -286,8 +201,8 @@ points are added to the Gaussian Process with $N$ being the total number of data
 points collected so far. However, it is possible to do online updates with $n 
 < N$ new data points where only a $n \times n$ matrix has to be inverted. This 
 reduces the complexity of the matrix inversion to $O(n^3)$ and the overall 
-complexity including the necessary matrix multiplications to $O(n [\max\{n, 
-N - n\}]^2)$.
+complexity including the necessary matrix multiplications to $O(n\,{[\max\{n, 
+    N - n\}]}^2)$.
 
 Let us denote the set of inputs already trained on with $X$ and the set of 
 inputs to add as $X'$. The block covariance matrix after adding these new inputs 
@@ -301,31 +216,31 @@ will be
 \end{equation}
 The Cholesky factorization can also be written with block matrices
 \begin{equation}
-    \tilde{\mat K}' = \mat L \mat L\T = \left[
+    \tilde{\mat K}' = \mat L \mat L\Tr = \left[
         \begin{array}{cc}
             \mat A & \mat 0 \\ \mat B & \mat C
         \end{array}
     \right] \left[
         \begin{array}{cc}
-            \mat A\T & \mat B\T \\ \mat 0 & \mat C\T
+            \mat A\Tr & \mat B\Tr \\ \mat 0 & \mat C\Tr
         \end{array}
     \right] = \left[
         \begin{array}{cc}
-            \mat A \mat A\T & \mat A \mat B\T \\ \mat B \mat A\T & \mat B \mat 
-            B\T + \mat C \mat C\T
+            \mat A \mat A\Tr & \mat A \mat B\Tr \\ \mat B \mat A\Tr & \mat B \mat 
+            B\Tr + \mat C \mat C\Tr
         \end{array}
     \right]
 \end{equation}
 and comparison with equation~(\ref{eqn:tilde_K_prime}) gives the following 
 relations:
-FIXME: the L is used for two different sized matrices!
+FIXME\@: the L is used for two different sized matrices!
 \begin{align}
     \mat A &= \mat L \\
-    \mat B &= K(X', X) (\mat L\T)^{-1} \\
-    \mat C \mat C\T &= K(X', X') + \sigma\ped{n}^2\mat I - K(X', X)\tilde{\mat 
-        K}^{-1}K(X, X')
+    \mat B &= K(X', X) \del{\mat L\Tr}^{-1} \\
+    \mat C \mat C\Tr &= K(X', X') + \sigma\ped{n}^2\mat I - K(X', 
+    X)\tilde{\mat{K}}^{-1}K(X, X')
 \end{align}
-As $\mat C \mat C\T$ is symmetric, positive-definite it is possible to obtain 
+As $\mat C \mat C\Tr$ is symmetric, positive-definite it is possible to obtain 
 $\mat C$ by a Cholesky decomposition.
 With the inverse of a block matrix \parencite[45]{Petersen:2008wc} we obtain the 
 following relation for the inverse of the updated Cholesky factor:
@@ -340,7 +255,7 @@ following relation for the inverse of the updated Cholesky factor:
 
 \section{Sparse Approximations}
 
-\section{Covariance Functions}
+\section{Covariance Functions}\label{sec:covfn}
 The choice of the covariance function determines the assumptions about the 
 functions learned with a Gaussian process. Hence, it is quite important. In this 
 chapter I will discuss some widely used covariance functions and considerations 
@@ -451,8 +366,8 @@ use gradient-based optimizers. In an active learning scenario, moreover, there
 is a limited amount of data in the beginning making the correct estimation of 
 parameters like the source position virtually impossible.
 
-TODO: read and maybe include non-stationary papers
-TODO: non-stationary not agnostic to structure.
+TODO\@: read and maybe include non-stationary papers
+TODO\@: non-stationary not agnostic to structure.
 
 \section{Hyper-parameter Selection}
 Though Gaussian processes are non-parametric, the choice of covariance function 
@@ -490,10 +405,11 @@ more easily lead to overfitting, only the marginal likelihood is optimized which
 is known as type~II maximum likelihood. For a Gaussian process with $n$ training 
 samples it is given by
 \begin{equation}
-    \log p(\vc y | \mat X, \vc\theta) = -\frac{1}{2}\del{\vc y\T \tilde{\mat 
-            K}^{-1} \vc y + \log \det \tilde{\mat K} + n \log 2\uppi} \text{.}
+    \log p(\vc y | \mat X, \vc\theta) = -\frac{1}{2}\del{\vc y\Tr 
+        \tilde{\mat{K}}^{-1} \vc y + \log \det \tilde{\mat K} + n \log 2\uppi} 
+    \text{.}
 \end{equation}
-The three summands can be interpreted as the quality of the data fit $\vc y\T 
+The three summands can be interpreted as the quality of the data fit $\vc y\Tr 
 \tilde{\mat K}^{-1} \vc y$, model complexity $\log \det \tilde{\mat K}$, and 
 a normalization term $n \log 2\uppi$. Hence, the optimization of the marginal 
 likelihood includes an automatic trade-off of model complexity and data fit.
@@ -503,18 +419,20 @@ set method that a gradient based optimizer can be used. The partial derivatives
 of the likelihood are given by
 \begin{equation}
     \dpd{}{\theta_j} \log p(\vc y | \mat X, \vc\theta) = \frac{1}{2} 
-    \del{\del{\tilde{\mat K}^{-1}\vc y \vc y\T \tilde{\mat K}^{-1} - \tilde{\mat 
-                K}^{-1}} \dpd{\tilde{\mat K}}{\theta_j}} \text{.}
+    \del{\del{\tilde{\mat K}^{-1}\vc y \vc y\Tr \tilde{\mat K}^{-1} 
+            - \tilde{\mat{K}}^{-1}} \dpd{\tilde{\mat K}}{\theta_j}} \text{.}
 \end{equation}
 However, all method require a complete retraining of the Gaussian process as for 
 each update of the hyper-parameters $\tilde{\mat K}^{-1}$ has to be newly 
 calculated. Thus, in an online setting it is far more efficient to keep the 
 hyper-parameters fixed or only update them occasionally.
 
-TODO: Gaussian Process Mixtures? Efficiency in case of parallel calculation?
+TODO\@: Gaussian Process Mixtures? Efficiency in case of parallel calculation?
 How is the selection happening? Error or likelihood?
 
 \section{Active Learning}
+TODO scaling is not correct
+
 A setting in which a learning algorithm can freely choose the next training 
 input is called \newterm{active learning}. A general introduction in the topic 
 is provided by \textcite{Settles:2009vo}. Here, I will focus on how to realize 
@@ -662,8 +580,8 @@ TODO include multi-step look-ahead? process mixtures?
         PDUCB, GO) and the rows show the state after 3, 10, and 20 iterations.  
         The parameters used for these plots were $\kappa' = 1.25$, $\gamma' 
         = -0.0002$, $\varepsilon = 10^{-30}$, $s\ped{DUCB} = 1$, and 
-        $s\ped{PDUCB} = 70$. The inital sample was always chosen at $x_0 = -7$.}
-    \label{fig:acqfns}
+        $s\ped{PDUCB} = 70$. The inital sample was always chosen at $x_0 
+        = -7$.}\label{fig:acqfns}
 \end{figure}
 In Figure~\ref{fig:acqfns} a grapihcal comparison of the proposed utility 
 functions is given for a one-dimensional example. It can be seen that DUCB 
@@ -673,7 +591,39 @@ maximum, but reduces the uncertainty more equally over the domain. In comparison
 to these to functions PDUCB seems also to focus around the maxima, but with 
 a wider exploration around those. In Chapter TODO I will more closely look on 
 how well these functions work to estimate a plume dispersion with different 
-arameter choices.
+parameter choices.
+
+\subsection{Multiple UAVs}
+
+\subsection{Bootstrapping}
+As long as not a minimal concentration has been measured all of the proposed 
+acquisition functions do not have a unique maximum. Though one could choose one 
+of the many maxima randomly, this might take a long time until the plume gets 
+discovered. Hence, it is best to employ a more systematic search strategy in the 
+beginning.
+
+Here, three variations have been used. First, surrounding the area in a medium 
+height. Without noise this should be sufficient to obtain enough information for 
+a successful usage of the discussed acquisition functions.
+
+Considering noise a second strategy is needed as measurements of low 
+concentrations are not reliably anymore. This strategy consists of surrounding 
+the area at different heights until the criterion that a plume as been found is 
+fulfilled. The criterion was that the maximum of all concentration measurements 
+$C$ for one surrounding has to be larger than $5\sigma(C)$ with $\sigma(C)$ 
+being the standard deviation of $C$.
+
+This second strategy may also take a long time until a plume has been found, but 
+should be faster than only random exploration. If the wind direction is known 
+(which is not the case in the standard QRSim scenarios), a third strategy can be 
+used. It improves the second strategy by not doing complete surrounds of the 
+area, but only along the two area edges which are ``hit'' by the wind as those 
+the only two were the plume might be detected.
+
+These bootstrapping strategies can be easily extended to multiple UAVs by 
+assigning different heights to each one.
+
+TODO only part of samples are used to train GP
 
 \chapter{Error Measures}
 To be able to compare different statistical models some kind of performance 
@@ -780,6 +730,7 @@ locations should be added.
 To ``smooth'' out the samples around the plumes even more one can use the 
 samples of the Metropolis-Hastings algorithm as center of Gaussian distributions 
 and draw a number of further samples from these.
+TODO not completely correct, just take every n-th sample
 
 TODO pics
 
@@ -789,15 +740,15 @@ a reward
 \begin{equation}
     R = - \sum_{i = 1}^n \del{c(\vc x) - \mu(\vc x)}^2
 \end{equation}
-as a performance measure. This is essentially the negative of $\hat 
-E\ped{RMISE}^2$ without normalization. Thus, with a non uniform sampling this 
-reward will give a biased estimate attributing more importance to areas with 
-more sample locations.
+as a performance measure. This is essentially the negative of 
+$\hat{E}\ped{RMISE}^2$ without normalization. Thus, with a non uniform sampling 
+this reward will give a biased estimate attributing more importance to areas 
+with more sample locations.
 
 The set of $\vc x_i$ used to calculate the reward in QRSim consists ouf of two 
 parts. One-fifth is sampled uniformly over the whole volume whereas the 
 remaining samples are taken uniformly from the areas where the concentration 
-exceeds the limit $c\ped{min} = Q \cdot 10^{-3} \cdot 
+exceeds the limit $c_{\min} = Q \cdot 10^{-3} \cdot 
 \si{\second\per\meter\cubed}$.
 
 The bias introduced by that towards the interesting regions is not necessarily 
@@ -847,15 +798,244 @@ possible with higher values (i.e.~$\mathit{pgtol} = 10^{-5}$ and $\mathit{factr}
 = 10^7$).  Nevertheless, the same parameters were used for all utility 
 functions.
 
-\section{Velocity Control}
+TODO additional starting points
 
+\section{UAV Control}
+The QRSim simulator accepts different UAV control commands including way-points 
+and target velocities. Setting directly the way-points would be natural as the 
+optimization of the acquisition function leads to target coordinates. However, 
+the QRSim way-point controller did not proof to be very reliable and UAVs 
+leaving the simulation area were not uncommon. To circumvent this, I translated 
+each way-point $\vc t_i$ to velocity commands $\vc v_i$ sent to QRSim for the 
+$i$-th out of $n$ UAVs with
+\begin{align}
+        \vc v_i &= \del{\begin{array}{c}
+            d_{i, 1} \min\{1, v_{\max,1} / d_{i,\mathrm{hor}}\} \\
+            d_{i, 2} \min\{1, v_{\max,2} / d_{i,\mathrm{hor}}\} \\
+            \min\{v_{\max,3}, \max\{-v_{\max,3}, d_{i, 3}\}\}
+        \end{array}} \label{eqn:final_velocities} \\
+        d_{i,\mathrm{hor}} &= \sqrt{d_{i, 1}^2 + d_{i, 2}^2} \\
+    \begin{split}
+        \vc d_i &= \del{d_{i,1}, d_{i,2}, d_{i,3}}\Tr \\
+        &= \diag(\vc v{\max}) \del{u_1 \del{\vc t_i - \vc x_i} + u_2 \sum_{j 
+                = 1,\ i \neq j}^{n} \frac{\vc x_i - \vc x_j}{\abs{\vc x_i - \vc 
+                    x_j}^3}}
+    \end{split}
+\end{align}
+where $\vc x_i$ are the current UAV positions, $u_1 = \SI{0.025}{\per\meter}$ 
+and $u_2 = \SI{5}{\meter\squared}$ are scaling constants, and $\vc v_{\max} 
+= (v_{\max,1}, v_{\max,2}, v_{\max,3})\Tr = (\SI{6}{\meter\per\second}, 
+\SI{6}{\meter\per\second}, \SI{6}{\meter\per\second})\Tr$ a vector of speed 
+limits\footnote{QRSim additionally applies its own speed limit independently per 
+    direction in the UAV body frame of reference. It is 
+    \SI{3}{\meter\per\second} for the two horizontal axes.}.  The $\vc d_i$ 
+vector consists of two terms.  One directs the speed towards the target 
+proportional to the remaining distance resulting in a slow down near to the 
+target. The remaining term acts like a repelling force between the UAVs to keep 
+them from colliding.  It is proportional to the inverse of the square of the 
+distance. The power of three occurs because the direction vector $\vc x_i - \vc 
+x_j$ has to be normalized.  With Equation~\ref{eqn:final_velocities} the 
+velocity will be limited keeping the horizontal direction.
 
-\chapter{TODO}
-- surround area first
+To prevent the UAVs from going astray a safety margin of \SI{10}{\meter} is 
+defined at the boundaries of the simulated volume. When an UAV enters this 
+margin in one dimension the corresponding velocity component will be set to $\pm 
+\vc v_{\max}$.
+
+TODO when is target considered to be reached.
+
+\chapter{Evaluation and Simulation Experiments}
+TODO
+
+\section{Best Covariance Function for Plume Modelling}
+To obtain the best covariance function including its parameters to approximate 
+a plume distribution these were evaluated using the test-set method. For each of 
+the single source Gaussian (G-NF-SS-SV), the single source dispersion 
+(D-NF-SS-SV), and the multiple source dispersion (D-NF-MS-SV), all without 
+noise, 50 random instances were created. For each instance a set sampling 
+locations was generated using the Metropolis-Hastings based technique described 
+in chapter~TODO\@. Herein, every fifth Metropolis-Hastings sample was used in 
+the final set and was used as mean of Gaussian with a standard deviation $\sigma 
+= \SI{6}{\meter}$ to draw five more samples to include in the final set. As 
+proposal distribution Metropolis-Hastings algorithm was also a Gaussian with 
+standard deviation $\sigma = \SI{6}{\meter}$. In addition, 1000 uniformly 
+samples were added to the final set of samples. All samples outside of the 
+scenario volume were dismissed. From these samples 1000 were randomly selected 
+for training and the rest was used as test set to determine the error.
+
+Obtaining the training samples in this way should roughly mirror a good sampling 
+with an UAV with many samples in the areas of high concentration and a few in 
+the remaining areas. The advantage using this way of sampling is that it allows 
+us to test different kernels independently on the exact behavior of the UAV and 
+time consuming simulation of it.
+
+The kernels tested were the squared exponential, the Mat\'ern kernel with $\nu 
+= 5/2$, the Mat\'ern kernel with $\nu = 3/2$, and the exponential kernel. The 
+lengthscales tested ranged from \SI{1}{\meter} to \SI{100}{\meter}. The process 
+variance was fixed as $\sigma_k^2 = 1$. Note that this parameter has no effect 
+on the predictive mean as long as the assumed noise variance $\sigma_n^2$ is 
+zero.
+
+The average of the fraction of the remaining error is plotted in Figure~TODO for 
+the different kernels and error measures. The minimum is roughly the same for 
+all kernels and around $\ell = \SI{5}{\meter}$.  However, the behavior differs 
+considerably for non-optimal lengthscales. The smoother (the more often the 
+kernel is differentiable) the more the error increases for too large 
+lengthscales. Especially, for the squared exponential covariance function this 
+increase is quite abrupt. Only for very large lengthscales it decreases again 
+for the squared exponential kernel.
+
+Comparing the WRMISE to the RMISE the former one stays even for larger 
+lengthscales quite low. This indicates that in the area of the plume (also due 
+to the more dense sampling) a good fit is still obtained, but around that area 
+the prediction gets worse. Thus, the steep concentration gradients around the 
+plume are not well captured in that case.
+
+The results give also an idea how good of a fit can be expected at best when 
+using an UAV\@. Whereas fraction of the remaining error decreases to nearly zero 
+for the single source Gaussian, it stays above 0.6 for the dispersion scenario 
+with the more localized plume distribution. The reward error measure is 
+decreased to lower levels, but this is likely to underestimation of the error at 
+the plume boundaries as argued in Chapter~TODO\@.
+
+Besides the error measures the log likelihood of each trained Gaussian process 
+was calculated. In Figure~TODO the average over trials is plotted. Only for the 
+squared exponential kernel the maximum of the log likelihood corresponds to the 
+minimum of the RMISE\@. Towards longer lengthscales the likelihood declines very 
+steeply. Using the log likelihood to estimate the lengthscales for the other 
+covariance functions would largely overestimate it.
+
+Taken these results together it is best to choose a non-smooth kernel with 
+a lengthscale of $\ell = \SI{5}{\meter}$. As it is advantageous to be able to 
+use a gradient based optimizer for the optimization of acquisition functions, 
+I decided to use the Matérn kernel with $\nu = 3/2$ in the further experiments, 
+which gives a once mean-square differentiable Gaussian process in opposite to 
+the exponential kernel. Unfortunately, optimizing the lengthscale using the 
+likelihood would not give good results and I fixed the lengthscale at $\ell 
+= \SI{5}{\meter}$. Also, including a prior in the log likelihood does not help 
+here. In example to shift the maximum of the likelihood for the chosen kernel to 
+\SI{5}{\meter} a Gaussian prior would need a standard deviation of less then 
+$\sigma < \e^{-TODO} \approx 0$ (see apendix TODO).
+
+TODO trade-off low and long lengthscale
+
+\section{Comparison of Utility Functions} \label{sec:cmputility}
+Given the kernel chosen in the previous section I continued to compare the 
+different utility functions in the noiseless scenarios single source Gaussian 
+(G-NF-SS-SV), single source dispersion (D-NF-SS-SV), and multiple source 
+dispersion (D-NF-MS-SV).
+
+For each given scenario were 20~trials performed. In each run the UAV first 
+surrounded the simulation area in a height of \SI{40}{\meter} with a margin of 
+\SI{10}{\meter} to the boundaries of the simulated volume. After that further 
+way-points were chosen with on of the acquisition functions discussed in 
+Chapter~TODO\@. The optimization of that functions has been described in 
+Chapter~TODO\@.
+
+Each trial was allowed to run for a maximum of \SI{3000}{\second} in simulation 
+time. However, when a new target way-point was within \SI{3}{\meter} of the 
+previous one the UAV was considered to become stuck in a maximum of the 
+acquisition function and the simulation was stopped at that point to reduce 
+overall simulation time.
+
+The error measures were estimated as described in Chapter~TODO\@. The sampling 
+locations for that where chosen as 1000 uniformly distributed sampling 
+locations, every tenth of 4200 locations from the Metropolis-Hastings algorithm 
+with Gaussian proposal distribution with standard deviation $\sigma 
+= \SI{10}{\meter}$, and 10 more locations sampled from the proposal distribution 
+for each of included Metropolis-Hastings samples.
+
+I tested all three utility functions proposed in Chapter~TODO\@: DUCB, PDUCB 
+(with $\varepsilon = 10^{-30}$), and GO\@. DUCB was tested with a constant 
+scaling factor of $s = 1$ and the automatic scaling in Equation~TODO\@. PDUCB 
+was tested with a constant scaling factor of $s = 70$ (a little bit more than 
+$-\log \varepsilon$) and the automatic scaling in Equation~TODO\@.  Furthermore, 
+I performed a parameter search over $\kappa \in \cbr{0.1, 0.5, 
+0.75, 1, 1.25, 1.5, 2}$ and $\gamma \in \cbr{0} \cup \cbr{-10^p | p = -9, -8, 
+  \dots, -2}$. Note that for the GO utility function the $\kappa$ parameter has 
+no effect.
+
+Figure~TODO to TODO visualize the average fraction of the remaining error for 
+the different scenarios. The respective parameters and values of the minima are 
+listed in Table~TODO\@. The average reduction (over trials) of the RMISE against 
+simulation time is plotted in Figure~TODO and looks essentially the same for 
+WRMISE and the QRSim reward.
+
+This is a rich dataset from which quite a few insights can be gained. First of 
+all it can be noted that the GO acquisition function does not perform very well.  
+Even in the single source Gaussian scenario the RMISE is only reduced by about 
+\SI{20}{\percent} and in the other two scenarios it performs even worse.
+
+Comparing DUCB and PDUCB the latter one consistently performs better with 
+a reduction in the RMISE and WRMISE by about additional \SI{15}{\percent} or 
+more. Also, PDUCB has a lower standard deviation in the single source Gaussian 
+scenario. Despite that, its standard deviation is higher than that of DUCB in 
+the dispersion scenarios.
+
+In the single source Gaussian scenario PDUCB proves to be quite robust against 
+the choice of $\kappa$ as for all values very good results are obtained. This 
+picture is a bit more noisy in the dispersion scenarios. It seems that too low 
+values ($\kappa < 0.75$) degrade performance. This is consistent with the 
+argument in Chapter~TODO that too low $\kappa$ limit the exploration and let the 
+UAV become stuck in a (local) maximum. The choice of $\gamma$ has also no 
+considerable effect as long as the distance penalty is not chosen too large 
+($\gamma < -10^{-5}$).
+
+The same behavior for the choice of $\gamma$ is also observed for DUCB in the 
+single source Gaussian scenario. However, this utility function is far more 
+sensitive to the choice of $\kappa$. Using the scaling $s = 1$ the performance 
+degrades setting $\kappa < 1$ and using the automatic scaling it degrades for 
+$\kappa < 1.5$. In the dispersion scenarios the DUCB acquisition function does 
+not perform well for any tested combination of parameter values.
+
+Interestingly,  DUCB performs slightly better with the automatic scaling, 
+whereas PDUCB performs slightly worse.
+
+Finally, taking a look at the time course of error reduction multiple phases can 
+be discovered where a reasonable reduction of the error occurs. About the first 
+\SI{500}{\second} nearly no reduction occurs as in this phase the UAV only 
+surround the area of interest. Then the error rapidly decreases in the next 
+\SIrange{1000}{2000}{\second} until the decrease levels off and stays fairly 
+constant for the rest of the simulation time.
+
+These results show that PDUCB outperforms the DUCB and GO acquisition functions 
+and in addition is quite robust against the against a non-optimal choice of 
+parameters. The especially bad performance of the GO utility function is not too 
+surprising at its intended use is to find a function maximum and not building 
+a correct model of the function (respectively plume concentration).  DUCB works 
+reasonable well for the simple case of a Gaussian distribution, but fails for 
+the more localized dispersions.
+
+The PDUCB performance might not seem to be too impressive in the dispersion 
+scenarios, too. However, one has to keep in mind that even in Chapter~TODO with 
+much more samples the error could not be reduced to less than 
+TODO\SI{1}{\percent}.  Also, the qualitatively the plume is predicted at the 
+correct location as Figure~TODO shows, despite some deviance of the exact 
+concentration values.
+
+Given this discussion I selected the PDUCB acquisition function with automatic 
+scaling, $\kappa = 1.25$, and $\gamma = -10^{-8}$ for further experiments.  
+Though, the automatic scaling preforms a little bit worse I consider it to be 
+advantageous as it decouples the other parameter values from the exact 
+concentration levels of the plume dispersion.
+
+TODO explain kappa and gamma
+TODO example run visualizations
+
+\section{Noisy}
+
+\section{Multiple UAVs}
+
+\chapter{Outlook Time-varying Plumes}
+
+\chapter{Conclusion}
 
 \appendix
+\chapter{Samples Needed to Decrease Noise to a Certain Degree} 
+\label{sec:decnoise}
+
 \chapter{PDUCB Differentiability}
 
-\printbibliography
+\printbibliography{}
 
 \end{document}
