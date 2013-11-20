@@ -163,6 +163,20 @@ the predictive distribution for $\vc f_*$ as
     \\
     \sigma^2(X_*) &= \diag(\cov(\vc f_*)) \text{.}
 \end{align}
+See Figure~\ref{fig:ex-gp-main} for a visualization of an example Gaussian 
+process.
+
+\begin{figure}
+    \centering
+    \subfigure[]{\includegraphics{plots/gp}\label{fig:ex-gp}}%
+    \subfigure[]{\includegraphics{plots/gp_sample}\label{fig:ex-gp-sample}}
+    \caption[Gaussian process example]{Example of a one-dimensional Gaussian 
+        process (using the squared exponential covariance function with 
+        a length-scale of 1, $\sigma\ped{n}^2 = 0$) conditioned on five training 
+        points: \subref{fig:ex-gp} shows the mean $\bar{\vc f_*}$ and predictive 
+        standard deviation $\sigma(X_*)$; \subref{fig:ex-gp-sample} shows three 
+        functions sampled from the process.}\label{fig:ex-gp-main}
+\end{figure}
 
 Even though, $K$ is a symmetric, positive-definite matrix it can be 
 ill-conditioned.\footnote{The condition $\kappa(A)$ of a matrix $A$ is defined 
@@ -187,13 +201,6 @@ will increase all eigenvalues by the same value and thus improve the condition.
 The addition of a nugget can also be seen as increasing the noise variance 
 $\sigma\ped{n}^2$ and thus allowing the Gaussian Process to match the target 
 less precisely and to become smoother.
-
-\begin{figure}
-    \centering
-    \subfigure[]{\includegraphics{plots/gp}}%
-    \subfigure[]{\includegraphics{plots/gp_sample}}
-    \caption[TODO]{TODO}
-\end{figure}
 
 \section{Online Updates}
 A naive implementation requires a $O(N^3)$ matrix inversion whenever new data 
@@ -338,25 +345,46 @@ Half-integer values are used as the kernel function will become quite simple:
 \end{align}
 From these kernel functions $k_{\nu=1/2}(r)$ is also known as the 
 \newterm{exponential kernel}. Furthermore, note that for $\nu \rightarrow 
-\infty$ the squared exponential kernel is recovered.
+\infty$ the squared exponential kernel is recovered. A plot of the covariance 
+functions can be found in Figure~\ref{fig:kernels}.
 
-% TODO include MS continuity?
+\begin{figure}
+    \centering
+    \includegraphics{plots/kernels}
+    \caption[Covariance functions]{Plot of stationary covariance functions with 
+        $\sigma_k^2 = 1, \ell = 1$.}\label{fig:kernels}
+\end{figure}
+
+TODO include MS continuity?
 
 \subsection{Non-stationary Covariance Functions}
 Many phenomena, including the concentrations of gas plumes, are not stationary.  
-Already a (shifted) Gaussian density function exhibits different optimal 
-length-scales (see TODO fig). The rate of change along the tails is low leading 
-to a large length-scale, whereas around the mean the length-scale is much 
-shorter.  Moreover, discontinuities at specific places can be easier modelled 
-using non-stationary kernels.
+Already a Gaussian density function exhibits different optimal length-scales 
+(see Figure~\ref{fig:gp-lengthscale}).  With a long length-scale the predicted 
+mean can considerably deviate from the target function as shown for positive $x$ 
+in the figure. With a short length-scale a quite good fit is obtained. However, 
+the predictive variance along the tail towards negative $x$ is overestimated as 
+the actual rate of change in this area is quite low.
 
-However, the usage of non-stationary covariance functions for the given plume 
-modelling problem is far from straight forward and might need more prior 
-knowledge than one is willing to assume (in simulations) or effectively has.  
-One would probably have to use different kernels depending on the scenario 
-(wind/no wind, number of sources) and these would have to be parameterized with 
-the source locations. Otherwise the non-stationarity of the kernel could not 
-relate to the actual non-stationarity of the plume.
+\begin{figure}
+    \centering
+    \includegraphics{plots/gp-lengthscale}
+    \caption[Length-scale influence]{Influence of the kernel length-scale on the 
+        Gaussian process. In both plots the Mat\'ern kernel with $\nu = 3/2$ was 
+        used. On the left a short length-scale of $\ell = 1$ was used, whereas 
+        a longer length-scale of $\ell = 10$ was used on the right.
+    }\label{fig:gp-lengthscale}
+\end{figure}
+
+Non-stationary covariance functions can alleviate this problem. Moreover, they 
+allow to model discontinuities at specific places. However, the usage of 
+non-stationary covariance functions for the given plume modelling problem is far 
+from straight forward and might need more prior knowledge than one is willing to 
+assume (in simulations) or effectively has.  One would probably have to use 
+different kernels depending on the scenario (wind/no wind, number of sources) 
+and these would have to be parameterized with the source locations. Otherwise 
+the non-stationarity of the kernel could not relate to the actual 
+non-stationarity of the plume.
 
 Methods for selecting such parameters will be discussed in the next section.  
 Unfortunately, the cost of these methods grows with the number of parameters 
@@ -366,8 +394,8 @@ use gradient-based optimizers. In an active learning scenario, moreover, there
 is a limited amount of data in the beginning making the correct estimation of 
 parameters like the source position virtually impossible.
 
-TODO\@: read and maybe include non-stationary papers
-TODO\@: non-stationary not agnostic to structure.
+TODO read and maybe include non-stationary papers
+TODO non-stationary not agnostic to structure.
 
 \section{Hyper-parameter Selection}
 Though Gaussian processes are non-parametric, the choice of covariance function 
@@ -427,7 +455,7 @@ each update of the hyper-parameters $\tilde{\mat K}^{-1}$ has to be newly
 calculated. Thus, in an online setting it is far more efficient to keep the 
 hyper-parameters fixed or only update them occasionally.
 
-TODO\@: Gaussian Process Mixtures? Efficiency in case of parallel calculation?
+TODO Gaussian Process Mixtures? Efficiency in case of parallel calculation?
 How is the selection happening? Error or likelihood?
 
 \section{Active Learning}
@@ -755,11 +783,25 @@ The bias introduced by that towards the interesting regions is not necessarily
 bad. The same is done in the weighted root mean integrated square error.  
 Unfortunately, the sampling strategy will not sample at the low side of 
 a (steep) concentration boundary and will give an bad estimate of the reward 
-around those boundaries. Especially the reward (respectively error) around those 
-boundaries is interesting as it tells us how well the fast changing components 
-of the plume distribution are estimated.
+around those boundaries. In contrast to that, the Metropolis-Hastings based 
+sampling algorithm acquires also some samples low concentration area around 
+a high concentration. Figure~\ref{fig:err-sampling} provides a comparison of 
+both sampling strategies.
 
-TODO pic
+\begin{figure}
+    \centering
+    \includegraphics{plots/err-sampling}
+    \caption[Comparison of error estimation sampling methods]{One-dimensional 
+        comparison of the Metropolis-Hastings (MH) based sampling and the QRSim 
+        sampling for error estimation. For both approaches 60 samples with 
+        regard to the plotted Gaussian density were taken excluding the 
+        uniformly distributed samples.  The $y$ position of the scatter marks 
+        has no meaning in this plot. For this plot every fifth sample of the 
+        Metropolis-Hastings algorithm was used.  A Gaussian was used as proposal 
+        distribution with $\sigma = 2$.  The same distribution was used to 
+        create five additional samples for each initial 
+        one.}\label{fig:err-sampling}
+\end{figure}
 
 \chapter{Technical Details}
 To implement the discussed algorithms in a functioning system some further 
