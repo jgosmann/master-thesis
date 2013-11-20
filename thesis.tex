@@ -7,12 +7,13 @@
 \usepackage{amsmath}
 \usepackage[style=authoryear,backend=biber,language=american]{biblatex}
 \usepackage{bm}
-\usepackage{commath}
 %\usepackage{booktabs}
+\usepackage{commath}
+\usepackage{enumerate}
 %\usepackage[flushmargin,ragged]{footmisc}
+\usepackage{gitinfo}
 \usepackage{graphicx}
 %\usepackage{ifthen}
-\usepackage{enumerate}
 %\usepackage{hhline}
 \usepackage{hyperref}
 %\usepackage{lastpage}
@@ -21,6 +22,7 @@
 \usepackage{polyglossia}
 %\usepackage{ngerman}
 \usepackage{siunitx}
+\usepackage{scrpage2}
 \usepackage{subfigure}
 \usepackage{upgreek}
 %\usepackage{xcolor}
@@ -31,6 +33,18 @@
 
 %\lstset{basicstyle=\fontfamily{pcr}\selectfont, keywordstyle=\bfseries, language=C++}
 \sisetup{per-mode=symbol}
+
+\pagestyle{scrheadings}
+\automark[section]{section}
+\clearscrheadfoot{}
+\ofoot{\pagemark}
+\ifoot{\headmark}
+% FIXME remove git hash for final version
+\ihead{\gitHash}
+\ohead{\gitCommitterIsoDate}
+% TODO what is the following code for?
+%\deftripstyle{mychapter}{}{}{}{}{}{\pagemark}
+%\renewcommand*{\chapterpagestyle}{mychapter}
 
 \newcommand{\vc}[1]{\bm{#1}}
 \newcommand{\vcc}[1]{\textbf{#1}}
