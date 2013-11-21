@@ -1,43 +1,45 @@
 \chapter{Introduction}
-Environmental monitoring is important in various ways. It is needed to ensure 
-water and air pollution levels are in compliance with regulations like 
-\textcite{Anonymous:1996ui}, to monitor ozone concentrations and climate change,  
-as well as surveillance of industrial facilities for leakages of pollutants to 
-just name a few applications.
+Environmental monitoring is important in various ways.
+For example, it is needed to ensure water and air pollution levels are in
+compliance with governmental regulations \parencite[i.\,e.][]{Anonymous:1996ui}, 
+to monitor ozone concentrations and climate change,  as well as surveillance of 
+industrial facilities for leakages of pollutants to just name a few 
+applications.
 
-In many of these scenarios it is feasible to have a static sensor network and 
-there is already existing research on how to optimally utilize sensors at fixed 
-locations \parencite[e.g.][]{Osborne:2008hi, Guestrin:2005cq, Wang:kz}.  
-However, better results may be obtainable using mobile robots which can move to 
-and acquire more precise data in interesting areas. Moreover, in some scenarios 
-like disaster response where timely information is needed it might not be 
-possible to first deploy an extensive sensor network. Mobile robots allow here 
-to quickly identify the interesting regions and gather data primarily in those.  
-The problem of autonomously choosing the interesting locations for data 
-acquisition is known as \newterm{active learning}. \textcite{Marchant:2012wb} 
-also used the term \newterm{Intelligent Environmental Monitoring} (IEM) 
+In many of these scenarios it is feasible to have a static sensor network and
+research exists on how to optimally utilize sensors at fixed locations
+\parencite[e.g.][]{Osborne:2008hi, Guestrin:2005cq, Wang:kz}.  However, better
+results might be obtainable using mobile robots which can move to interesting
+areas and acquire more precise data there. Moreover, in some scenarios like
+disaster response, where timely information is needed, it might not be possible
+to first deploy an extensive sensor network. Mobile robots allow here to quickly
+identify the interesting regions. The problem of autonomously choosing the
+best locations for data acquisition is known as \newterm{active
+learning}. \textcite{Marchant:2012wb} also used the term 
+\newtermAbbrev{Intelligent
+Environmental Monitoring}{IEM} 
 
-In this work I focus on a scenario proposed as part of the CompLACS project in 
-\textcite{denardi2013rn}: One or more sources emit gaseous substance or aerosol 
-which is dispersed by a constant wind. The resulting plume distribution has to 
-be estimated with autonomously controlled unmanned aerial vehicles (UAVs). The 
-rather steep concentration gradients and small spatial extend orthogonal to the 
-dispersion direction especially add to the difficulty of this problem.  With few 
-UAVs it is not possible to cover the whole volume of investigation densely 
-enough using a regular pattern in a timely manner. It is necessary to focus 
-measurement to specific areas. Furthermore, measurement noise has to be taken in 
-consideration.
+In this work, I focus on a scenario proposed as part of the CompLACS project in 
+\textcite{denardi2013rn}: One or more sources emit a gaseous substance or 
+aerosol which is dispersed by a constant wind. The resulting plume distribution 
+has to be estimated with autonomously controlled \pabbrev{unmanned aerial 
+    vehicle}{UAV}. The rather steep concentration gradients and small spatial 
+extend orthogonal to the main dispersion axis add to the difficulty of this 
+problem.  With a few UAVs it is not possible to cover the whole volume of 
+investigation using a regular pattern densely enough in a timely manner.  It is 
+necessary to focus measurements in specific areas.  Furthermore, measurement 
+noise has to be taken in consideration.
 
 In previous work swarms of robots have been used to localize the source of 
 a plume \parencite{Jatmiko:2007df, Zarzhitsky:2005tz}. These approaches, 
 however, do not allow the usage of only one robot and do not provide one with an 
-estimation of the plume dispersion. Such an estimation might be important for 
-various reasons such as determining areas in which a threshold is exceeded or 
-a contamination occurred. As \textcite{Reggente:2009ti} noted, though one could 
-try to model the actual fluid dynamics to obtain these information, such 
-computational fluid dynamics models become intractable for real world 
-applications with inaccurate data.  Instead they propose to build a statistical 
-model with the gas concentration measurements as random variables.
+estimation of the overall plume distribution. Such an estimation might be 
+important for various reasons such as determining areas in which a threshold is 
+exceeded or a contamination occurred. As \textcite{Reggente:2009ti} noted, 
+though one could try to model the actual fluid dynamics to obtain these 
+information, such computational fluid dynamics models become intractable for 
+real world applications with inaccurate data.  Instead they propose to build 
+a statistical model with the gas concentration measurements as random variables.
 
 A widely used statistical model for spatial or spatio-temporal data are 
 \newterm{Gaussian processes}\footnote{In geospatial statistics the modelling 

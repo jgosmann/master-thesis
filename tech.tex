@@ -1,0 +1,91 @@
+\chapter{Technical Details}
+To implement the discussed algorithms in a functioning system some further 
+details have to be taken in consideration. I will discuss these in the following 
+after giving short general overview of the implementation.
+
+\section{Implementation}
+All simulations were performed with QRSim \parencite{denardi2013rn}, a quadrotor 
+simulator developed specifically to test high level tasks. It supports multiple 
+UAVs which are simulated with realistic dynamics of the platform. Also, equipped 
+sensors (e.\,g.~GPS, IMU) are simulated with different sources of inaccuracies.  
+This includes wind influencing the vehicles as well as the plume dispersions.
+
+I decided to implement the algorithms (i.\,e.~Gaussian processes, acquisition 
+functions) in Python because of its high-level programming constructs and 
+excellent scientific computing support with NumPy and SciPy 
+\parencite{Oliphant:2007dm}. Communication between the Python part and QRSim 
+implemented in MATLAB were done with a TCP interface based on the Google 
+protocol 
+buffers\footnote{\url{https://developers.google.com/protocol-buffers/}}.
+
+Though there exist several Gaussian process implementations for Python like for 
+example Scikit-learn \parencite[i.\,e.][]{scikit-learn}, none supports online 
+updates to my knowledge.  For that reason I developed an own implementation.
+
+\section{Function optimization}
+To find the maximum of the acquisition function the SciPy wrapper of the 
+\mbox{FORTRAN} implementation of the L-BFGS-B algorithm \parencite{Byrd:2006iv, 
+    Zhu:1997br} was used. As gradient based optimizer with the possibility to 
+constrain the search space to the task volume it is well suited for the task.
+
+To choose the starting location $\vc x_0$ the utility function was evaluated on 
+a coarse $5 \times 5 \times 5$ grid and the location with the maximal value was 
+chosen. The convergence parameters were set to $\mathit{pgtol} = 10^{-10}$ and 
+$\mathit{factr} = 100$. The rather flat DUCB gradient required this strict 
+settings. For the other acquisition functions a good convergence was also 
+possible with higher values (i.\,e.~$\mathit{pgtol} = 10^{-5}$ and $\mathit{factr} 
+= 10^7$).  Nevertheless, the same parameters were used for all utility 
+functions.
+
+Noisy plume measurements produce a large number of local maxima in the utility 
+function. Hence, in those scenarios the optimization has to be performed 
+multiple times using some additional starting points. Those were chosen from 
+Gaussian distributions with a standard deviation of \SI{5}{\meter} centered on 
+the current UAV position and the location of the maximal recorded plume 
+measurement. From each of these Gaussian five additional starting locations for 
+the optimization were sampled.
+
+\section{UAV Control}
+The QRSim simulator accepts different UAV control commands including way-points 
+and target velocities. Setting directly the way-points would be natural as the 
+optimization of the acquisition function leads to target coordinates. However, 
+the QRSim way-point controller did not proof to be very reliable and UAVs 
+leaving the simulation area were not uncommon. To circumvent this, a different 
+algorithm was used. Each way-point $\vc t_i$ was translated to velocity commands 
+$\vc v_i$ sent to QRSim for the $i$-th out of $n$ UAVs with
+\begin{align}
+        \vc v_i &= \del{\begin{array}{c}
+            d_{i, 1} \min\{1, v_{\max,1} / d_{i,\mathrm{hor}}\} \\
+            d_{i, 2} \min\{1, v_{\max,2} / d_{i,\mathrm{hor}}\} \\
+            \min\{v_{\max,3}, \max\{-v_{\max,3}, d_{i, 3}\}\}
+        \end{array}} \label{eqn:final_velocities} \\
+        d_{i,\mathrm{hor}} &= \sqrt{d_{i, 1}^2 + d_{i, 2}^2} \\
+    \begin{split}
+        \vc d_i &= \del{d_{i,1}, d_{i,2}, d_{i,3}}\Tr \\
+        &= \diag\!\del{\vc v\ped{\max}} \del{u_1 \del{\vc t_i - \vc x_i} + u_2 
+            \sum_{j = 1,\ i \neq j}^{n} \frac{\vc x_i - \vc x_j}{\abs{\vc x_i 
+                    - \vc x_j}^3}}
+    \end{split}
+\end{align}
+where $\vc x_i$ are the current UAV positions, $u_1 = \SI{0.025}{\per\meter}$ 
+and $u_2 = \SI{5}{\meter\squared}$ are scaling constants, and $\vc v_{\max} 
+= (v_{\max,1}, v_{\max,2}, v_{\max,3})\Tr = (\SI{6}{\meter\per\second}, 
+\SI{6}{\meter\per\second}, \SI{6}{\meter\per\second})\Tr$ a vector of speed 
+limits\footnote{QRSim additionally applies its own speed limit independently per 
+    direction in the UAV body frame of reference. It is 
+    \SI{3}{\meter\per\second} for the two horizontal axes.}.  The $\vc d_i$ 
+vector components consist of two terms.  One directs the speed towards the 
+target proportional to the remaining distance resulting in a slow down near to 
+the target. The remaining term acts like a repelling force between the UAVs to 
+keep them from colliding.  It is proportional to the inverse of the square of 
+the distance. The power of three occurs because the direction vector $\vc x_i 
+- \vc x_j$ has to be normalized.  With Equation~\ref{eqn:final_velocities} the 
+velocity will be limited while keeping the overall horizontal direction.
+
+To prevent the UAVs from going astray a safety margin of \SI{10}{\meter} is 
+defined at the boundaries of the simulated volume. When an UAV enters this 
+margin in one dimension the corresponding velocity component will be set to $\pm 
+\vc v_{\max}$.
+
+A target $\vc t_i$ is considered to be reached when $\abs{\vc t_i - x_i} 
+< \SI{3}{\meter}$.

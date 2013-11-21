@@ -1,0 +1,26 @@
+\begin{thenomenclature} 
+
+ \nomgroup{A}
+
+  \item [{DUCB}]\begingroup distance-based upper confidence bound\nomeqref {\relax 3.22}
+		\nompageref{14}
+  \item [{IEM}]\begingroup Intelligent Environmental Monitoring\nomeqref {\relax 1.0}
+		\nompageref{1}
+  \item [{KDE}]\begingroup kernel density estimation\nomeqref {\relax 4.7}
+		\nompageref{20}
+  \item [{MH}]\begingroup Metropolis-Hastings\nomeqref {\relax 4.7}
+		\nompageref{20}
+  \item [{MS}]\begingroup mean square\nomeqref {\relax 3.13}
+		\nompageref{10}
+  \item [{PDUCB}]\begingroup plume distance-based upper confidence bound\nomeqref {\relax 3.23}
+		\nompageref{14}
+  \item [{RBF}]\begingroup radial basis function\nomeqref {\relax 3.14}
+		\nompageref{10}
+  \item [{RMISE}]\begingroup root mean integrated square error\nomeqref {\relax 4.0}
+		\nompageref{19}
+  \item [{SE}]\begingroup squared exponential\nomeqref {\relax 3.14}
+		\nompageref{10}
+  \item [{UAV}]\begingroup unmanned aerial vehicle\nomeqref {\relax 1.0}
+		\nompageref{1}
+
+\end{thenomenclature}
