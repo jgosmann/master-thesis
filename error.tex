@@ -21,7 +21,7 @@ a weighting factor $w(\vc x)$ to
     E\ped{WRMISE} = \sqrt{\frac{1}{v} \int_V \del{c(\vc x) - \mu(\vc x)}^2 w(\vc 
         x) \dif\vc x} \text{,}
 \end{equation}
-the \newterm{weighted root mean integrated square error}{WRMISE}, with
+the \newtermAbbrev{weighted root mean integrated square error}{WRMISE}, with
 \begin{equation}
     w(\vc x) = \frac{c(\vc x) - \min c(\vc x')}{\max c(\vc x') - \min c(\vc x')} 
     \text{.}
@@ -53,7 +53,7 @@ The probability density $p(\vc x)$ can be estimated using Gaussian
 methods to determine the bandwidth parameter of the KDE\@. In this work Scott's 
 Rule (TODO ref) was used.
 
-\section{Selecting Samples for Error Approximation}
+\section{Selecting Samples for Error Approximation}\label{sec:mh}
 Up to now it is still open how to select the $x_i$ for approximating the error 
 measures.  Using a regularly spaced grid is either likely to miss the important 
 areas as the plume is quite localized or it is so fine grained that the 
@@ -104,7 +104,7 @@ $k$-th sample of the Metropolis-Hastings algorithm and use the remaining samples
 as center of Gaussian distributions and draw $k$ more samples from each of 
 these.
 
-\section{QRSim Reward}
+\section{QRSim Reward}\label{sec:qrsim-reward}
 The plume modelling scenarios in \textcite{denardi2013rn} themselves define 
 a reward
 \begin{equation}

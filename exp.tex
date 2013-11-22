@@ -1,21 +1,22 @@
 \chapter{Evaluation and Simulation Experiments}\label{sec:exp}
 TODO
 
-\section{Best Covariance Function for Plume Modelling}
+\section{Best Covariance Function for Plume Modelling}\label{sec:bestkernel}
 To obtain the best covariance function including its parameters to approximate 
 a plume distribution these were evaluated using the test-set method. For each of 
 the single source Gaussian (G-NF-SS-SV), the single source dispersion 
 (D-NF-SS-SV), and the multiple source dispersion (D-NF-MS-SV), all without 
 noise, 50 random instances were created. For each instance a set sampling 
 locations was generated using the Metropolis-Hastings based technique described 
-in chapter~TODO\@. Herein, every fifth Metropolis-Hastings sample was used in 
-the final set and was used as mean of Gaussian with a standard deviation $\sigma 
-= \SI{6}{\meter}$ to draw five more samples to include in the final set.  The 
-proposal distribution of the Metropolis-Hastings algorithm was also a Gaussian 
-with standard deviation $\sigma = \SI{6}{\meter}$. In addition, 1000 uniformly 
-samples were added to the final set of samples. All samples outside of the 
-scenario volume were dismissed. From all kept sample points 1000 were randomly 
-selected for training and the rest was used as test set to determine the error.
+in Chapter~\ref{sec:mh}. Herein, every fifth Metropolis-Hastings sample was used 
+in the final set and was used as mean of Gaussian with a standard deviation 
+$\sigma = \SI{6}{\meter}$ to draw five more samples to include in the final set.  
+The proposal distribution of the Metropolis-Hastings algorithm was also 
+a Gaussian with standard deviation $\sigma = \SI{6}{\meter}$. In addition, 1000 
+uniformly samples were added to the final set of samples. All samples outside of 
+the scenario volume were dismissed. From all kept sample points 1000 were 
+randomly selected for training and the rest was used as test set to determine 
+the error.
 
 Obtaining the training samples in this way should roughly mirror a good sampling 
 with an UAV with many samples in the areas of high concentration and a few in 
@@ -30,14 +31,29 @@ variance was fixed as $\sigma\ped{k}^2 = 1$. Note that this parameter has no
 effect on the predictive mean as long as the assumed noise variance 
 $\sigma\ped{n}^2$ is zero.
 
-The average of the fraction of the remaining error is plotted in Figure~TODO for 
-the different kernels and error measures. The minimum is roughly the same for 
-all kernels and lies around $\ell = \SI{5}{\meter}$.  However, the behavior 
-differs considerably for non-optimal length scales. The smoother (the more often 
-the kernel is differentiable) the more the error increases for too large 
-length scales. Especially, for the squared exponential covariance function this 
-increase is quite abrupt. Only for very large length scales it decreases again 
-for the squared exponential kernel.
+The average of the fraction of the remaining error is plotted in 
+Figure~\ref{fig:lengthscales} for the different kernels and error measures. The 
+minimum is roughly the same for all kernels and lies around $\ell 
+= \SI{5}{\meter}$.  However, the behavior differs considerably for non-optimal 
+length scales.  The smoother (the more often the kernel is differentiable) the 
+more the error increases for too large length scales.  Especially, for the 
+squared exponential covariance function this increase is quite abrupt. Only for 
+very large length scales it decreases again for the squared exponential kernel.
+
+\begin{figure}
+    \centering
+    \includegraphics{plots/lengthscales}
+    \caption[Influence of the length scale of the covariance functions]{The 
+        average remaining fraction of the inital error for different covariance 
+        function in dependence of length scale.  The rows correspond to the 
+        RMISE, WRMISE, and QRSim reward error measures.  The columns correspond 
+        to a single source Gaussian (G-NF-SS), a single source Gaussian 
+        dispersion (D-NF-SS), and a multiple source Gaussian dispersion 
+        (D-NF-MS). All scenarios were simulated without sensor noise.  Error 
+        bars represent the standard error. The boundary of $1.0$ where the error 
+        of the trained Gaussian process is larger than an all zero prediction is 
+        marked with a horizontal line.}\label{fig:lengthscales}
+\end{figure}
 
 Comparing the WRMISE to the RMISE the former one stays quite low even for larger 
 length scales. This indicates that in the area of the plume (also due to the more 
@@ -50,14 +66,26 @@ using an UAV\@. Whereas the fraction of the remaining error decreases to nearly
 zero for the single source Gaussian, it stays above 0.6 for the dispersion 
 scenario with the more localized plume distribution. The reward error measure is 
 decreased to lower levels, but this is likely to underestimation of the error at 
-the plume boundaries as argued in Chapter~TODO\@.
+the plume boundaries as argued in Chapter~\ref{sec:qrsim-reward}.
 
 Besides the error measures the log likelihood of each trained Gaussian process 
-was calculated. In Figure~TODO the average over trials is plotted. Only for the 
-squared exponential kernel the maximum of the log likelihood corresponds to the 
-minimum of the RMISE\@. Towards longer length scales the likelihood declines very 
-steeply. Using the log likelihood to estimate the length scales for the other 
-covariance functions would largely overestimate it.
+was calculated. In Figure~\ref{fig:loglikelihood} the average over trials is 
+plotted. Only for the squared exponential kernel the maximum of the log 
+likelihood corresponds to the minimum of the RMISE\@. Towards longer length 
+scales the likelihood declines very steeply. Using the log likelihood to 
+estimate the length scales for the other covariance functions would largely 
+overestimate it.
+
+\begin{figure}
+    \centering
+    \includegraphics{plots/loglikelihood}
+    \caption[Log likelihood in dependence of the kernel lengthscale]{The average 
+        log likelihood of the training data in dependence of the length scale 
+        using different kernels.  Each of the three plots shows one noise free 
+        scenario of the single source Gaussian (G-NF-SS), single source Gaussian 
+        dispersion (D-NF-SS), and multiple source Gaussian dispersion (D-NF-MS).  
+        Error bars represent the standard error.}\label{fig:loglikelihood}
+\end{figure}
 
 Taken these results together it is best to choose a non-smooth kernel with 
 a length scale of $\ell = \SI{5}{\meter}$. As it is advantageous to be able to 
@@ -82,8 +110,8 @@ For each given scenario 20~trials were performed. In each run the UAV first
 surrounded the simulation area in a height of \SI{40}{\meter} with a margin of 
 \SI{10}{\meter} to the boundaries of the simulated volume. After that further 
 way-points were chosen with one of the acquisition functions discussed in 
-Chapter~TODO\@. The optimization of that functions has been described in 
-Chapter~TODO\@.
+Chapter~\ref{sec:utility}. The optimization of that functions has been described 
+in Chapter~\ref{sec:fnopt}.
 
 Each trial was allowed to run for a maximum of \SI{3000}{\second} in simulation 
 time. However, when a new target way-point was within \SI{3}{\meter} of the 
@@ -109,11 +137,67 @@ Furthermore, I performed a parameter search over $\kappa \in \cbr{0.1, 0.5,
   \dots, -2}$. Note that for the GO utility function the $\kappa$ parameter has 
 no effect.
 
-Figure~TODO to TODO visualize the average fraction of the remaining error for 
-the different scenarios. The respective parameters and values of the minima are 
-listed in Table~TODO\@. The average reduction (over trials) of the RMISE against 
-simulation time is plotted in Figure~TODO and looks essentially the same for 
-WRMISE and the QRSim reward and therefore it is not shown fer those measures.
+Figure~\ref{fig:psearch-G-NF-SS-SV}--\ref{fig:psearch-D-NF-MS-SV} visualize the 
+average remaining fraction of the error for the different scenarios.  The 
+respective parameters and values of the minima are listed in Table~TODO\@.  The 
+average reduction (over trials) of the RMISE against simulation time in the 
+single source Gaussian scenario (G-NF-SS-SV) is plotted in 
+Figure~\ref{fig:errtrace-nf} and looks essentially the same for WRMISE and the 
+QRSim reward and therefore it is not shown fer those measures.
+
+\begin{figure}
+    \centering
+    \includegraphics{plots/psearch-G-NF-SS-SV}
+    \caption[Remaining fraction of the initial error (G-NF-SS-SV)]{The average 
+        remaining fraction of the initial error for different measures, utility 
+        functions, parameters in the noiseless single source Gaussian scenario 
+        (G-NF-SS-SV).  The columns represent the RMISE, WRMISE, and QRSim reward 
+        error measure.  The rows represent the DUCB, auto-scaled DUCB, PDUCB, 
+        auto-scaled PDUCB and GO utility functions. The auto-scaled versions use 
+        the scaling factor defined in Equations~\ref{eqn:scale-ducb} 
+        and~\ref{eqn:scale-pducb}, in contrast to a constant scaling factor. The 
+        minimum of each plot is marked with 
+        cross.}\label{fig:psearch-G-NF-SS-SV}
+\end{figure}
+\begin{figure}
+    \centering
+    \includegraphics{plots/psearch-D-NF-SS-SV}
+    \caption[Remaining fraction of the initial error (D-NF-SS-SV)]{The average 
+        remaining fraction of the initial error for different measures, utility 
+        functions, parameters in the noiseless single source Gaussian dispersion 
+        scenario (D-NF-SS-SV).  The columns represent the RMISE, WRMISE, and 
+        QRSim reward error measure.  The rows represent the DUCB, auto-scaled 
+        DUCB, PDUCB, auto-scaled PDUCB and GO utility functions. The auto-scaled 
+        versions use the scaling factor defined in 
+        Equations~\ref{eqn:scale-ducb} and~\ref{eqn:scale-pducb}, in contrast to 
+        a constant scaling factor.  The minimum of each plot is marked with 
+        cross.}\label{fig:psearch-D-NF-SS-SV}
+\end{figure}
+\begin{figure}
+    \centering
+    \includegraphics{plots/psearch-D-NF-MS-SV}
+    \caption[Remaining fraction of the initial error (D-NF-MS-SV)]{The average 
+        remaining fraction of the initial error for different measures, utility 
+        functions, parameters in the noiseless multiple source Gaussian 
+        dispersion scenario (D-NF-SS-SV).  The columns represent the RMISE, 
+        WRMISE, and QRSim reward error measure.  The rows represent the DUCB, 
+        auto-scaled DUCB, PDUCB, auto-scaled PDUCB and GO utility functions. The 
+        auto-scaled versions use the scaling factor defined in 
+        Equations~\ref{eqn:scale-ducb} and~\ref{eqn:scale-pducb}, in contrast to 
+        a constant scaling factor.  The minimum of each plot is marked with 
+        cross.}\label{fig:psearch-D-NF-MS-SV}
+\end{figure}
+\begin{figure}
+    \centering
+    \includegraphics{plots/errtrace-nf}
+    \caption[Time-course of the error reduction]{The average remaining fraction 
+        of the initial RMISE in the single source Gaussian scenario 
+        (G-NF-SS-SV).  Each individual plot corresponds to one utility function 
+        and scaling.  The auto-scaled versions use the scaling factor defined in 
+        Equations~\ref{eqn:scale-ducb} and~\ref{eqn:scale-pducb}, in contrast to 
+        a constant scaling factor. The $\gamma$ parameter is coded by hue and 
+        the $\kappa$ parameter by lightness.}\label{fig:errtrace-nf}
+\end{figure}
 
 This is a rich dataset from which quite a few insights can be gained. First of 
 all it can be noted that the GO acquisition function does not perform very well.  
@@ -130,10 +214,10 @@ In the single source Gaussian scenario PDUCB proves to be quite robust against
 the choice of $\kappa$ as for all values very good results are obtained. This 
 picture is a bit more noisy in the dispersion scenarios. It seems that too low 
 values ($\kappa < 0.75$) degrade performance. This is consistent with the 
-argument in Chapter~TODO that too low $\kappa$ limit the exploration and let the 
-UAV become stuck in a (local) maximum. The choice of $\gamma$ has no 
-considerable effect as long as the distance penalty is not chosen too large 
-($\gamma < -10^{-5}$).
+argument in Chapter~\ref{sec:utility} that too low $\kappa$ limit the 
+exploration and let the UAV become stuck in a (local) maximum. The choice of 
+$\gamma$ has no considerable effect as long as the distance penalty is not 
+chosen too large ($\gamma < -10^{-5}$).
 
 The same behavior for the choice of $\gamma$ is also observed for DUCB in the 
 single source Gaussian scenario. However, this utility function is far more 
@@ -161,11 +245,11 @@ for the simple case of a Gaussian distribution, but fails for the more localized
 dispersions.
 
 The PDUCB performance might not seem to be too impressive in the dispersion 
-scenarios, too. However, one has to keep in mind that even in Chapter~TODO with 
-much more samples the error could not be reduced to less than 
-TODO\SI{1}{\percent}.  Also, the qualitatively the plume is predicted at the 
-correct location as Figure~TODO shows, despite some deviance of the exact 
-concentration values.
+scenarios, too. However, one has to keep in mind that even in 
+Section~\ref{sec:bestkernel} with much more samples the error could not be 
+reduced to less than TODO\SI{1}{\percent}.  Also, the qualitatively the plume is 
+predicted at the correct location as Figure~TODO shows, despite some deviance of 
+the exact concentration values.
 
 Given this discussion I selected the PDUCB acquisition function with automatic 
 scaling, $\kappa = 1.25$, and $\gamma = -10^{-8}$ for further experiments.  

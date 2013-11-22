@@ -1,4 +1,5 @@
 gitHeadInfo.gin
+*.glsdefs
 *.acn
 *.acr
 *.alg

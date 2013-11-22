@@ -285,8 +285,17 @@ use gradient-based optimizers. In an active learning scenario, moreover, there
 is a limited amount of data in the beginning making the correct estimation of 
 parameters like the source position virtually impossible.
 
+It has also taken into account that non-stationary kernels might not be agnostic 
+to the structure of the modelled function. Such a covariance function will lead 
+to better results if the function matches the structural assumptions of the 
+kernel. However, if that is not the case, the results will probably be worse 
+than with stationary kernel agnostic to the structure. Especially, when 
+modelling a plume distribution in a real world scenario one would have to 
+consider a multitude of effects like obstacles and local changes in wind.  That 
+might make it impossible to derive valid structural assumptions for using 
+a non-stationary kernel.
+
 TODO read and maybe include non-stationary papers
-TODO non-stationary not agnostic to structure.
 
 \section{Hyper-parameter Selection}
 Though Gaussian processes are non-parametric, the choice of covariance function 
@@ -495,11 +504,12 @@ TODO include multi-step look-ahead? process mixtures?
 \begin{figure}
     \centering
     \includegraphics{plots/acqfns}
-    \caption{Visualization of acquisition functions. The columns of the plot 
-        matrix correspond to the three different acquisition functions (DUCB, 
-        PDUCB, GO) and the rows show the state after 3, 10, and 20 iterations.  
-        The utility functions were normalized by dividing by $\max_{x \in 
-            \intcc{-15, 15}} \abs[0]{u(x)}$.
+    \caption[Visualization of acquisition functions]{Visualization of 
+    acquisition functions. The columns of the plot matrix correspond to the 
+    three different acquisition functions (DUCB, PDUCB, GO) and the rows show 
+    the state after 3, 10, and 
+        20 iterations.  The utility functions were normalized by dividing by 
+           $\max_{x \in \intcc{-15, 15}} \abs[0]{u(x)}$.
         The parameters used for these plots were $\kappa = 1.25$, $\gamma 
         = -0.0002$, $\varepsilon = 10^{-30}$, $s\ped{DUCB}(\vc y) = 1$, and 
         $s\ped{PDUCB}(\vc y) = 70$. The initial sample was always chosen at $x_0 
