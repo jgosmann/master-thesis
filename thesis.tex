@@ -47,6 +47,7 @@
 \setotherlanguages{german}
 
 \newtheorem{theorem}{Theorem}
+\newtheorem{corollary}{Corollary}
 
 %\lstset{basicstyle=\fontfamily{pcr}\selectfont, keywordstyle=\bfseries, language=C++}
 \sisetup{per-mode=symbol}
@@ -208,139 +209,190 @@ proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 \label{sec:decnoise}
 
 \chapter{Sparse Online Gaussian Processes}\label{sec:sparse-gp-apdx}
-TODO sigma n equal sigma 0, k x star = K
-
-\section{TODO title}
+In the following full update of the sparse online Gaussian processes by 
+\textcite{Csato:2002fp} will be related to the update rule from 
+Chapter~\ref{sec:onlineup}.  As their notation differs it should be noted that $[\sigma_x^2] = \mat B$ and 
+$\vc k_{t+1} = K(X, {\vc x_{t+1}})$.
 
 \begin{theorem}
-Assuming Gaussian likelihood the matrix $\mat C_t$ in the sparse online Gaussian 
-process formulation by \textcite{Csato:2002fp} can be expressed as $\mat C_t 
-= -\tilde{\mat K}_t^{-1} - \mat R_{\mat C,t}$. Herein, $\tilde{\mat K}_t$ is the 
-covariance matrix of $t$ basis vectors.
-\end{theorem}
+Applying the sparse online Gaussian Process full update rule 
+\parencite[equation~2.9]{Csato:2002fp} on a symmetric, positive definite matrix 
+$-\mat C_t = \del[0]{\mat L^{-1}}\Tr \mat L^{-1}$ the resulting matrix $-\mat 
+C_{t+1}$ is also symmetric, positive definite.\end{theorem}
 
-\begin{proof}
-TODO alpha
-The proof is based on induction and it has to be shown
-\begin{itemize}
-    \item that the relation holds for $\mat C_1$ (base case)
-    \item and that the relation holds after performing an update of any kind 
-        given that the relation holds for one $t$ (inductive step).
-\end{itemize}
-
-\subsection{Base Case}
-For $t = 1$ we obtain
+\begin{proof} The proof is done by showing that a Cholesky factorization for the 
+    updated matrix $\mat C_{t+1} = -\del[0]{\mat L'^{-1}}\Tr \mat L'^{-1}$ 
+    exists.
 \begin{align*}
-    \mat C_1 &= r^{(1)} \vc s_1 \vc s_1\Tr \\
-    &= - \frac{1}{\sigma\ped{n}^2 + k(\vc x_1, \vc x_1)} \vc\e_1 \vc\e_1\Tr \\
-    &= -\tilde{\mat K}_t^{-1} \text{.}
-\end{align*}
-By setting $\mat R_{\mat C, t} = \sbr{0}$ the base case holds.
-
-\subsection{Inductive Step}
-For both,
-\begin{itemize}
-    \item a full update,
-    \item and a reduced update,
-\end{itemize}
-it has to be shown that the relation holds for $\mat C_{t+1}$ given that it 
-holds for $\mat C_t$. Also, it has to be shown that the relation  
-$\hat{\mat{C}}_t = - \tilde{\mat K}_t^{-1} - \hat{\mat R}_{\mat C, t}$ holds 
-after deleting the last added basis vector $t+1$ given that the relation holds 
-for $\mat C_t$.
-
-\subsubsection{Full Update}
-With
-\begin{equation*}
-    \mat\varDelta = \sbr{\begin{array}{cc}
-                \del[1]{\tilde{\mat K}_t^{-1}}\Tr \vc k_{t+1} \del{\mat 
-                    B^{-1}}\Tr \mat B^{-1} \vc k_{t+1}\Tr \tilde{\mat K}_t^{-1} 
-                & \del[1]{\tilde{\mat K}_t^{-1}}\Tr \vc k_{t+1} 
-                \del{\mat{B}^{-1}}\Tr \mat B^{-1} \\
-                \del{\mat B^{-1}}\Tr \mat B^{-1} \vc k_{t+1}\Tr 
-                \tilde{\mat{K}}_t^{-1} & \del{\mat B^{-1}}\Tr \mat B^{-1}
-            \end{array}}
-\end{equation*}
-performing a full update as described in Chapter~\ref{sec:onlineup} gives
-\begin{align*}
-    \tilde{\mat K}_{t+1}^{-1} &= \del{\mat L_{t+1}\Tr}^{-1} \mat L_{t+1}^{-1} \\
-    &= U_{t+1}\!\del[1]{\tilde{\mat K}_t^{-1}} + \mat \varDelta \\
-    &= U_{t+1}\!\del[1]{-\mat C_t - \mat R_{\mat C, t}} + \mat \varDelta \\
-    &= -U_{t+1}\!\del[1]{\mat C_t} - r^{(t+1)} \vc s_{t+1} \vc s_{t+1}\Tr 
-    - U_{t+1}\!\del[1]{\mat R_{\mat C, t}} + \mat \varDelta + r^{(t+1)} \vc 
-    s_{t+1} \vc s_{t+1}\Tr \\
-    &= -\mat C_{t+1} - U_{t+1}\!\del[1]{\mat R_{\mat C, t}} + \mat \varDelta 
-    + r^{(t+1)} \vc s_{t+1} \vc s_{t+1}\Tr \text{.}
-\end{align*}
-By setting
-\begin{equation*}
-    \mat R_{\mat C, t+1} = -\mat \varDelta - r^{(t+1)} \vc s_{t+1} \vc 
-    s_{t+1}\Tr
-\end{equation*}
-the relation $\mat C_{t+1} = - \tilde{\mat K}_{t+1}^{-1} - \mat R_{\mat C, t+1}$ 
-is obtained.
-
-\subsubsection{Reduced Update}
-For a reduced update the relation holds as
-\begin{align*}
-    \mat C_{t+1} &= \mat C_t + r^{(t+1)} \vc s_{t+1} \vc s_{t+1}\Tr \\
-    &= -\tilde{\mat K}_t^{-1} - \mat R_{\mat C, t} + r^{(t+1)} \vc s_{t+1} \vc 
-    s_{t+1}\Tr \\
-    &= -\tilde{\mat K}_t^{-1} - \mat R_{\mat C, t+1}
-\end{align*}
-with
-\begin{equation*}
-    R_{\mat C, t+1} = \mat R_{\mat C, t} - r^{(t+1)} \vc s_{t+1} \vc s_{t+1}\Tr 
-    \text{.}
-\end{equation*}
-
-\subsubsection{Deletion of a Basis Vector}
-As in \textcite{Csato:2002fp} it is assumed that the basis vector to delete was 
-just added. If this is not the case, all matrices and vectors can be rearranged 
-to bring the basis vector in the last position.
-
-Using Equation~\ref{eqn:invChol} one obtains
-\begin{align*}
-    \tilde{\mat K}_{t+1}^{-1} &= \del[1]{\mat L_{t+1}^{-1}}\Tr \mat L_{t+1}^{-1} 
-    \\
-    &= \sbr{\begin{array}{cc}
-            \del[1]{\mat L_t^{-1}}\Tr \mat L_t^{-1} + \frac{1}{q^*} \mat Q^* 
-            {\mat Q^*}\Tr  & \mat Q^* \\
-            {\mat Q^*}\Tr & q^*
-        \end{array}} \\
-\intertext{with}
-    \mat Q^* &= \tilde{\mat K}_t^{-1} \vc k_{t+1} \del[1]{\mat B^{-1}}\Tr \mat 
-    B^{-1} \\
-    q^* &= \del[1]{\mat B^{-1}}\Tr \mat B^{-1} \text{.}
-\end{align*}
-Denoting a matrix $\mat A$ with the last row and column removed as 
-${(\mat{A})}_-$ it follows
-\begin{align*}
-    \del[1]{\tilde{\mat K}_{t+1}^{-1}}_- &= \del[1]{\mat L_t^{-1}}\Tr \mat 
-    L_t^{-1} + \frac{1}{q^*} \mat Q^* {\mat Q^*}\Tr \\
-     &= \tilde{\mat K}_t^{-1} + \frac{1}{q^*} \mat Q^* {\mat Q^*}\Tr
-\end{align*}
-With this the following holds for the deletion of an basis vector:
-\begin{align*}
-    \hat{\mat C} &= \del{\mat C_{t+1}}_- + c^* \frac{\mat Q^* {\mat 
-            Q^*}\Tr}{q^{*2}} - \frac{1}{q^*} \del{\mat Q^* {\mat C^*}\Tr + \mat 
-        C^* {\mat Q^*}\Tr} \\
-     &= -\del{\tilde{\mat K}_{t+1}^{-1}}_- - \del{\mat R_{\mat C, t+1}}_- + c^* 
-     \frac{\mat Q^* {\mat Q^*}\Tr}{q^{*2}} - \frac{1}{q^*} \del{\mat Q^* {\mat 
-             C^*}\Tr + \mat C^* {\mat Q^*}\Tr} \\
-     &= -\tilde{\mat K}_{t}^{-1} - \del{\mat R_{\mat C, t+1}}_- + c^* \frac{\mat 
-         Q^* {\mat Q^*}\Tr}{q^{*2}} - \frac{1}{q^*} \del{\mat Q^* {\mat Q^*}\Tr 
-         + \mat Q^* {\mat C^*}\Tr + \mat C^* {\mat Q^*}\Tr} \\
-     &= -\tilde{\mat K}_{t}^{-1} - \hat{\mat R}_{\mat C, t} \\
-\intertext{with}
-    \hat{\mat R}_{\mat C, t} &= \del{\mat R_{\mat C, t+1}}_- - c^* \frac{\mat 
-        Q^* {\mat Q^*}\Tr}{q^{*2}} + \frac{1}{q^*} \del{\mat Q^* {\mat Q^*}\Tr 
-        + \mat Q^* {\mat C^*}\Tr + \mat C^* {\mat Q^*}\Tr}
-\end{align*}
-
+        -\mat C_{t+1} &= -U_{t+1}(\mat C_t) - r^{(t+1)} \vc s_{t+1} \vc 
+        s_{t+1}\Tr \\
+        &= \sbr{\begin{array}{cc}
+                \mat -C_t + \sigma_x^{-2} \mat C_t \vc k_{t+1} \vc k_{t+1}\Tr 
+                \mat C_t\Tr & \sigma_x^{-2} \mat C_t \vc k_{t+1} \vc\e_{t+1}\Tr 
+                \\
+                \sigma_x^{-2} \vc\e_{t+1} k_{t+1}\Tr \mat C_t\Tr & \sigma_x^{-2}
+            \end{array}} \\
+        &= \sbr{\begin{array}{cc}
+                \del[0]{\mat L^{-1}}\Tr & \sigma_x^{-1} \mat C_t \vc k_{t+1} \\
+                0 & \sigma_x^{-1}
+            \end{array}} \sbr{\begin{array}{cc}
+                \mat L^{-1} & 0 \\
+                \sigma_x^{-1} \vc k_{t+1}\Tr \mat C_t\Tr & \sigma_x^{-1}
+            \end{array}} \\
+        &= \del[0]{\mat L'^{-1}}\Tr \mat L'^{-1}
+    \end{align*}
 \end{proof}
+Note, that $-\mat C_t$ is symmetric, positive definite for all $t$ as long as 
+only full updates are performed. This holds for $-\mat C_1 = [k(\vc x_1, \vc 
+x_1) > 0]$ and follows for all $t > 1$ from the theorem.
 
-\section{Downdating with the Inverse Cholesky Factor}\label{sec:downdating}
+\begin{corollary}
+    A full update of a symmetric, positive-definite matrix $-\mat{C}_t$ as 
+    formulated by \textcite[equation~2.9]{Csato:2002fp} consists of the same 
+    calculations as an online update of the inverse Cholesky factor in 
+    Equation~\ref{eqn:invChol}.
+\end{corollary}
+
+%\section{TODO title}
+
+%\begin{theorem}
+%Assuming Gaussian likelihood the matrix $\mat C_t$ in the sparse online Gaussian 
+%process formulation by \textcite{Csato:2002fp} can be expressed as $\mat C_t 
+%= -\tilde{\mat K}_t^{-1} - \mat R_{\mat C,t}$. Herein, $\tilde{\mat K}_t$ is the 
+%covariance matrix of $t$ basis vectors.
+%\end{theorem}
+
+%\begin{proof}
+%TODO alpha
+%The proof is based on induction and it has to be shown
+%\begin{itemize}
+    %\item that the relation holds for $\mat C_1$ (base case)
+    %\item and that the relation holds after performing an update of any kind 
+        %given that the relation holds for one $t$ (inductive step).
+%\end{itemize}
+
+%\subsection{Base Case}
+%For $t = 1$ we obtain
+%\begin{align*}
+    %\mat C_1 &= r^{(1)} \vc s_1 \vc s_1\Tr \\
+    %&= - \frac{1}{\sigma\ped{n}^2 + k(\vc x_1, \vc x_1)} \vc\e_1 \vc\e_1\Tr \\
+    %&= -\tilde{\mat K}_t^{-1} \text{.}
+%\end{align*}
+%By setting $\mat R_{\mat C, t} = \sbr{0}$ the base case holds.
+
+%\subsection{Inductive Step}
+%For both,
+%\begin{itemize}
+    %\item a full update,
+    %\item and a reduced update,
+%\end{itemize}
+%it has to be shown that the relation holds for $\mat C_{t+1}$ given that it 
+%holds for $\mat C_t$. Also, it has to be shown that the relation  
+%$\hat{\mat{C}}_t = - \tilde{\mat K}_t^{-1} - \hat{\mat R}_{\mat C, t}$ holds 
+%after deleting the last added basis vector $t+1$ given that the relation holds 
+%for $\mat C_t$.
+
+%\subsubsection{Full Update}
+%With
+%\begin{equation*}
+    %\mat\varDelta = \sbr{\begin{array}{cc}
+                %\del[1]{\tilde{\mat K}_t^{-1}}\Tr \vc k_{t+1} \del{\mat 
+                    %B^{-1}}\Tr \mat B^{-1} \vc k_{t+1}\Tr \tilde{\mat K}_t^{-1} 
+                %& \del[1]{\tilde{\mat K}_t^{-1}}\Tr \vc k_{t+1} 
+                %\del{\mat{B}^{-1}}\Tr \mat B^{-1} \\
+                %\del{\mat B^{-1}}\Tr \mat B^{-1} \vc k_{t+1}\Tr 
+                %\tilde{\mat{K}}_t^{-1} & \del{\mat B^{-1}}\Tr \mat B^{-1}
+            %\end{array}}
+%\end{equation*}
+%performing a full update as described in Chapter~\ref{sec:onlineup} gives
+%\begin{align*}
+    %\tilde{\mat K}_{t+1}^{-1} &= \del{\mat L_{t+1}\Tr}^{-1} \mat L_{t+1}^{-1} \\
+    %&= U_{t+1}\!\del[1]{\tilde{\mat K}_t^{-1}} + \mat \varDelta \\
+    %&= U_{t+1}\!\del[1]{-\mat C_t - \mat R_{\mat C, t}} + \mat \varDelta \\
+    %&= -U_{t+1}\!\del[1]{\mat C_t} - r^{(t+1)} \vc s_{t+1} \vc s_{t+1}\Tr 
+    %- U_{t+1}\!\del[1]{\mat R_{\mat C, t}} + \mat \varDelta + r^{(t+1)} \vc 
+    %s_{t+1} \vc s_{t+1}\Tr \\
+    %&= -\mat C_{t+1} - U_{t+1}\!\del[1]{\mat R_{\mat C, t}} + \mat \varDelta 
+    %+ r^{(t+1)} \vc s_{t+1} \vc s_{t+1}\Tr \text{.}
+%\end{align*}
+%By setting
+%\begin{equation*}
+    %\mat R_{\mat C, t+1} = -\mat \varDelta - r^{(t+1)} \vc s_{t+1} \vc 
+    %s_{t+1}\Tr
+%\end{equation*}
+%the relation $\mat C_{t+1} = - \tilde{\mat K}_{t+1}^{-1} - \mat R_{\mat C, t+1}$ 
+%is obtained.
+
+%\subsubsection{Reduced Update}
+%For a reduced update the relation holds as
+%\begin{align*}
+    %\mat C_{t+1} &= \mat C_t + r^{(t+1)} \vc s_{t+1} \vc s_{t+1}\Tr \\
+    %&= -\tilde{\mat K}_t^{-1} - \mat R_{\mat C, t} + r^{(t+1)} \vc s_{t+1} \vc 
+    %s_{t+1}\Tr \\
+    %&= -\tilde{\mat K}_t^{-1} - \mat R_{\mat C, t+1}
+%\end{align*}
+%with
+%\begin{equation*}
+    %R_{\mat C, t+1} = \mat R_{\mat C, t} - r^{(t+1)} \vc s_{t+1} \vc s_{t+1}\Tr 
+    %\text{.}
+%\end{equation*}
+
+%\subsubsection{Deletion of a Basis Vector}
+%As in \textcite{Csato:2002fp} it is assumed that the basis vector to delete was 
+%just added. If this is not the case, all matrices and vectors can be rearranged 
+%to bring the basis vector in the last position.
+
+%Using Equation~\ref{eqn:invChol} one obtains
+%\begin{align*}
+    %\tilde{\mat K}_{t+1}^{-1} &= \del[1]{\mat L_{t+1}^{-1}}\Tr \mat L_{t+1}^{-1} 
+    %\\
+    %&= \sbr{\begin{array}{cc}
+            %\del[1]{\mat L_t^{-1}}\Tr \mat L_t^{-1} + \frac{1}{q^*} \mat Q^* 
+            %{\mat Q^*}\Tr  & \mat Q^* \\
+            %{\mat Q^*}\Tr & q^*
+        %\end{array}} \\
+%\intertext{with}
+    %\mat Q^* &= \tilde{\mat K}_t^{-1} \vc k_{t+1} \del[1]{\mat B^{-1}}\Tr \mat 
+    %B^{-1} \\
+    %q^* &= \del[1]{\mat B^{-1}}\Tr \mat B^{-1} \text{.}
+%\end{align*}
+%Denoting a matrix $\mat A$ with the last row and column removed as 
+%${(\mat{A})}_-$ it follows
+%\begin{align*}
+    %\del[1]{\tilde{\mat K}_{t+1}^{-1}}_- &= \del[1]{\mat L_t^{-1}}\Tr \mat 
+    %L_t^{-1} + \frac{1}{q^*} \mat Q^* {\mat Q^*}\Tr \\
+     %&= \tilde{\mat K}_t^{-1} + \frac{1}{q^*} \mat Q^* {\mat Q^*}\Tr
+%\end{align*}
+%With this the following holds for the deletion of an basis vector:
+%\begin{align*}
+    %\hat{\mat C} &= \del{\mat C_{t+1}}_- + c^* \frac{\mat Q^* {\mat 
+            %Q^*}\Tr}{q^{*2}} - \frac{1}{q^*} \del{\mat Q^* {\mat C^*}\Tr + \mat 
+        %C^* {\mat Q^*}\Tr} \\
+     %&= -\del{\tilde{\mat K}_{t+1}^{-1}}_- - \del{\mat R_{\mat C, t+1}}_- + c^* 
+     %\frac{\mat Q^* {\mat Q^*}\Tr}{q^{*2}} - \frac{1}{q^*} \del{\mat Q^* {\mat 
+             %C^*}\Tr + \mat C^* {\mat Q^*}\Tr} \\
+     %&= -\tilde{\mat K}_{t}^{-1} - \del{\mat R_{\mat C, t+1}}_- + c^* \frac{\mat 
+         %Q^* {\mat Q^*}\Tr}{q^{*2}} - \frac{1}{q^*} \del{\mat Q^* {\mat Q^*}\Tr 
+         %+ \mat Q^* {\mat C^*}\Tr + \mat C^* {\mat Q^*}\Tr} \\
+     %&= -\tilde{\mat K}_{t}^{-1} - \hat{\mat R}_{\mat C, t} \\
+%\intertext{with}
+    %\hat{\mat R}_{\mat C, t} &= \del{\mat R_{\mat C, t+1}}_- - c^* \frac{\mat 
+        %Q^* {\mat Q^*}\Tr}{q^{*2}} + \frac{1}{q^*} \del{\mat Q^* {\mat Q^*}\Tr 
+        %+ \mat Q^* {\mat C^*}\Tr + \mat C^* {\mat Q^*}\Tr}
+%\end{align*}
+
+%\end{proof}
+
+%\section{Downdating with the Inverse Cholesky Factor}\label{sec:downdating}
+%As in \textcite{Csato:2002fp} it is assumed that the basis vector to delete was 
+%just added. If this is not the case, all matrices and vectors can be rearranged 
+%to bring the basis vector in the last position.
+
+%\begin{theorem}
+    %The downdated inverse of $\mat K = \mat L \mat L\Tr$ is given by $D\del{\mat 
+        %K}^{-1} = D\del{\mat L^{-1}}\Tr \mat L^{-1}$ wherein $D(\mat A)$ is the 
+        %matrix $\mat A$ downdated by removing the last column and row.
+%\end{theorem}
 
 \chapter{PDUCB Differentiability}\label{sec:pducb-diff}
 

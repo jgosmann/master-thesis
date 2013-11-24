@@ -162,21 +162,20 @@ case in an online scenario. An exception to this is the online approximation by
 \textcite{Csato:2002fp}.
 
 They replace the inverse covariance matrix $\tilde{\mat K}_t^{-1}$ in 
-Equations~\ref{eqn:meanpred} and~\ref{eqn:covpred} after $t$ updates by $-\mat 
-C_t = \tilde{\mat K}_t^{-1} + \mat R_{C,t}$.\footnote{The original paper 
-    expresses this a bit different. The equivalence of both notations is shown 
-    in Appendix~\ref{sec:sparse-gp-apdx}.} Normal (full) online updates are 
-performed as discussed in the previous section by updating $\tilde{\mat K}_t$ 
-respectively the Cholesky factor $\mat L_t$. If, however, the ``novelty''
+Equation~\ref{eqn:covpred} after $t$ updates by $-\mat C_t$. Normal (full) 
+online updates are performed as discussed in the previous section by updating 
+$-\mat C_t$ respectively the Cholesky factor $\mat L_t^{-1}$.\footnote{The 
+    original paper formulates the update a bit different. The equivalence for 
+    full updates is shown in Appendix~\ref{sec:sparse-gp-apdx}.} If, however, 
+the ``novelty''
 \begin{equation}
     \tilde{\sigma}^2_{t+1} = k(\vc x_*, \vc x_*) + \sigma\ped{n}^2 
     \mat{\mathrm{I}} - K\!\del{\{\vc x_*\}, X_t} \tilde{\mat K}_t^{-1} 
     K\!\del{X_t, \{\vc x_*\}}
 \end{equation}
-of a new input $\vc x_*$ is below a threshold $\epsilon\ped{tol}$, reduced 
+of a new input $\vc x_*$ is below a threshold $\epsilon\ped{tol}$, a reduced 
 update will be performed. The reduced update leaves the size of $\mat C_t$ 
-unchanged, while adjusting $\mat R_{C,t}$ to improve the fit of the Gaussian 
-process.
+unchanged.
 
 All inputs used for a full update are called basis vectors and constitute the 
 set~$\mathcal{BV}$. The size of this set can be limited by deleting the basis 
@@ -189,14 +188,14 @@ associated with the $i$-th basis vector is given by
 
 The basis vector deletion requires downdating the covariance matrix 
 $\tilde{\mat{K}}_{t+1}$ and performing a reduced updated with the deleted basis 
-vector. Given the inverse Cholesky factor $\mat L^{-1}$ the inverse downdated 
-covariance matrix can be easily and efficiently obtained (see 
-Appendix~\ref{sec:downdating}).  Unfortunately, downdating based on Cholesky 
-factorization is known to be numerical unstable \parencite{Bjorck:1994dz}, 
-especially when the correlation of the training inputs is high. Using other 
-factorizations like the QR factorization more stable downdating algorithm can be 
-obtained.  However, this comes at the cost of the initial factorization being 
-numerical more unstable.  Also, it would be possible to directly downdate 
+vector. Unfortunately, as shown in Appendix~\ref{sec:sparse-gp-apdx} the 
+calculation of $-\mat C_t$ is based on the Cholesky factors and downdating based 
+on Cholesky factorization or a matrix obtained from the factorization is known 
+to be numerical unstable \parencite{Bjorck:1994dz}, especially when the 
+correlation of the training inputs is high. Using other factorizations like the 
+QR factorization a more stable downdating algorithm can be obtained.  However, 
+this comes at the cost of the initial factorization being numerical more 
+unstable.  Also, it would be possible to directly downdate 
 $\tilde{\mat{K}}_{t+1}$ and recalculate the Cholesky factorization. Yet, this 
 leads to cubic instead of quadratic complexity for downdating.
 
