@@ -49,9 +49,9 @@ The normalization constant $Z$ is given by
 \end{equation}
 
 The probability density $p(\vc x)$ can be estimated using Gaussian 
-\abbrev{kernel density estimation}{KDE}. (TODO ref) There exist different 
-methods to determine the bandwidth parameter of the KDE\@. In this work Scott's 
-Rule (TODO ref) was used.
+\abbrev{kernel density estimation}{KDE}. There exist different methods to 
+determine the bandwidth parameter of the KDE\@. In this work Scott's Rule 
+\parencite{Scott:2009tl} was used.
 
 \section{Selecting Samples for Error Approximation}\label{sec:mh}
 Up to now it is still open how to select the $x_i$ for approximating the error 
@@ -61,15 +61,15 @@ evaluation of the error takes a long time. Thus, I used a slightly modified
 \abbrev{Metropolis-Hastings}{MH} algorithm to concentrate samples in areas with 
 a high concentration.
 
-The standard Metropolis-Hastings (TODO ref) is used to sample from a probability 
-distribution $P(\vc x)$ given only a function $f(\vc x)$ proportional to $P(\vc 
-x)$. It starts at a random location $\vc x_1$.  Then in each iteration $i > 0$ 
-a new candidate location $\vc x_*$ is picked from a symmetric\footnote{$Q(\vc 
-    a | \vc b) = Q(\vc b | \vc a)$} proposal distribution and an acceptance 
-ratio $\xi = f(\vc x_*) / f(\vc x_i)$ is calculated. The candidate $\vc x_*$ is 
-accepted as $\vc x_{i + 1} = \vc x_*$ with probability $\xi$ ($\xi \geq 1$ 
-automatically accepts). If it is rejected, $\vc x_{i + 1} = \vc x_i$ will be 
-used.
+The standard Metropolis-Hastings \parencite{Chib:1994ud} is used to sample from 
+a probability distribution $P(\vc x)$ given only a function $f(\vc x)$ 
+proportional to $P(\vc x)$. It starts at a random location $\vc x_1$.  Then in 
+each iteration $i > 0$ a new candidate location $\vc x_*$ is picked from 
+a symmetric\footnote{$Q(\vc a | \vc b) = Q(\vc b | \vc a)$} proposal 
+distribution and an acceptance ratio $\xi = f(\vc x_*) / f(\vc x_i)$ is 
+calculated. The candidate $\vc x_*$ is accepted as $\vc x_{i + 1} = \vc x_*$ 
+with probability $\xi$ ($\xi \geq 1$ automatically accepts). If it is rejected, 
+$\vc x_{i + 1} = \vc x_i$ will be used.
 
 To select the samples for the error approximation this algorithm can be used 
 with the true concentrations $f(\vc x) = c(\vc x)$. For this purpose it is not 
@@ -88,9 +88,10 @@ concentration slope can be expected to be better.
 A further change concerns the initial location $\vc x_1$. Choosing at randomly 
 might place it in an area with zero concentration which renders the acceptance 
 ratio $r$ undefined. Hence, it is better base the initial location on the source 
-locations. Unfortunately, given a plume dispersion (TODO ref eq) the plume 
-concentration is undefined at the source location (TODO appendix). To circumvent 
-this, the initial location $\vc x_1$ should be excluded from the samples.
+locations. Unfortunately, given a plume dispersion 
+(Equation~\ref{eqn:plumedisp}) the plume concentration is undefined at the 
+source location (TODO appendix). To circumvent this, the initial location $\vc 
+x_1$ should be excluded from the samples.
 
 In case of multiple sources it should be started from each source location and 
 the resulting sets should be joined. The concentration between sources can be 
@@ -144,4 +145,31 @@ visualized in Figure~\ref{fig:err-sampling}.
         sample.}\label{fig:err-sampling}
 \end{figure}
 
-TODO fraction of remaining error
+\section{Remaining Fraction of Initial Error}
+For a reliable comparison of the models it is not sufficient to compare them 
+based on a single trial. A good model should provide a low error in different 
+trials.
+
+In the plume modelling scenarios the concentration density and spatial extend of 
+the plume varies. The error measures directly depend upon the absolute 
+concentration values and, therefore, also depend on the specific trial.
+
+Directly averaging the error over trials would give a higher weighting to trials 
+with high concentration densities or a large plume extend. A good plume 
+modelling method should adapt to the concentration levels and be more precise 
+for lower overall concentrations. To achieve a fair weighting of the trials the 
+remaining fraction of the initial error can be calculated as
+\begin{equation}
+    F = \frac{E}{E_0}
+\end{equation}
+for each trial, where $E$ is the current error estimate and $E_0$ the error 
+estimate for an all zero prediction. The error estimate can be freely chosen 
+with regard to its properties. Note that this equation can also be applied to 
+the reward $R$ as error measure as the minus cancels out. When averaging $F$ 
+over trials each trial is weighted equally.
+
+The remaining fraction of the error $F$ has also the advantage of being readily 
+interpretable. For $F > 1$ the prediction is worse than an all zero prediction.  
+This should for not happen with a viable modelling method. For $F < 1$ the 
+prediction is better than an all zero prediction and the error has been 
+decreased by $(1 - F) \cdot \SI{100}{\percent}$.
