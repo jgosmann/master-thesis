@@ -46,6 +46,7 @@
 \setdefaultlanguage{english}
 \setotherlanguages{german}
 
+\newtheorem{lemma}{Lemma}
 \newtheorem{theorem}{Theorem}
 \newtheorem{corollary}{Corollary}
 
@@ -205,24 +206,49 @@ proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 \chapter{Conclusion}
 
 \appendix
-\chapter{Samples Needed to Decrease Noise to a Certain Degree} 
-\label{sec:decnoise}
+\chapter{Samples Needed to Decrease Noise to a Certain 
+    Degree}\label{sec:decnoise}
 
 \chapter{Sparse Online Gaussian Processes}\label{sec:sparse-gp-apdx}
-In the following full update of the sparse online Gaussian processes by 
-\textcite{Csato:2002fp} will be related to the update rule from 
-Chapter~\ref{sec:onlineup}.  As their notation differs it should be noted that $[\sigma_x^2] = \mat B$ and 
-$\vc k_{t+1} = K(X, {\vc x_{t+1}})$.
+In the following it will be proven that the matrix $-\mat C_t$ of a sparse 
+online Gaussian process \parencite{Csato:2002fp} is symmetric, positive 
+definite. The proof allows to relate the rule for full updates to the update of 
+the inverse Cholesky factor in Chapter~\ref{sec:onlineup}. As the notation by 
+\textcite{Csato:2002fp} differs it should be noted that $[\sigma_x^2] = \mat B$ 
+and $\vc k_{t+1} = K(X, {\vc x_{t+1}})$.
 
 \begin{theorem}
-Applying the sparse online Gaussian Process full update rule 
-\parencite[equation~2.9]{Csato:2002fp} on a symmetric, positive definite matrix 
-$-\mat C_t = \del[0]{\mat L^{-1}}\Tr \mat L^{-1}$ the resulting matrix $-\mat 
-C_{t+1}$ is also symmetric, positive definite.\end{theorem}
+    The matrix $-\mat C_t$ is symmetric, positive definite for all $t \geq 1$.
+\end{theorem}
 
-\begin{proof} The proof is done by showing that a Cholesky factorization for the 
-    updated matrix $\mat C_{t+1} = -\del[0]{\mat L'^{-1}}\Tr \mat L'^{-1}$ 
-    exists.
+%\begin{theorem}
+%Applying the sparse online Gaussian Process full update rule 
+%\parencite[equation~2.9]{Csato:2002fp} on a symmetric, positive definite matrix 
+%$-\mat C_t = \del[0]{\mat L^{-1}}\Tr \mat L^{-1}$ the resulting matrix $-\mat 
+%C_{t+1}$ is also symmetric, positive definite.\end{theorem}
+
+\begin{proof}
+    The proof is done by induction. It has to be shown
+    \begin{itemize}
+        \item that $-\mat C_1$ (base case) fulfills the proposition
+        \item and that $-\mat C_{t+1}$ fulfills the proposition given it is 
+            fulfilled for $\mat C_t$ (inductive step).
+    \end{itemize}
+    The deletion of a basis vector has not to be considered as it exactly undoes 
+    a full update and then performs a reduced update.
+
+    \paragraph{Base Case}
+    For $t = 1$ we obtain
+    \begin{equation*}
+        -\mat C_1 = \sbr{r^{(t+1)}} = \sbr{\sigma_x^-2}
+    \end{equation*}
+    As $\sigma_x > 0$ it follows that $-\mat C_1$ is symmetric positive 
+    definite.
+
+    \paragraph{Inductive Step}
+    For showing the symmetry and positive definiteness after a full update it 
+    suffices to show that Cholesky factorization for the updated matrix $-\mat 
+    C_{t+1} = \del[0]{\mat L'^{-1}}\Tr \mat L'^{-1}$ exists.
 \begin{align*}
         -\mat C_{t+1} &= -U_{t+1}(\mat C_t) - r^{(t+1)} \vc s_{t+1} \vc 
         s_{t+1}\Tr \\
@@ -241,10 +267,17 @@ C_{t+1}$ is also symmetric, positive definite.\end{theorem}
             \end{array}} \\
         &= \del[0]{\mat L'^{-1}}\Tr \mat L'^{-1}
     \end{align*}
+
+    In case of a reduced update the relation
+    \begin{equation*}
+        -\mat C_{t+1} = -\mat C_t - r^{(t+1)} \vc s_{t+1} \vc s_{t+1}\Tr
+    \end{equation*}
+    holds. The term $- r^{(t+1)} \vc s_{t+1} \vc s_{t+1}\Tr$ is symmetric, 
+    positive definite as it is an outer vector product (which is symmetric, 
+    positive definite) multiplied by a positive number $-r^{(t+1)} 
+    = \sigma_x^{-2} > 0$. The sum $-\mat C_{t+1}$ of symmetric, positive 
+    definite matrices is again symmetric, positive definite.
 \end{proof}
-Note, that $-\mat C_t$ is symmetric, positive definite for all $t$ as long as 
-only full updates are performed. This holds for $-\mat C_1 = [k(\vc x_1, \vc 
-x_1) > 0]$ and follows for all $t > 1$ from the theorem.
 
 \begin{corollary}
     A full update of a symmetric, positive-definite matrix $-\mat{C}_t$ as 
@@ -252,6 +285,7 @@ x_1) > 0]$ and follows for all $t > 1$ from the theorem.
     calculations as an online update of the inverse Cholesky factor in 
     Equation~\ref{eqn:invChol}.
 \end{corollary}
+This is obvious from the inductive step for a full update.
 
 %\section{TODO title}
 
