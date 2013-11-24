@@ -43,11 +43,11 @@ considering a constant wind parallel to the ground with velocity $u$ measured
 a cone-like distribution along the wind direction.  Making a few more 
 assumptions (constant $Q$, steady-state, isotropic diffusion, no ground 
 penetration, and neglegible variation in topography) the analytic expression
-\begin{multline}
+\begin{multline}\label{eqn:plumedisp}
     c(\vc x') = \frac{Q}{2\uppi ua\del{x'_1 - s'_1}^b} 
     \exp\!\del{-\frac{\del{x'_2 - s'_2}^2}{2a\del{x'_1 - s'_1}^b}} \\ 
     \sbr{\exp\!\del{-\frac{\del{x'_3 - s'_3}^2}{2a\del{x'_1 - s'_1}^b}} 
-        + \exp\!\del{\frac{\del{x'_3 + s'_3}^2}{2a\del{x'_1 - s'_1}^b}}}
+        + \exp\!\del{-\frac{\del{x'_3 + s'_3}^2}{2a\del{x'_1 - s'_1}^b}}}
 \end{multline}
 can be derived for the concentration \parencite{Stockie:2011fd}. Note that the 
 coordinates $\vc x'$ and $\vc s'$ are expressed in the wind frame of reference.  
@@ -59,12 +59,13 @@ over the interval \SIrange{0.1}{2.5}{\gram\per\second}.
 Sensor noise (SN) of the plume sensor is assumed to be additive and distributed 
 according to $\mathcal{N}(0, \sigma\ped{noise}^2)$. In the noise free (NF) 
 scenarios no noise was added to the measurements. The standard deviation 
-$\sigma\ped{noise}$ was set to $10^{-5}$ in the scenarios including noise. The 
-QRSim default scenarios set it to $10^{-2}$, but given the low default plume 
-concentration this would require roughly an averaging of 1600 samples from one 
-single location to reduce the magnitude of the noise to the same level as the 
-highest plume concentration values (see Appendix~\ref{sec:decnoise}). Hence, the 
-default scenario is not solvable in a feasible amount of simulation time.
+$\sigma\ped{noise}$ was set to $\SI{e-5}{\gram\per\meter\cubed}$ in the 
+scenarios including noise.  The QRSim default scenarios set it to 
+$\SI{e-2}{\gram\per\meter\cubed}$, but given the low default plume concentration 
+this would require roughly an averaging of 385 samples from one single location 
+to reduce the magnitude of the noise to the same level as the highest plume 
+concentration values (see Appendix~\ref{sec:decnoise}).  Hence, the default 
+scenario is not solvable in a feasible amount of simulation time.
 
 The overall concentration $c(\vc x)$ for $n$ sources like in 
 Figure~\ref{fig:MS-D} is obtained by summing the individual contributions 

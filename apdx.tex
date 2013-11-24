@@ -1,0 +1,229 @@
+\chapter{Error Bound of a Mean Estimate}\label{sec:decnoise}
+\begin{theorem}
+    Let $y = y^* + \eta$ with $\eta \sim \mathcal N(0, \sigma^2)$ and $\bar y$ 
+    the mean of $n$ samples from $y$. Then $n \geq 4 \cdot 1.96^2 \cdot 
+    \del{\sigma / \rho}^2$ samples are needed to have the error bound 
+    $\abs{\bar{y} - y^*} < \rho$ hold with probability $p \geq 0.95$.
+\end{theorem}
+
+\begin{proof}
+    Given the error bound the true value $y^*$ has to, with probability $p$, lie 
+    in $\intcc{\bar y - \rho, \bar y + \rho}$. Thus, the \SI{95}{\percent} 
+    confidence interval of $\bar y$ has to be a subset of that. With the 
+    standard error $\sigma / \sqrt{n}$ the confidence interval is obtained as
+    \begin{equation*}
+        y^* \in \intcc{\bar y - 1.96 \cdot \frac{\sigma}{\sqrt{n}}, \bar{y} 
+            + 1.96 \cdot \frac{\sigma}{\sqrt{n}}} \subseteq \intcc{\bar{y} 
+            - \rho, \bar y + \rho} \text{.}
+    \end{equation*}
+    From that follows
+    \begin{equation*}
+        \rho \geq 1.96 \cdot \frac{\sigma}{\sqrt{n}} \quad\Leftrightarrow\quad 
+        n \geq 
+        1.96^2 \del{\frac{\sigma}{\rho}}^2
+    \end{equation*}
+\end{proof}
+
+Assuming a Gaussian plume dispersion (Equation~\ref{eqn:plumedisp}) with the 
+highest concentration possible in the scenarios $Q 
+= \SI{2.5}{\gram\per\second}$, and
+$u = \SI{3}{\meter\per\second}, \vc s' = (0, 0, \SI{-40}{\meter})\Tr$ 
+a concentration of $c(\vc x') \approx \SI{0.055}{\gram\per\meter\cubed}$ is 
+obtained at $\vc x' = (\SI{10}{\meter}, 0, \SI{-40}{\meter})\Tr$, a position in 
+the center of the plume ten meters away from the source. For a usable 
+measurement the magnitude of noise should be at least a magnitude lower, thus 
+$\rho \leq \SI{0.001}{\gram\per\meter\cubed}$. From the theorem it follows that, 
+given the QRSim default noise standard deviation of $\sigma\ped{noise} 
+= \SI{e-2}{\gram\per\meter\cubed}$ at least 385~samples are needed. Further away 
+from the source or with a lower emission rate (which can also be a magnitude 
+lower) even more samples would be needed.
+
+\chapter{Sparse Online Gaussian Processes}\label{sec:sparse-gp-apdx}
+In the following it will be proven that the matrix $-\mat C_t$ of a sparse 
+online Gaussian process \parencite{Csato:2002fp} is symmetric, positive 
+definite. The proof allows to relate the rule for full updates to the update of 
+the inverse Cholesky factor in Chapter~\ref{sec:onlineup}. As the notation by 
+\textcite{Csato:2002fp} differs it should be noted that $[\sigma_x^2] = \mat B$ 
+and $\vc k_{t+1} = K(X, {\vc x_{t+1}})$.
+
+\begin{theorem}
+    The matrix $-\mat C_t$ is symmetric, positive definite for all $t \geq 1$.
+\end{theorem}
+
+\begin{proof}
+    The proof is done by induction. It has to be shown
+    \begin{itemize}
+        \item that $-\mat C_1$ (base case) fulfills the proposition
+        \item and that $-\mat C_{t+1}$ fulfills the proposition given it is 
+            fulfilled for $\mat C_t$ (inductive step).
+    \end{itemize}
+    The deletion of a basis vector has not to be considered as it exactly undoes 
+    a full update and then performs a reduced update.
+
+    \paragraph{Base Case}
+    For $t = 1$ we obtain
+    \begin{equation*}
+        -\mat C_1 = \sbr{r^{(t+1)}} = \sbr{\sigma_x^-2}
+    \end{equation*}
+    As $\sigma_x > 0$ it follows that $-\mat C_1$ is symmetric positive 
+    definite.
+
+    \paragraph{Inductive Step}
+    For showing the symmetry and positive definiteness after a full update it 
+    suffices to show that Cholesky factorization for the updated matrix $-\mat 
+    C_{t+1} = \del[0]{\mat L'^{-1}}\Tr \mat L'^{-1}$ exists.
+\begin{align*}
+        -\mat C_{t+1} &= -U_{t+1}(\mat C_t) - r^{(t+1)} \vc s_{t+1} \vc 
+        s_{t+1}\Tr \\
+        &= \sbr{\begin{array}{cc}
+                \mat -C_t + \sigma_x^{-2} \mat C_t \vc k_{t+1} \vc k_{t+1}\Tr 
+                \mat C_t\Tr & \sigma_x^{-2} \mat C_t \vc k_{t+1} \vc\e_{t+1}\Tr 
+                \\
+                \sigma_x^{-2} \vc\e_{t+1} k_{t+1}\Tr \mat C_t\Tr & \sigma_x^{-2}
+            \end{array}} \\
+        &= \sbr{\begin{array}{cc}
+                \del[0]{\mat L^{-1}}\Tr & \sigma_x^{-1} \mat C_t \vc k_{t+1} \\
+                0 & \sigma_x^{-1}
+            \end{array}} \sbr{\begin{array}{cc}
+                \mat L^{-1} & 0 \\
+                \sigma_x^{-1} \vc k_{t+1}\Tr \mat C_t\Tr & \sigma_x^{-1}
+            \end{array}} \\
+        &= \del[0]{\mat L'^{-1}}\Tr \mat L'^{-1}
+    \end{align*}
+
+    In case of a reduced update the relation
+    \begin{equation*}
+        -\mat C_{t+1} = -\mat C_t - r^{(t+1)} \vc s_{t+1} \vc s_{t+1}\Tr
+    \end{equation*}
+    holds. The term $- r^{(t+1)} \vc s_{t+1} \vc s_{t+1}\Tr$ is symmetric, 
+    positive definite as it is an outer vector product (which is symmetric, 
+    positive definite) multiplied by a positive number $-r^{(t+1)} 
+    = \sigma_x^{-2} > 0$. The sum $-\mat C_{t+1}$ of symmetric, positive 
+    definite matrices is again symmetric, positive definite.
+\end{proof}
+
+\begin{corollary}
+    A full update of a symmetric, positive-definite matrix $-\mat{C}_t$ as 
+    formulated by \textcite[equation~2.9]{Csato:2002fp} consists of the same 
+    calculations as an online update of the inverse Cholesky factor in 
+    Equation~\ref{eqn:invChol}.
+\end{corollary}
+This is obvious from the inductive step for a full update.
+
+\chapter{PDUCB Differentiability}\label{sec:pducb-diff}
+\begin{theorem}
+    The PDUCB acquisition function given by
+    \begin{align*}
+    u\ped{PDUCB}(\vc x) &= u_1(\vc x) + s\ped{PDUCB}(\vc y) u_2(\vc x) \\
+    u_1(\vc x) &= \del{1 - a} \cdot \ln\del{\mu_+(\vc x) + \varepsilon} 
+    + a \cdot \ln \varepsilon \\
+    u_2(\vc x) &= \kappa \cdot \sigma^2(\vc x) + \gamma \cdot d^2(\vc x, \vc x')
+    \end{align*}
+    with
+    \begin{align*}
+    a &= \e^{-\mu_+(\vc x) / \varepsilon} \\
+    \mu_+(\vc x) &= \max\cbr{0, \mu(\vc x)}
+    \end{align*}
+    is differentiable by $\vc x$ for all $\vc x$ if the Gaussian process 
+    providing $\mu(\vc x)$ is mean square differentiable.
+\end{theorem}
+
+\newcommand{\dx}{\od{}{\vc{x}}}
+\begin{proof}
+    As
+    \begin{equation*}
+        \dx u\ped{PDUCB}(\vc x) = \dx u_1(\vc x) + s\ped{PDUCB}(\vc y) \dx 
+        u_2(\vc x)
+    \end{equation*}
+    it suffices to show the differentiability for $u_1(\vc x)$ and $u_2(\vc x)$ 
+    independently.
+
+    For $u_1(\vc x)$ the derivative is
+    \begin{align*}
+        %\dx u_1(\vc x) &= \dx\!\del{1 - \e^{-\mu_+(\vc x)/\varepsilon}} \cdot 
+        %\ln\!\del{\mu_+(\vc x) + \varepsilon} \\
+        %&\quad + \del{1 - \e^{-\mu_+(\vc x)/\varepsilon}} \dx\!\del{\mu_+(\vc 
+            %x)} \frac{1}{\mu_+(\vc x) + \varepsilon} \\
+        %&\quad + \ln \varepsilon \cdot \dx \e^{-\mu_+(\vc x) / \varepsilon} \\
+        \dx u_1(\vc x) &= \dx\!\del{1 - a} \cdot \ln\!\del{\mu_+(\vc x) 
+            + \varepsilon} \\
+        &\quad + \del{1 - a} \dx\!\del{\mu_+(\vc x)} \frac{1}{\mu_+(\vc x) 
+            + \varepsilon} \\
+        &\quad + \ln \varepsilon \cdot \dx a \\
+        %&= \dx\!\del{\mu_+(\vc x)} \varepsilon^{-1} \e^{-\mu_+(\vc 
+            %x)/\varepsilon} \cdot \ln\!\del{\mu_+(\vc x) + \varepsilon} \\
+        %&\quad + \del{1 - \e^{-\mu_+(\vc x)/\varepsilon}} \dx\!\del{\mu_+(\vc 
+            %x)} \frac{1}{\mu_+(\vc x) + \varepsilon} \\
+        %&\quad + \ln \varepsilon \cdot \dx\!\del{\mu_+(\vc x)} \varepsilon^{-1} 
+        %\e^{-\mu_+(\vc x) / \varepsilon} \\
+        &= \dx\!\del{\mu_+(\vc x)} a\varepsilon^{-1} \cdot \ln\!\del{\mu_+(\vc 
+            x) + \varepsilon} \\
+        &\quad + \del{1 - a} \dx\!\del{\mu_+(\vc x)} \frac{1}{\mu_+(\vc x) 
+            + \varepsilon} \\
+        &\quad - \ln \varepsilon \cdot \dx\!\del{\mu_+(\vc x)} a\varepsilon^{-1}
+        \\
+        &= \dx\!\del{\mu_+(\vc x)} \cdot \del{a\varepsilon^{-1} 
+            \ln\!\del{\mu_+(\vc x) + \varepsilon} - a\varepsilon^{-1} \ln 
+            \varepsilon + \frac{1 - a}{\mu_+(\vc{x}) + \varepsilon}} \\
+        &= \left\{ \begin{array}{ll}
+                \dx\!\del{\mu(\vc x)} \cdot \del{a\varepsilon^{-1} 
+                    \ln\!\del{\mu(\vc x) + \varepsilon} - a\varepsilon^{-1} \ln 
+                    \varepsilon + \frac{1 - a}{\mu(\vc{x}) + \varepsilon}} 
+                & \mu(\vc x) > 0 \\
+                \dx\!\del{0} \cdot \del{\varepsilon^{-1} \ln \varepsilon 
+                    - \varepsilon^{-1} \ln \varepsilon + \frac{1 
+                        - 1}{\varepsilon}} = 0 & \mu(\vc x) \leq 0
+            \end{array} \right. \text{.}
+        \end{align*}
+    Hence, $u_1(\vc x)$ is always differentiable for all $\vc x$ with $\mu(\vc 
+    x) \leq 0$. Furthermore, the parenthesized term is a composition of 
+    continuous functions for $\mu(\vc x) > 0$ and the derivative $\dx \mu(\vc 
+    x)$ exists for a mean square differentiable Gaussian process. From that, the 
+    differentiability for all $\vc x$ follows.
+
+    For $u_2(\vc x)$ the somewhat simpler derivative is
+    \begin{equation*}
+        u_2(\vc x) = \kappa \cdot \dx \sigma^2(\vc x) + \gamma \cdot 
+        \dx\!\del{d^2(\vc x, \vc x')}
+    \end{equation*}
+    in which $\dx \sigma^2(\vc x)$ is differentiable for a mean square 
+    differentiable Gaussian process and the distance derivative is given by
+    \begin{equation*}
+        \dx d^2(\vc x, \vc x') = 2 (\vc x - \vc x') \text{.}
+    \end{equation*}
+    \end{proof}
+
+\chapter{Prior Width}\label{sec:prior}
+\begin{theorem}
+    To increase the log likelihood $\ln p(\vc y | X, \vc \theta, \mathcal{H}_j)$ 
+    by at least $\ln(\Delta p)$ at $\theta_i = m_{\theta_i}$ with a Gaussian 
+    prior at $m_{\theta_i}$ the width $\sigma_{\theta_i}$ of this prior has to 
+    be lower or equal than $1 / (\Delta p \sqrt{2\uppi})$.
+\end{theorem}
+
+\begin{proof}
+    The log likelihood combined with (independent) priors is given by
+    \begin{equation*}
+        \ln\!\del{p(\vc y | X, \vc \theta, \mathcal{H}_j) p(\vc \theta 
+            | \mathcal{H}_j)} = \ln p(\vc y | X, \vc \theta, \mathcal{H}_j) 
+        + \sum_{i = 1}^n \ln p(\theta_i | \mathcal{H}_j) \text{.}
+    \end{equation*}
+    Hence, the condition
+    \begin{equation*}
+        \ln p(\theta_i | \mathcal{H}_j) \geq \ln(\Delta p)
+    \end{equation*}
+    has to be fulfilled. Inserting the Gaussian prior it becomes:
+    \begin{align*}
+        &N(m_{\theta_i}; m_{\theta_i}, \sigma_{\theta_i}) 
+        = \ln\!\del{\frac{1}{\sigma_{\theta_i} \sqrt{2\uppi}}} \geq \ln(\Delta 
+        p) \\
+        \Leftrightarrow\quad & \frac{1}{\sqrt{2\uppi}} \e^{-\ln(\Delta p)} \geq 
+        \sigma_{\theta_i}
+    \end{align*}
+\end{proof}
+
+In Chapter~\ref{sec:bestkernel} the difference of the maximum likelihood and the 
+likelihood at $\ell = \SI{5}{\meter}$ is $\ln(\Delta p) \approx 2078$ in the 
+G-NF-SS scenario. To shift the likelihood maximum to $\ell = \SI{5}{\meter}$ 
+with a Gaussian prior with its mean at that position the width would need to be 
+less than $\e^{-2078} / \sqrt{2\uppi} \approx 0$.
