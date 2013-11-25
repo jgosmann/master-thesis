@@ -71,7 +71,7 @@ process.
         functions sampled from the process.}\label{fig:ex-gp-main}
 \end{figure}
 
-Even though, $K$ is a symmetric, positive-definite matrix it can be 
+Even though $K$ is a symmetric, positive-definite matrix it can be 
 ill-conditioned\footnote{The condition $\kappa(\mat A)$ of a matrix $\mat A$ is 
     defined as $\kappa(\mat A) = \|\mat A\| \|\mat A^{-1}\|$. Using the 
     $L^2$-norm this corresponds to $\kappa(\mat A) = \lambda_1/\lambda_n$,
@@ -384,8 +384,8 @@ The third possibility is to find $\argmax_{\vc \theta} p(\vc\theta | \vc y, X,
         \mathcal{H}_i) p(\vc\theta | \mathcal{H}_i)}{p(\vc y | X, 
         \mathcal{H}_i)}
 \end{equation}
-with marginal likelihood $p(\vc y | X, \vc\theta, \mathcal{H}_i)$, prior 
-$p(\vc\theta | \mathcal{H}_i)$, normalization factor $p(\vc y | X, 
+consisting of the marginal likelihood $p(\vc y | X, \vc\theta, \mathcal{H}_i)$, 
+a prior $p(\vc\theta | \mathcal{H}_i)$, a normalization factor $p(\vc y | X, 
 \mathcal{H}_i)$, and a set of possible model structures $\mathcal{H}_i$. The 
 normalization factor can be difficult to estimate 
 \parencite[109]{Rasmussen:2006vz}. For that reason, even though it can more 

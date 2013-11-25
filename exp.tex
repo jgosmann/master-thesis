@@ -36,28 +36,28 @@ variance was fixed as $\sigma\ped{k}^2 = 1$. Note that this parameter has no
 effect on the predictive mean as long as the assumed noise variance 
 $\sigma\ped{n}^2$ is zero.
 
-The average of the fraction of the remaining error is plotted in 
-Figure~\ref{fig:lengthscales} for the different kernels and error measures. The 
-minimum is roughly the same for all kernels and lies around $\ell 
-= \SI{5}{\meter}$.  However, the behavior differs considerably for non-optimal 
-length scales.  The smoother (the more often the kernel is differentiable) the 
-more the error increases for too large length scales.  Especially, for the 
-squared exponential covariance function this increase is quite abrupt. Only for 
-very large length scales it decreases again for the squared exponential kernel.
+The normalized error is plotted in Figure~\ref{fig:lengthscales} for the 
+different kernels and error measures. The minimum is roughly the same for all 
+kernels and lies around $\ell = \SI{5}{\meter}$.  However, the behavior differs 
+considerably for non-optimal length scales.  The smoother (the more often the 
+kernel is differentiable) the more the error increases for too large length 
+scales.  Especially, for the squared exponential covariance function this 
+increase is quite abrupt. Only for very large length scales it decreases again 
+for the squared exponential kernel.
 
 \begin{figure}
     \centering
     \includegraphics{plots/lengthscales}
     \caption[Influence of the length scale of the covariance functions]{The 
-        average remaining fraction of the inital error for different covariance 
-        function in dependence of length scale.  The rows correspond to the 
-        RMISE, WRMISE, and QRSim reward error measures.  The columns correspond 
-        to a single source Gaussian (G-NF-SS), a single source Gaussian 
-        dispersion (D-NF-SS), and a multiple source Gaussian dispersion 
-        (D-NF-MS). All scenarios were simulated without sensor noise.  Error 
-        bars represent the standard error. The boundary of $1.0$ where the error 
-        of the trained Gaussian process is larger than an all zero prediction is 
-        marked with a horizontal line.}\label{fig:lengthscales}
+        normalized error for different covariance function in dependence of 
+        length scale.  The rows correspond to the RMISE, WRMISE, and QRSim 
+        reward error measures.  The columns correspond to a single source 
+        Gaussian (G-NF-SS), a single source Gaussian dispersion (D-NF-SS), and 
+        a multiple source Gaussian dispersion (D-NF-MS). All scenarios were 
+        simulated without sensor noise.  Error bars represent the standard 
+        error. The boundary of $1.0$ where the error of the trained Gaussian 
+        process is larger than an all zero prediction is marked with 
+        a horizontal line.}\label{fig:lengthscales}
 \end{figure}
 
 Comparing the WRMISE to the RMISE the former one stays quite low even for larger 
@@ -67,11 +67,11 @@ prediction gets worse. Thus, the steep concentration gradients around the plume
 are not well captured in that case.
 
 The results give also an idea how good of a fit can be expected at best when 
-using an UAV\@. Whereas the fraction of the remaining error decreases to nearly 
-zero for the single source Gaussian, it stays above 0.6 for the dispersion 
-scenario with the more localized plume distribution. The reward error measure is 
-decreased to lower levels, but this is likely to underestimation of the error at 
-the plume boundaries as argued in Chapter~\ref{sec:qrsim-reward}.
+using an UAV\@. Whereas the normalized error decreases to nearly zero for the 
+single source Gaussian, it stays above 0.6 for the dispersion scenario with the 
+more localized plume distribution. The reward error measure is decreased to 
+lower levels, but this is likely to underestimation of the error at the plume 
+boundaries as argued in Chapter~\ref{sec:qrsim-reward}.
 
 Besides the error measures the log likelihood of each trained Gaussian process 
 was calculated. In Figure~\ref{fig:loglikelihood} the average over trials is 
@@ -125,7 +125,7 @@ acquisition function and the simulation was stopped at that point to reduce
 overall simulation time. A plume measurement was taken every second.
 
 The error measures were estimated as described in Chapter~\ref{sec:error}. The 
-sampling locations for that where chosen as 1000 uniformly distributed sampling 
+samples for that where chosen from 1000 uniformly distributed sampling 
 locations, every tenth of 4200 locations from the Metropolis-Hastings algorithm 
 with Gaussian proposal distribution with standard deviation $\sigma 
 = \SI{10}{\meter}$, and 10 more locations sampled from the proposal distribution 
@@ -135,9 +135,9 @@ I tested all three utility functions proposed in Chapter~\ref{sec:utility}:
 DUCB, PDUCB (with $\varepsilon = 10^{-30}$), and GO\@. DUCB was tested with 
 a constant scaling factor of $s\ped{DUCB}(\vc y) = 1$ and the automatic scaling 
 in Equation~\ref{eqn:scale-ducb}.  PDUCB was tested with a constant scaling 
-factor of $s\ped{PDUCB}(\vc y) = 70$ (a little bit more than $-\log 
-\varepsilon$) and the automatic scaling in Equation~\ref{eqn:scale-pducb}.  
-Furthermore, I performed a parameter search over $\kappa \in \cbr{0.1, 0.5, 
+factor of $s\ped{PDUCB}(\vc y) = 70$ (a little bit more than $-\ln \varepsilon$) 
+and the automatic scaling in Equation~\ref{eqn:scale-pducb}.  Furthermore, 
+I performed a parameter search over $\kappa \in \cbr{0.1, 0.5, 
 0.75, 1, 1.25, 1.5, 2}$ and $\gamma \in \cbr{0} \cup \cbr{-10^p | p = -9, -8, 
   \dots, -2}$. Note that for the GO utility function the $\kappa$ parameter has 
 no effect.
@@ -155,28 +155,26 @@ trajectories for the different acquisition functions.
 \begin{figure}
     \centering
     \includegraphics{plots/psearch-G-NF-SS-SV}
-    \caption[Remaining fraction of the initial error (G-NF-SS-SV)]{The average 
-        remaining fraction of the initial error for different measures, utility 
-        functions, parameters in the noiseless single source Gaussian scenario 
-        (G-NF-SS-SV).  The columns represent the RMISE, WRMISE, and QRSim reward 
-        error measure.  The rows represent the DUCB, auto-scaled DUCB, PDUCB, 
-        auto-scaled PDUCB and GO utility functions. The auto-scaled versions use 
-        the scaling factor defined in Equations~\ref{eqn:scale-ducb} 
-        and~\ref{eqn:scale-pducb}, in contrast to a constant scaling factor. The 
-        minimum of each plot is marked with 
+    \caption[Normalized error (G-NF-SS-SV)]{The normalized error for different 
+        measures, utility functions, parameters in the noiseless single source 
+        Gaussian scenario (G-NF-SS-SV).  The columns represent the RMISE, 
+        WRMISE, and QRSim reward error measure.  The rows represent the DUCB, 
+        auto-scaled DUCB, PDUCB, auto-scaled PDUCB and GO utility functions. The 
+        auto-scaled versions use the scaling factor defined in 
+        Equations~\ref{eqn:scale-ducb} and~\ref{eqn:scale-pducb}, in contrast to 
+        a constant scaling factor. The minimum of each plot is marked with 
         cross.}\label{fig:psearch-G-NF-SS-SV}
 \end{figure}
 
 \begin{figure}
     \centering
     \includegraphics{plots/psearch-D-NF-SS-SV}
-    \caption[Remaining fraction of the initial error (D-NF-SS-SV)]{The average 
-        remaining fraction of the initial error for different measures, utility 
-        functions, parameters in the noiseless single source Gaussian dispersion 
-        scenario (D-NF-SS-SV).  The columns represent the RMISE, WRMISE, and 
-        QRSim reward error measure.  The rows represent the DUCB, auto-scaled 
-        DUCB, PDUCB, auto-scaled PDUCB and GO utility functions. The auto-scaled 
-        versions use the scaling factor defined in 
+    \caption[Normalized error (D-NF-SS-SV)]{The normalized error for different 
+        measures, utility functions, parameters in the noiseless single source 
+        Gaussian dispersion scenario (D-NF-SS-SV).  The columns represent the 
+        RMISE, WRMISE, and QRSim reward error measure.  The rows represent the 
+        DUCB, auto-scaled DUCB, PDUCB, auto-scaled PDUCB and GO utility 
+        functions. The auto-scaled versions use the scaling factor defined in 
         Equations~\ref{eqn:scale-ducb} and~\ref{eqn:scale-pducb}, in contrast to 
         a constant scaling factor.  The minimum of each plot is marked with 
         cross.}\label{fig:psearch-D-NF-SS-SV}
@@ -185,13 +183,12 @@ trajectories for the different acquisition functions.
 \begin{figure}
     \centering
     \includegraphics{plots/psearch-D-NF-MS-SV}
-    \caption[Remaining fraction of the initial error (D-NF-MS-SV)]{The average 
-        remaining fraction of the initial error for different measures, utility 
-        functions, parameters in the noiseless multiple source Gaussian 
-        dispersion scenario (D-NF-SS-SV).  The columns represent the RMISE, 
-        WRMISE, and QRSim reward error measure.  The rows represent the DUCB, 
-        auto-scaled DUCB, PDUCB, auto-scaled PDUCB and GO utility functions. The 
-        auto-scaled versions use the scaling factor defined in 
+    \caption[Normalized error (D-NF-MS-SV)]{The normalized error for different 
+        measures, utility functions, parameters in the noiseless multiple source 
+        Gaussian dispersion scenario (D-NF-SS-SV).  The columns represent the 
+        RMISE, WRMISE, and QRSim reward error measure.  The rows represent the 
+        DUCB, auto-scaled DUCB, PDUCB, auto-scaled PDUCB and GO utility 
+        functions. The auto-scaled versions use the scaling factor defined in 
         Equations~\ref{eqn:scale-ducb} and~\ref{eqn:scale-pducb}, in contrast to 
         a constant scaling factor.  The minimum of each plot is marked with 
         cross.}\label{fig:psearch-D-NF-MS-SV}
@@ -293,10 +290,10 @@ trajectories for the different acquisition functions.
 \begin{figure}
     \centering
     \includegraphics{plots/errtrace-nf}
-    \caption[Time-course of the error reduction]{The average remaining fraction 
-        of the initial RMISE in the single source Gaussian scenario 
-        (G-NF-SS-SV).  Each individual plot corresponds to one utility function 
-        and scaling.  The auto-scaled versions use the scaling factor defined in 
+    \caption[Time-course of the error reduction]{The normalized RMISE in the 
+        single source Gaussian scenario (G-NF-SS-SV).  Each individual plot 
+        corresponds to one utility function and scaling.  The auto-scaled 
+        versions use the scaling factor defined in 
         Equations~\ref{eqn:scale-ducb} and~\ref{eqn:scale-pducb}, in contrast to 
         a constant scaling factor. The $\gamma$ parameter is coded by hue and 
         the $\kappa$ parameter by lightness.}\label{fig:errtrace-nf}
@@ -328,8 +325,8 @@ the performance degrades setting $\kappa < 1$ and using the automatic scaling it
 degrades for $\kappa < 1.5$. In the dispersion scenarios the DUCB acquisition 
 function does not perform well for any tested combination of parameter values.
 
-Interestingly,  DUCB performs slightly better with the automatic scaling, 
-whereas PDUCB performs slightly worse.
+Interestingly,  DUCB performs slightly better with automatic scaling, whereas 
+PDUCB performs slightly worse.
 
 Finally, taking a look at the time course of error reduction multiple phases can 
 be discovered where a reasonable reduction of the error occurs. About the first 
@@ -422,11 +419,22 @@ of course wind information which was read out from the QRSim simulator.
 Apart from these points the same methods as in the noiseless case 
 (Section~\ref{sec:cmputility}) were used including the same number of 20~trials.
 
-The results for a single source are summarized in Figure~TODO and Table~TODO\@.  
-All tested variants reduce the normalized RMISE to approximately \num{0.75} with 
-a similar standard deviation around \num{0.23}. Using the wind based search the 
-error starts to decrease earlier as less area has to be covered. Also the 
-overall decrease seems to be a bit faster after the plume has bee discovered.
+The results for a single source are summarized in Figure~\ref{fig:noisy-ss} and 
+Table~\ref{tbl:noisy-ss}.  All tested variants reduce the normalized RMISE to 
+approximately \num{0.75} with a similar standard deviation around \num{0.23}.  
+Using the wind based search the error starts to decrease earlier as less area 
+has to be covered.  Also the overall decrease seems to be a bit faster after the 
+plume has bee discovered.
+
+\begin{figure}
+    TODO
+    \caption[TODO]{TODO}\label{fig:noisy-ss}
+\end{figure}
+
+\begin{table}
+    TODO
+    \caption[TODO]{TODO}\label{tbl:noisy-ss}
+\end{table}
 
 Looking at the WRMISE it turns out that the wind based search decreases the 
 normalized error by about \SI{7}{\percent} additionally compared to the complete 

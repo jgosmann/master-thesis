@@ -23,10 +23,11 @@ example Scikit-learn \parencite[i.\,e.][]{scikit-learn}, none supports online
 updates to my knowledge.  For that reason I developed an own implementation.
 
 \section{Function optimization}\label{sec:fnopt}
-To find the maximum of the acquisition function the SciPy wrapper of the 
-\mbox{FORTRAN} implementation of the L-BFGS-B algorithm \parencite{Byrd:2006iv, 
-    Zhu:1997br} was used. As gradient based optimizer with the possibility to 
-constrain the search space to the task volume it is well suited for the task.
+For finding the maximum of an acquisition function the SciPy wrapper of the 
+\mbox{FORTRAN} implementation of the \mbox{L-BFGS-B} algorithm 
+\parencite{Byrd:2006iv, Zhu:1997br} was used.  As gradient based optimizer with 
+the possibility to constrain the search space to the task volume it is well 
+suited for the task.
 
 To choose the starting location $\vc x_0$ the utility function was evaluated on 
 a coarse $5 \times 5 \times 5$ grid and the location with the maximal value was 

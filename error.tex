@@ -145,7 +145,7 @@ visualized in Figure~\ref{fig:err-sampling}.
         sample.}\label{fig:err-sampling}
 \end{figure}
 
-\section{Remaining Fraction of Initial Error}
+\section{Normalized Error}
 For a reliable comparison of the models it is not sufficient to compare them 
 based on a single trial. A good model should provide a low error in different 
 trials.
@@ -158,7 +158,7 @@ Directly averaging the error over trials would give a higher weighting to trials
 with high concentration densities or a large plume extend. A good plume 
 modelling method should adapt to the concentration levels and be more precise 
 for lower overall concentrations. To achieve a fair weighting of the trials the 
-remaining fraction of the initial error can be calculated as
+error can be normalized as
 \begin{equation}
     F = \frac{E}{E_0}
 \end{equation}
@@ -168,8 +168,8 @@ with regard to its properties. Note that this equation can also be applied to
 the reward $R$ as error measure as the minus cancels out. When averaging $F$ 
 over trials each trial is weighted equally.
 
-The remaining fraction of the error $F$ has also the advantage of being readily 
-interpretable. For $F > 1$ the prediction is worse than an all zero prediction.  
-This should for not happen with a viable modelling method. For $F < 1$ the 
-prediction is better than an all zero prediction and the error has been 
-decreased by $(1 - F) \cdot \SI{100}{\percent}$.
+The normalized error $F$ has also the advantage of being readily interpretable.  
+For $F > 1$ the prediction is worse than an all zero prediction.  This should 
+for not happen with a viable modelling method. For $F < 1$ the prediction is 
+better than an all zero prediction and the error has been decreased by $(1 - F) 
+\cdot \SI{100}{\percent}$.
