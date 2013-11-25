@@ -1,0 +1,39 @@
+\chapter{Conclusion}
+Gaussian processes have been used before in modelling of spatial data and 
+environmental monitoring. However, previous approaches, namely DUCB, do not work 
+well for plume dispersions as the simulation experiments have shown. Presumably, 
+the steep concentration gradients and high locality are the main problem.
+
+In this work DUCB has been adapted to PDUCB which could be shown to work 
+reasonable well also for plume dispersions. Nevertheless, there is still room 
+for improvement as the error is seldom reduced by more than TODO\SI{1}{\percent} 
+on average. The PDUCB algorithm could successfully be extended to multiple UAVs 
+to increase the speed of mapping the dispersion.
+
+Besides the modelling of the plume distribution, localizing the dispersion at 
+all is also an important problem. Noisy data does not allow to reliably estimate 
+a concentration gradient. This requires to use a systematic search approach.  
+Incorporating information of the wind direction speed up the search. Once 
+a plume has been found PDUCB maps it quickly.
+
+One problem that could not be solved in the scope of this thesis is an automatic 
+selection of hyper-parameters based on the data. The usual approach of 
+likelihood optimization clearly fails. Selecting hyper-parameters on a trial to 
+trial basis would also allow a closer match of the prediction to the plume 
+dispersion.
+
+Besides that, the prediction quality might be improved if wind information is 
+considered and included in the covariance function. Some pointer in that 
+direction, though for a different algorithm, are given by 
+\textcite{Reggente:2009ti}. In general non-stationary kernels could improve the 
+prediction, but they come at the cost of more hyper-parameters and prior 
+assumptions about the plume dispersion which might be violated.
+
+In summary, the basic applicability of Gaussian processe with a PDUCB 
+acquisition function for plume distribution modelling has been shown. However, 
+there is quite a number of possibilities of improvement left for future work.  
+Also, it should be shown in future work that the proposed methods work in a real 
+world scenario as only simulations have been performed. Further interesting 
+research directions following from this work would be the inclusion and handling 
+of obstacles or the modelling of time-varying plume distributions.
+
