@@ -377,15 +377,15 @@ disjoint subsets $\mathcal{D}_i$ of equal size and the generalization error will
 be calculated from $k$ models using the respective $\mathcal{D}_i$ as test set 
 and the other sets as training data.
 
-The third possibility is to find $\argmax_{\vc \theta} p(\vc\theta | \vc y, \mat 
-X, \mathcal{H}_i)$, wherein
+The third possibility is to find $\argmax_{\vc \theta} p(\vc\theta | \vc y, X, 
+\mathcal{H}_i)$, wherein
 \begin{equation}
-    p(\vc\theta | \vc y, \mat X, \mathcal{H}_i) = \frac{p(\vc y | \mat X, 
-        \vc\theta, \mathcal{H}_i) p(\vc\theta | \mathcal{H}_i)}{p(\vc y | \mat 
-        X, \mathcal{H}_i)}
+    p(\vc\theta | \vc y, X, \mathcal{H}_i) = \frac{p(\vc y | X, \vc\theta, 
+        \mathcal{H}_i) p(\vc\theta | \mathcal{H}_i)}{p(\vc y | X, 
+        \mathcal{H}_i)}
 \end{equation}
-with marginal likelihood $p(\vc y | \mat X, \vc\theta, \mathcal{H}_i)$, prior 
-$p(\vc\theta | \mathcal{H}_i)$, normalization factor $p(\vc y | \mat X, 
+with marginal likelihood $p(\vc y | X, \vc\theta, \mathcal{H}_i)$, prior 
+$p(\vc\theta | \mathcal{H}_i)$, normalization factor $p(\vc y | X, 
 \mathcal{H}_i)$, and a set of possible model structures $\mathcal{H}_i$. The 
 normalization factor can be difficult to estimate 
 \parencite[109]{Rasmussen:2006vz}. For that reason, even though it can more 
@@ -393,9 +393,8 @@ easily lead to overfitting, often only the marginal likelihood is optimized
 which is known as \newterm{type~\RN{2} maximum likelihood}. For a Gaussian 
 process with $n$ training samples it is given by
 \begin{equation}
-    \ln p(\vc y | \mat X, \vc\theta) = -\frac{1}{2}\del{\vc y\Tr 
-        \tilde{\mat{K}}^{-1} \vc y + \ln \det \tilde{\mat K} + n \ln 2\uppi} 
-    \text{.}
+    \ln p(\vc y | X, \vc\theta) = -\frac{1}{2}\del{\vc y\Tr \tilde{\mat{K}}^{-1} 
+        \vc y + \ln \det \tilde{\mat K} + n \ln 2\uppi} \text{.}
 \end{equation}
 The three summands can be interpreted as the quality of the data fit $\vc y\Tr 
 \tilde{\mat K}^{-1} \vc y$, model complexity $\ln \det \tilde{\mat K}$, and 
@@ -406,7 +405,7 @@ Optimizing the marginal likelihood has the advantage (in comparison to the test
 set method) that a gradient based optimizer can be used. The partial derivatives 
 of the likelihood are given by
 \begin{equation}
-    \dpd{}{\theta_j} \ln p(\vc y | \mat X, \vc\theta) = \frac{1}{2} 
+    \dpd{}{\theta_j} \ln p(\vc y | X, \vc\theta) = \frac{1}{2} 
     \del{\del{\tilde{\mat K}^{-1}\vc y \vc y\Tr \tilde{\mat K}^{-1} 
             - \tilde{\mat{K}}^{-1}} \dpd{\tilde{\mat K}}{\theta_j}} \text{.}
 \end{equation}
