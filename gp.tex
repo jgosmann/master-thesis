@@ -366,9 +366,9 @@ With the \newterm{test set method} all data available $\mathcal{D}$ will be
 split into two sets $\mathcal{D}_0$ and $\mathcal{D}_*$. The set $\mathcal{D}_0$ 
 is used to train Gaussian processes with different covariance functions and 
 hyper-parameters. For each model the generalization error $E\ped{G}$ over the 
-test set $\mathcal{D}_*$ will be evaluated and one chooses the parameters with 
-the minimal generalization error. The error measure can be chosen freely, with 
-the root mean square error being a typical choice (see also 
+test set $\mathcal{D}_*$ will be evaluated the parameters with the minimal 
+generalization error will be chosen. The error measure can be chosen freely, 
+with the root mean square error being a typical choice (see also 
 Chapter~\ref{sec:error}).
 
 If the amount of available data is limited, it is common to use 
@@ -585,10 +585,22 @@ a wider exploration around those. In Chapter~\ref{sec:cmputility} I will more
 closely look on how well these functions work to estimate a plume dispersion 
 with different parameter choices.
 
-\subsection{Multiple UAVs}
-TODO
+\subsection{Multiple UAVs}\label{sec:multiple-uavs}
+Using more than one UAV might considerably speed up the estimation of a plume 
+distribution. For that reason I propose a method to extend the target selection 
+with an acquisition function $u(\vc x)$ to multiple UAVs. To not impair the 
+performance of the original utility function one UAV will be selected as 
+a \newterm{master UAV} and uses exactly $u(\vc x)$. Without loss of generality 
+we can assign the index $i = 1$ to that UAV\@. For all other UAVs with $i > 1$ 
+the following modified acquisition function
+\begin{equation}
+    u_i(\vc x) = u(\vc x) + \rho \sum_{j = 1,\ i \neq j}^n d^2(\vc x, \vc x_j)
+\end{equation}
+will be used where $\vc x_j$ is the position of the $j$-th UAV\@. This modified 
+acquisition function basically introduces a penalty for locations close to other 
+UAVs to spread them out.
 
-\subsection{Bootstrapping}
+\subsection{Bootstrapping}\label{sec:bootstrapping}
 As long as no minimal concentration has been measured all of the proposed 
 acquisition functions do not have a unique maximum. Though one could choose 
 sampling locations randomly, this might take a long time until the plume gets 

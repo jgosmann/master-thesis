@@ -143,12 +143,14 @@ Furthermore, I performed a parameter search over $\kappa \in \cbr{0.1, 0.5,
 no effect.
 
 Figure~\ref{fig:psearch-G-NF-SS-SV}--\ref{fig:psearch-D-NF-MS-SV} visualize the 
-average remaining fraction of the error for the different scenarios.  The 
-respective parameters and values of the minima are listed in Table~TODO\@.  The 
-average reduction (over trials) of the RMISE against simulation time in the 
-single source Gaussian scenario (G-NF-SS-SV) is plotted in 
-Figure~\ref{fig:errtrace-nf} and looks essentially the same for WRMISE and the 
-QRSim reward and therefore it is not shown fer those measures.
+normalized error for the different scenarios.  The respective parameters and 
+values of the minima (excluding the QRSim reward) are listed in 
+Table~\ref{tbl:err-g-nf-ss-sv}--\ref{tbl:err-d-nf-ms-sv}.  The average reduction 
+(over trials) of the RMISE against simulation time in the single source Gaussian 
+scenario (G-NF-SS-SV) is plotted in Figure~\ref{fig:errtrace-nf} and looks 
+essentially the same for WRMISE and the QRSim reward and therefore it is not 
+shown fer those measures. Finally, Figure~TODO visualizes some example UAV 
+trajectories for the different acquisition functions.
 
 \begin{figure}
     \centering
@@ -164,6 +166,7 @@ QRSim reward and therefore it is not shown fer those measures.
         minimum of each plot is marked with 
         cross.}\label{fig:psearch-G-NF-SS-SV}
 \end{figure}
+
 \begin{figure}
     \centering
     \includegraphics{plots/psearch-D-NF-SS-SV}
@@ -178,6 +181,7 @@ QRSim reward and therefore it is not shown fer those measures.
         a constant scaling factor.  The minimum of each plot is marked with 
         cross.}\label{fig:psearch-D-NF-SS-SV}
 \end{figure}
+
 \begin{figure}
     \centering
     \includegraphics{plots/psearch-D-NF-MS-SV}
@@ -192,6 +196,100 @@ QRSim reward and therefore it is not shown fer those measures.
         a constant scaling factor.  The minimum of each plot is marked with 
         cross.}\label{fig:psearch-D-NF-MS-SV}
 \end{figure}
+
+\newenvironment{errtbl}{\begin{tabular}{lllSSSS}\toprule}{\bottomrule\end{tabular}}
+\newcommand*{\errtblhead}[1]{
+        & & &
+        \multicolumn{2}{c}{#1} &
+        \multicolumn{2}{c}{Norm.\ #1} \\
+        \cmidrule(lr){4-5} \cmidrule(lr){6-7}
+
+        Utility function &
+        \multicolumn{1}{l}{$\kappa$} &
+        \multicolumn{1}{l}{$\gamma$} &
+        \multicolumn{1}{c}{Mean} &
+        \multicolumn{1}{c}{Std} &
+        \multicolumn{1}{c}{Mean} &
+        \multicolumn{1}{c}{Std} \\
+        & & &
+        \multicolumn{1}{c}{\si{\nano\gram\per\meter\cubed}} &
+        \multicolumn{1}{c}{\si{\nano\gram\per\meter\cubed}} &
+        & \\ \midrule }
+
+\begin{table}
+    \centering
+    \begin{errtbl}
+        \errtblhead{RMISE}
+        DUCB & 1.25 & \num{-1e-07} & 249.47 & 154.87 & 0.29 & 0.20 \\
+        auto-scaled DUCB & 1.50 & \num{-1e-08} & 250.56 & 154.55 & 0.31 & 0.25 
+        \\
+        PDUCB & 0.10 & \num{-1e-09} & 191.16 & 198.60 & 0.18 & 0.13 \\
+        auto-scaled PDUCB & 0.10 & \num{-1e-07} & 190.73 & 180.43 & 0.18 & 0.12 \\
+        GO & 0.10 & \num{-1e-08} & 745.74 & 317.59 & 0.80 & 0.13 \\
+        \midrule
+        \\
+        \errtblhead{WRMISE}
+        DUCB & 1.25 & \num{-1e-07} & 115.25 & 109.04 & 0.21 & 0.22 \\
+        auto-scaled DUCB & 1.50 & \num{-1e-08} & 122.45 & 112.15 & 0.25 & 0.28 
+        \\
+        PDUCB & 0.10 & \num{-1e-06} & 91.73 & 122.39 & 0.13 & 0.14 \\
+        auto-scaled PDUCB & 0.10 & \num{-1e-07} & 92.62 & 120.08 & 0.13 & 0.13 \\
+        GO & 0.10 & \num{-1e-08} & 472.51 & 219.39 & 0.80 & 0.15 \\
+    \end{errtbl}
+    \caption[Minimal error values G-NF-SS-SV.]{The minimal obtained error (RMISE 
+        and WRMISE) for each acquisition function and the parameter values used 
+        in the single source Gaussian scenario 
+        (G-NF-SS-SV).}\label{tbl:err-g-nf-ss-sv}
+\end{table}
+
+\begin{table}
+    \centering
+    \begin{errtbl}
+        \errtblhead{RMISE}
+        DUCB & 2.00 & \num{0.0} & 5.33 & 3.90 & 0.94 & 0.10 \\
+        auto-scaled DUCB & 1.50 & \num{-0.0001} & 5.00 & 3.67 & 0.91 & 0.16 \\
+        PDUCB & 0.50 & \num{-1e-09} & 4.19 & 2.99 & 0.75 & 0.24 \\
+        auto-scaled PDUCB & 1.00 & \num{-1e-09} & 4.10 & 2.85 & 0.76 & 0.24 \\
+        GO & 0.10 & \num{0.0} & 5.40 & 3.88 & 0.95 & 0.09 \\
+        \midrule
+        \\
+        \errtblhead{WRMISE}
+        DUCB & 2.00 & \num{0.0} & 3.48 & 3.04 & 0.91 & 0.22 \\
+        auto-scaled DUCB & 1.50 & \num{-0.0001} & 3.28 & 2.95 & 0.88 & 0.26 \\
+        PDUCB & 0.50 & \num{-1e-05} & 2.29 & 2.20 & 0.63 & 0.39 \\
+        auto-scaled PDUCB & 1.00 & \num{-1e-07} & 2.37 & 2.33 & 0.64 & 0.37 \\
+        GO & 0.10 & \num{0.0} & 3.62 & 3.00 & 0.94 & 0.17 \\
+    \end{errtbl}
+    \caption[Minimal error values D-NF-SS-SV.]{The minimal obtained error (RMISE 
+        and WRMISE) for each acquisition function and the parameter values used 
+        in the single source Gaussian dispersion scenario 
+        (D-NF-SS-SV).}\label{tbl:err-d-nf-ss-sv}
+\end{table}
+
+\begin{table}
+    \centering
+    \begin{errtbl}
+        \errtblhead{RMISE}
+        DUCB & 1.25 & \num{0.0} & 20.63 & 11.60 & 0.93 & 0.08 \\
+        auto-scaled DUCB & 2.00 & \num{-0.0001} & 18.45 & 10.97 & 0.83 & 0.13 \\
+        PDUCB & 0.50 & \num{0.0} & 16.55 & 11.76 & 0.68 & 0.18 \\
+        auto-scaled PDUCB & 1.25 & \num{-1e-06} & 16.62 & 11.87 & 0.68 & 0.19 \\
+        GO & 0.10 & \num{0.0} & 20.70 & 11.76 & 0.92 & 0.11 \\
+        \midrule
+        \\
+        \errtblhead{WRMISE}
+        DUCB & 0.50 & \num{-1e-05} & 14.11 & 10.03 & 0.93 & 0.14 \\
+        auto-scaled DUCB & 2.00 & \num{-0.0001} & 12.11 & 9.60 & 0.80 & 0.21 \\
+        PDUCB & 1.00 & \num{-1e-06} & 10.99 & 10.86 & 0.62 & 0.29 \\
+        auto-scaled PDUCB & 1.25 & \num{-1e-05} & 10.80 & 10.59 & 0.65 & 0.26 \\
+        GO & 0.10 & \num{0.0} & 14.06 & 9.96 & 0.93 & 0.12 \\
+    \end{errtbl}
+    \caption[Minimal error values D-NF-MS-SV.]{The minimal obtained error (RMISE 
+        and WRMISE) for each acquisition function and the parameter values used 
+        in the multiple source Gaussian dispersion scenario 
+        (D-NF-MS-SV).}\label{tbl:err-d-nf-ms-sv}
+\end{table}
+
 \begin{figure}
     \centering
     \includegraphics{plots/errtrace-nf}
@@ -210,16 +308,15 @@ Even in the single source Gaussian scenario the RMISE is only reduced by about
 \SI{20}{\percent} and in the other two scenarios it performs even worse.
 
 Comparing DUCB and PDUCB the latter one consistently performs better with 
-a reduction in the RMISE and WRMISE by about additional \SI{15}{\percent} or 
-more. Also, PDUCB has a lower standard deviation in the single source Gaussian 
-scenario. Despite that, its standard deviation is higher than that of DUCB in 
-the dispersion scenarios.
+a reduction in the RMISE and WRMISE by at least additional \SI{11}{\percent} and 
+in the dispersion scenarios even more.  Despite that, the standard deviation of 
+PDUCB is higher almost always higher than that of DUCB\@.
 
 In the single source Gaussian scenario PDUCB proves to be quite robust against 
 the choice of $\kappa$ as for all values very good results are obtained. This 
 picture is a bit more noisy in the dispersion scenarios. It seems that too low 
-values ($\kappa < 0.75$) degrade performance. This is consistent with the 
-argument in Chapter~\ref{sec:utility} that too low $\kappa$ limit the 
+values ($\kappa < 0.5$) degrade performance. This is consistent with the 
+argument in Chapter~\ref{sec:utility} that a too low $\kappa$ limits the 
 exploration and let the UAV become stuck in a (local) maximum. The choice of 
 $\gamma$ has no considerable effect as long as the distance penalty is not 
 chosen too large ($\gamma < -10^{-5}$).
@@ -251,21 +348,104 @@ dispersions.
 
 The PDUCB performance might not seem to be too impressive in the dispersion 
 scenarios, too. However, one has to keep in mind that even in 
-Section~\ref{sec:bestkernel} with much more samples the error could not be 
-reduced to less than TODO\SI{1}{\percent}.  Also, the qualitatively the plume is 
+Section~\ref{sec:bestkernel} with much more samples the RMISE could not be 
+reduced to less than \SI{61}{\percent}.  Also, the qualitatively the plume is 
 predicted at the correct location as Figure~TODO shows, despite some deviance of 
 the exact concentration values.
 
-Given this discussion I selected the PDUCB acquisition function with automatic 
-scaling, $\kappa = 1.25$, and $\gamma = -10^{-8}$ for further experiments.  
-Though the automatic scaling performs a little bit worse, I consider it to be 
-advantageous as it decouples the other parameter values from the exact 
-concentration levels of the plume dispersion.
+Given this discussion I decided to limit further experiments to the PDUCB 
+acquisition function as the other options seem to not a viable option (except 
+maybe for the single source Gaussian). As smaller values of $\kappa$ seem to 
+provide slightly better results, but it should not be below $1$ as argued, 
+a value of $\kappa = 1.25$ was selected. The penalty distance seems to slightly 
+improve the results up to \num{-1e-5}. However, to prevent to fall in the area 
+where the performs then quickly decreases, it was set to a lower value of 
+$\gamma = \num{-1e-7}$ which also good results. Both scaling approaches 
+(constant or automatic) where used in further experiments as it is not clear 
+from these results which one is better. Though, the automatic scaling is a bit 
+worse in terms of error, it has one less parameter which would be set according 
+to the range of concentration values.
 
-TODO explain kappa and gamma
 TODO example run visualizations
 
-\section{Noisy}
+\section{Evaluation in a Noisy Setting}\label{sec:noisy}
+It is important to verify that the methods for plume modelling also work in 
+a noisy environment as in the real world noise will necessarily occur. For that 
+a standard deviation of the sensor noise of $\sigma\ped{noise} 
+= \SI{1e-5}{\gram\per\meter\cubed}$ was assumed. As it should be possible to 
+reliably estimate the noise level of the sensor, I considered this value as 
+known. That allows to set the noise variance of the Gaussian process 
+$\sigma\ped{n}^2 = \sigma\ped{noise}^2$. For a good prediction the ratio of 
+$\sigma\ped{n}^2$ and the kernel variance $\sigma\ped{k}^2$ has to be chosen 
+well. The process of doing that will be discussed in the next section before 
+returning to the actual simulations.
+
+\subsection{Choosing the Kernel Variance}
+The method for determining the kernel variance was essentially the same as 
+described in Section~\ref{sec:bestkernel} for determining the length scale. The 
+points were it differs are that instead of the noiseless scenarios the single 
+and multiple source plume dispersion scenarios with sensor noise (D-SN-SS-SV, 
+D-SN-MS-SV) were used and only the Mat\'ern kernel with $\nu = 3/2$ was used.  
+Instead of varying the length scale it was fixed to $\ell = \SI{5}{\meter}$ and 
+the kernel variance $\sigma\ped{k}^2$ was varied from 
+\SIrange{1e-12}{1e-3}{\gram\squared\per\meter\tothe{6}}.
+
+The results are shown in Figure~TODO\@. The normalized error measures are 
+highest for low values of $\sigma\ped{k}^2$ approaching 1. For $\sigma\ped{k}^2 
+> \SI{1e-9}{\gram\squared\per\meter\tothe{6}}$ the WRMISE stays the same, but 
+the RMISE and QRSim reward slightly increase. This is even less pronounced for 
+multiple sources.
+
+As all error measures do have their minimum at $\sigma\ped{k}^2 
+= \SI{1e-9}{\gram\squared\per\meter\tothe{6}}$ or have almost reached it, this 
+value has been used in the following.
+
+\subsection{Simulation of the Scenarios Including Noise}
+Using the kernel variance of $\sigma\ped{k}^2 
+= \SI{1e-9}{\gram\squared\per\meter\tothe{6}}$ determined in the previous 
+section the PDUCB method was evaluated in the single and multiple source plume 
+dispersion scenario including sensor noise (D-SN-SS-SV, D-SN-MS-SV). The sensor 
+noise variance and the noise variance of the Gaussian process were set to 
+$\sigma\ped{noise}^2 = \sigma\ped{n}^2 
+= \SI{1e-10}{\gram\squared\per\meter\tothe{6}}$.  As the change of 
+$\sigma\ped{k}^2$ (previously set to 1) influences $\sigma^2(\vc x)$ the value 
+of $\kappa$ has to be adjusted by the inverse factor. Hence, the PDUCB parameter 
+setting in the following were $\kappa = \num{1.25e9}$ and $\gamma 
+= \num{-1e-7}$.
+
+In many instances surrounding the simulation area in just one height is not 
+sufficient to discover the plume under the influence of noise. Thus, the 
+complete search and the wind based search strategy described in 
+Chapter~\ref{sec:bootstrapping} have been employed. The latter approach requires 
+of course wind information which was read out from the QRSim simulator.
+
+Apart from these points the same methods as in the noiseless case 
+(Section~\ref{sec:cmputility}) were used including the same number of 20~trials.
+
+The results for a single source are summarized in Figure~TODO and Table~TODO\@.  
+All tested variants reduce the normalized RMISE to approximately \num{0.75} with 
+a similar standard deviation around \num{0.23}. Using the wind based search the 
+error starts to decrease earlier as less area has to be covered. Also the 
+overall decrease seems to be a bit faster after the plume has bee discovered.
+
+Looking at the WRMISE it turns out that the wind based search decreases the 
+normalized error by about \SI{7}{\percent} additionally compared to the complete 
+search. Thus, the wind based search is able to better approximate the actual 
+plume without increasing the approximation error in other area.
+
+With regard to the WRMISE the automatic scaling seems to perform a bit better 
+(difference of \num{0.05} in the normalized error), but this is not the case for 
+the RMISE\@.
+
+TODO multiple sources
+TODO discussion/conclusion
 
 \section{Multiple UAVs}
+Finally, the performance of the PDUCB acquisition function with the extension 
+for multiples UAVs (Chapter~\ref{sec:multiple-uavs}) has been evaluated. For 
+this exactly the same methods as in the previous section were used with 
+exception of the scenario. This was replaced by the multiple UAV, multiple 
+source plume dispersion scenario (D-SN-MS-MV). Also, a number of different $\rho 
+\in TODO$ has been tested.
 
+TODO

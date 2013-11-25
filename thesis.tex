@@ -8,8 +8,9 @@
 \usepackage{amsthm}
 \usepackage[style=authoryear,backend=biber,language=american]{biblatex}
 \usepackage{bm}
-%\usepackage{booktabs}
+\usepackage{booktabs}
 \usepackage{commath}
+\usepackage{dcolumn}
 \usepackage{enumerate}
 %\usepackage[flushmargin,ragged]{footmisc}
 \usepackage{gitinfo}
@@ -23,7 +24,7 @@
 \usepackage{longtable}
 \usepackage{polyglossia}
 %\usepackage{ngerman}
-\usepackage{siunitx}
+\usepackage[retain-unity-mantissa=false,exponent-product=\cdot]{siunitx}
 \usepackage{scrpage2}
 \usepackage{subfigure}
 \usepackage{upgreek}
@@ -45,6 +46,8 @@
 
 \setdefaultlanguage{english}
 \setotherlanguages{german}
+
+\newcolumntype{d}{D{.}{.}{2}}
 
 \newtheorem{lemma}{Lemma}
 \newtheorem{theorem}{Theorem}
@@ -73,6 +76,8 @@
 \DeclareMathOperator{\cov}{cov}
 \DeclareMathOperator{\diag}{diag}
 \DeclareMathOperator*{\mslim}{mslim}
+\DeclareMathOperator{\mean}{mean}
+\DeclareMathOperator{\std}{std}
 
 \newcommand{\ped}[1]{_{\mathrm{#1}}}
 
@@ -165,23 +170,35 @@
 \cleardoublepage\thispagestyle{empty}
 \vspace*{\fill}
 \section*{\abstractname}
-% TODO
-Lorem ipsum dolor sit amet, consectetur adipisici elit, sed eiusmod tempor 
-incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis 
-nostrud exercitation ullamco laboris nisi ut aliquid ex ea commodi 
-consequat. Quis aute iure reprehenderit in voluptate velit esse cillum 
-dolore eu fugiat nulla pariatur. Excepteur sint obcaecat cupiditat non 
-proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+Recent scientific work explored the possibility to use mobile robots for 
+environmental monitoring. This includes for example the estimation of ozone 
+concentrations or locating the source of a pollutant plume. So far the modelling 
+of the complete spatial distribution of a plume (which has quite different 
+spatial characteristics) has not been done. In this work existing methods of 
+Bayesian optimization, namely global optimization (GO) and the distance based 
+upper confidence bound (DUCB), were be evaluated on this task. Also, a new 
+method---plume distance based upper confidence bound (PDUCB)---and an extension 
+to multiple robots is proposed.  All methods were tested in simulations using 
+the QRSim quadrotor simulator. The existing methods were not able to solve the 
+task satisfyingly, whereas the PDUCB method was able to approximate plume 
+distributions with noisy measurements reasonably well.
 
 \begin{german}
 \section*{\abstractname}
-% TODO
-Lorem ipsum dolor sit amet, consectetur adipisici elit, sed eiusmod tempor 
-incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis 
-nostrud exercitation ullamco laboris nisi ut aliquid ex ea commodi 
-consequat. Quis aute iure reprehenderit in voluptate velit esse cillum 
-dolore eu fugiat nulla pariatur. Excepteur sint obcaecat cupiditat non 
-proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+Neuere wissenschaftliche Arbeiten haben die Möglichkeit untersucht mobile 
+Roboter zur Umweltüberwachung einzusetzen. Die beinhaltet die Vermessung von 
+Ozonkonzentrationen und die Lokalisierung der Quelle einer Gasfahne. Bisher 
+wurde jedoch nicht versucht die komplette räumliche Verteilung einer Gasfahne 
+(welche deutlich andere räumliche Charisitika hat) zu bestimmen. In dieser 
+Arbeit wurde die Anwendbarkeit globaler Optimierung (GO) und der distanzbasierte 
+obere Konfidenzgrenze (DUCB), bestehende Methoden Bayes'scher Optimierung, für 
+diese Aufgabe beurteilt. Weiterhin wird eine neue Methode~-- die distanzbasierte 
+obere Konfidenzgrenze für Gasfahnen (PDUCB)~-- sowie eine Erweiterung für 
+mehrere Roboter vorgeschlagen. Alle Methoden wurden in Simulationen mit dem 
+QRSim Quadrotorsimulator getestet. Die bestehenden Methoden waren nicht in der 
+Lage die Aufgabe zufriedenstellend zu lösen, wohingegen die PDUCB-Methode in der 
+Lage war die Verteilungen der Gasausbreitung angemessen gut mit verrauschten 
+Messungen anzunähern.
 \end{german}
 \vspace*{\fill}
 
