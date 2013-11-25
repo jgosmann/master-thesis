@@ -393,20 +393,20 @@ easily lead to overfitting, often only the marginal likelihood is optimized
 which is known as \newterm{type~\RN{2} maximum likelihood}. For a Gaussian 
 process with $n$ training samples it is given by
 \begin{equation}
-    \log p(\vc y | \mat X, \vc\theta) = -\frac{1}{2}\del{\vc y\Tr 
-        \tilde{\mat{K}}^{-1} \vc y + \log \det \tilde{\mat K} + n \log 2\uppi} 
+    \ln p(\vc y | \mat X, \vc\theta) = -\frac{1}{2}\del{\vc y\Tr 
+        \tilde{\mat{K}}^{-1} \vc y + \ln \det \tilde{\mat K} + n \ln 2\uppi} 
     \text{.}
 \end{equation}
 The three summands can be interpreted as the quality of the data fit $\vc y\Tr 
-\tilde{\mat K}^{-1} \vc y$, model complexity $\log \det \tilde{\mat K}$, and 
-a normalization term $n \log 2\uppi$. Hence, the optimization of the marginal 
+\tilde{\mat K}^{-1} \vc y$, model complexity $\ln \det \tilde{\mat K}$, and 
+a normalization term $n \ln 2\uppi$. Hence, the optimization of the marginal 
 likelihood includes an automatic trade-off of model complexity and data fit.
 
 Optimizing the marginal likelihood has the advantage (in comparison to the test 
 set method) that a gradient based optimizer can be used. The partial derivatives 
 of the likelihood are given by
 \begin{equation}
-    \dpd{}{\theta_j} \log p(\vc y | \mat X, \vc\theta) = \frac{1}{2} 
+    \dpd{}{\theta_j} \ln p(\vc y | \mat X, \vc\theta) = \frac{1}{2} 
     \del{\del{\tilde{\mat K}^{-1}\vc y \vc y\Tr \tilde{\mat K}^{-1} 
             - \tilde{\mat{K}}^{-1}} \dpd{\tilde{\mat K}}{\theta_j}} \text{.}
 \end{equation}
