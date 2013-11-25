@@ -26,6 +26,7 @@
 %\usepackage{ngerman}
 \usepackage[retain-unity-mantissa=false,exponent-product=\cdot]{siunitx}
 \usepackage{scrpage2}
+\usepackage{setspace}
 \usepackage{subfigure}
 \usepackage{upgreek}
 %\usepackage{xcolor}
@@ -148,7 +149,29 @@
 
 \begin{document}
 \frontmatter
-\maketitle % TODO title page
+\begin{titlepage}
+    \begin{center}
+        \vspace*{2.5cm}
+        \textsf{\Large Master Thesis}\\
+        \vspace{1cm}
+        \begin{spacing}{2.5}
+            \textsf{\textbf{\huge Gaussian Processes for Plume Distribution 
+                    Estimation with UAVs}}
+        \end{spacing}
+        \vspace{1cm}
+        \Large
+        \begin{spacing}{1.5}
+            Jan Gosmann\\
+            \today
+        \end{spacing}
+        \vspace{\fill}
+        \includegraphics[width=6cm]{plots/vis_multi_dispersion}\\
+        \vspace{\fill}
+        Supervisors:\\
+        Prof.~Dr.~Manfred~Opper\\
+        Dr.~Andreas~Ruttor
+    \end{center}
+\end{titlepage}
 
 \thispagestyle{empty}
 \begin{german}
