@@ -1,0 +1,59 @@
+\chapter{Outlook Time-varying Plumes}\label{sec:timevarying}
+So far only distributions which are static over time have been discussed. This 
+assumption might be violated in many instances. Unfortunately, time did not 
+allow me to extend the proposed methods to time-varying plumes. Nevertheless, 
+I provide some thoughts on how to do this.
+
+The first thing to do is probably adding another input dimension to the Gaussian 
+process representing time. This also requires adjusting the covariance function.  
+As the temporal correlations might differ from the spatial correlations 
+a product of a temporal and a spatial kernels would be a good start. Though that 
+separability neglects potential spatio-temporal interdependencies, construction 
+and hyper-parameter estimation is easier. Given wind with a strong 
+directionality, a kernel modelling the spatio-temporal interdependencies becomes 
+more important. Some work on separable as well as non-separable spatio-temporal 
+covariance functions with application to environmental monitoring has been 
+published by \textcite{Singh:2010wt}.
+
+Diffusion and advection by wind are the two main factors leading to a change of 
+the plume distribution over time. While diffusion is a rather slow process, 
+advection can occur on shorter time scales. Thus, it might be especially 
+beneficial to include wind effects in the covariance function.  
+\Textcite{Reggente:2009ti} did this in another kernel based approach called 
+Kernel DM+V/W algorithm \parencite{Lilienthal:2009ij}.
+
+A specific scenario with a time-varying plume distribution is suggested by 
+\textcite{denardi2013rn}. Instead of having a constant plume dispersion like in 
+the scenarios discussed, each source emits puffs in random intervals travelling 
+with the wind.  Given a regular emission interval this could be modelled by 
+using the sinus of the time coordinate or incorporating a sinusoidal function in 
+covariance function.  However, given random emission interval this probably does 
+not work as the frequency of the sinus would have to change.
+
+Another problem to be solved is locating such a puff dispersion. Already for the 
+static dispersion an extensive search is required in the beginning. Given a puff 
+dispersion measuring a low concentration could mean that the location does not 
+lie in the path of the puff dispersion, but also that the measurement was taken 
+between to puffs. Unfortunately, this seems like an inherent problem which 
+cannot be completely solved.
+
+Finally, let me discuss two properties of Gaussian processes to take into 
+account when modelling time-varying plume distributions. When using a zero mean 
+prior (as it is usually done), the predicted concentration mean will decay to 
+zero over time (assuming $k(t, t') \rightarrow 0$ for $\abs{t - t'} \rightarrow 
+\infty$). However, in certain scenarios (like puff dispersions) it is likely to 
+measure an increased concentration again at a location in the future if this was 
+the case once before at that location. It might be a good idea to adjust the 
+mean prior based on the measurements to prevent a decay of the mean prediction.  
+Note that the covariance function remains unchanged and the uncertainty at that 
+location will still increase with time indicating that the measurement should be 
+repeated.
+
+The performance in time-varying scenarios might be impaired by the property that 
+Gaussian processes have no notion of directionality of time. This follows from 
+the (required) symmetry of the covariance function which does not allow to 
+differentiate between $t < t'$ and $t > t'$. Hence, a kernel might model the 
+path along which a plume travels, but not the direction. Along that direction 
+the plume is likely to broaden because of dispersion. Respectively it gets more 
+concentrated in the opposite direction. Effects like this can not be modelled 
+except for the overall statistics.
