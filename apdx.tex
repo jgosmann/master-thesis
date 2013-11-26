@@ -1,9 +1,9 @@
 \chapter{Error Bound of a Mean Estimate}\label{sec:decnoise}
 \begin{theorem}
     Let $y = y^* + \eta$ with $\eta \sim \mathcal N(0, \sigma^2)$ and $\bar y$ 
-    the mean of $n$ samples from $y$. Then $n \geq 4 \cdot 1.96^2 \cdot 
-    \del{\sigma / \rho}^2$ samples are needed to have the error bound 
-    $\abs{\bar{y} - y^*} < \rho$ hold with probability $p \geq 0.95$.
+    the mean of $n$ samples from $y$. Then $n \geq 1.96^2 \cdot \del{\sigma 
+        / \rho}^2$ samples are needed to have the error bound $\abs{\bar{y} 
+        - y^*} < \rho$ hold with probability $p \geq 0.95$.
 \end{theorem}
 
 \begin{proof}
@@ -32,8 +32,8 @@ a concentration of $c(\vc x') \approx \SI{0.055}{\gram\per\meter\cubed}$ is
 obtained at $\vc x' = (\SI{10}{\meter}, 0, \SI{-40}{\meter})\Tr$, a position in 
 the center of the plume ten meters away from the source. For a usable 
 measurement the magnitude of noise should be at least a magnitude lower, thus 
-$\rho \leq \SI{0.001}{\gram\per\meter\cubed}$. From the theorem it follows that, 
-given the QRSim default noise standard deviation of $\sigma\ped{noise} 
+$\rho \leq \SI{0.0055}{\gram\per\meter\cubed}$. From the theorem it follows 
+that, given the QRSim default noise standard deviation of $\sigma\ped{noise} 
 = \SI{e-2}{\gram\per\meter\cubed}$ at least 385~samples are needed. Further away 
 from the source or with a lower emission rate (which can also be a magnitude 
 lower) even more samples would be needed.
@@ -218,7 +218,7 @@ This is obvious from the inductive step for a full update.
         &N(m_{\theta_i}; m_{\theta_i}, \sigma_{\theta_i}) 
         = \ln\!\del{\frac{1}{\sigma_{\theta_i} \sqrt{2\uppi}}} \geq \ln(\Delta 
         p) \\
-        \Leftrightarrow\quad & \frac{1}{\sqrt{2\uppi}} \e^{-\ln(\Delta p)} \geq 
+        \Leftrightarrow\quad & \frac{1}{\Delta p\sqrt{2\uppi}} \geq 
         \sigma_{\theta_i}
     \end{align*}
 \end{proof}

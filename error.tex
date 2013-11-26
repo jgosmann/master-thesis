@@ -55,10 +55,10 @@ determine the bandwidth parameter of the KDE\@. In this work Scott's Rule
 
 \section{Selecting Samples for Error Approximation}\label{sec:mh}
 Up to now it is still open how to select the $x_i$ for approximating the error 
-measures.  Using a regularly spaced grid is either likely to miss the important 
-areas as the plume is quite localized or it is so fine grained that the 
-evaluation of the error takes a long time. Thus, I used a slightly modified 
-\abbrev{Metropolis-Hastings}{MH} algorithm to concentrate samples in areas with 
+measures.  Using a regularly spaced grid, it is either likely to miss the 
+important areas as the plume is quite localized, or it is so fine grained that 
+the evaluation of the error takes a long time. Thus, I used a slightly modified 
+\abbrev{Metropolis-Hastings}{MH} algorithm to accumulate samples in areas with 
 a high concentration.
 
 The standard Metropolis-Hastings \parencite{Chib:1994ud} is used to sample from 
@@ -87,8 +87,8 @@ concentration slope can be expected to be better.
 
 A further change concerns the initial location $\vc x_1$. Choosing at randomly 
 might place it in an area with zero concentration which renders the acceptance 
-ratio $r$ undefined. Hence, it is better base the initial location on the source 
-locations. Unfortunately, given a plume dispersion 
+ratio $r$ undefined. Hence, it is better to base the initial location near the 
+source locations. Unfortunately, given a plume dispersion 
 (Equation~\ref{eqn:plumedisp}) the plume concentration is undefined at the 
 source location. To circumvent this, the initial location $\vc x_1$ should be 
 excluded from the samples.
