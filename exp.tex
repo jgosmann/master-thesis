@@ -6,6 +6,10 @@ compare the different acquisition functions based on the noise-free scenarios.
 Subsequently, the performance of PDUCB was evaluated on the noisy scenarios and 
 using multiple UAVs.
 
+Note that in all calculations of error measures predicted concentration values 
+below zero were set to exactly 0 as a negative concentration is physically not 
+possible.
+
 \section{Best Covariance Function for Plume Modelling}\label{sec:bestkernel}
 To obtain the best covariance function including its parameters to approximate 
 a plume distribution these were evaluated using the test-set method. For each of 
@@ -149,8 +153,8 @@ Table~\ref{tbl:err-g-nf-ss-sv}--\ref{tbl:err-d-nf-ms-sv}.  The average reduction
 (over trials) of the RMISE against simulation time in the single source Gaussian 
 scenario (G-NF-SS-SV) is plotted in Figure~\ref{fig:errtrace-nf} and looks 
 essentially the same for WRMISE and the QRSim reward and therefore it is not 
-shown fer those measures. Finally, Figure~TODO visualizes some example UAV 
-trajectories for the different acquisition functions.
+shown for those measures. Finally, Figure~\ref{fig:trajectory} visualizes an 
+example UAV trajectory for the PDUCB acquisition function.
 
 \begin{figure}
     \centering
@@ -205,9 +209,9 @@ trajectories for the different acquisition functions.
         \multicolumn{1}{l}{$\kappa$} &
         \multicolumn{1}{l}{$\gamma$} &
         \multicolumn{1}{c}{Mean} &
-        \multicolumn{1}{c}{Std} &
+        \multicolumn{1}{c}{SD} &
         \multicolumn{1}{c}{Mean} &
-        \multicolumn{1}{c}{Std} \\
+        \multicolumn{1}{c}{SD} \\
         & & &
         \multicolumn{1}{c}{\si{\nano\gram\per\meter\cubed}} &
         \multicolumn{1}{c}{\si{\nano\gram\per\meter\cubed}} &
@@ -297,10 +301,25 @@ trajectories for the different acquisition functions.
         the $\kappa$ parameter by lightness.}\label{fig:errtrace-nf}
 \end{figure}
 
+\begin{figure}
+    \centering
+    \includegraphics[width=6.5cm]{plots/trajectory}
+    \caption[Example of an UAV trajectory]{Example of an UAV trajectory using 
+        the PDUCB acquisition function with $\kappa = 1.25$, $\gamma 
+        = -10^{-7}$, and automatic scaling in the single source Gaussian 
+        scenario. The plume is shown in red.}\label{fig:trajectory}
+\end{figure}
+
 This is a rich dataset from which quite a few insights can be gained. First of 
-all it can be noted that the GO acquisition function does not perform very well.  
-Even in the single source Gaussian scenario the RMISE is only reduced by about 
-\SI{20}{\percent} and in the other two scenarios it performs even worse.
+all it can be noted that the normalized QRSim reward attributes almost always 
+a better performance to the algorithms than the other two error measures.  This 
+is consistent with the argument in Chapter~\ref{sec:qrsim-reward} that the 
+reward may be underestimated at concentration boundaries.
+
+Turning to the actual utility functions it can be noted that the GO function 
+does not perform very well.  Even in the single source Gaussian scenario the 
+RMISE is only reduced by about \SI{20}{\percent} and in the other two scenarios 
+it performs even worse.
 
 Comparing DUCB and PDUCB the latter one consistently performs better with 
 a reduction in the RMISE and WRMISE by at least additional \SI{11}{\percent} and 
@@ -345,8 +364,23 @@ The PDUCB performance might not seem to be too impressive in the dispersion
 scenarios, too. However, one has to keep in mind that even in 
 Section~\ref{sec:bestkernel} with much more samples the RMISE could not be 
 reduced to less than \SI{61}{\percent}.  Also, the qualitatively the plume is 
-predicted at the correct location as Figure~TODO shows, despite some deviance of 
-the exact concentration values.
+predicted at the correct location as Figure~\ref{fig:plume} shows, despite some 
+deviance of the exact concentration values. The largest difference to the true 
+distribution is close to the source at the concentration maximum.
+
+\begin{figure}
+    \centering
+    \subfigure[Prediction]{\includegraphics[width=0.3\textwidth]{plots/plume-prediction}\label{fig:plume-prediction}}
+    \subfigure[Difference]{\includegraphics[width=0.3\textwidth]{plots/plume-diff}\label{fig:plume-diff}}
+    \subfigure[True 
+    distribution]{\includegraphics[width=0.3\textwidth]{plots/plume-true}\label{fig:plume-true}}
+    \caption[Example visualization of the plume prediction]{One instance of the 
+        single source Gaussian dispersion scenario (D-NF-SS-SV).  
+        \subref{fig:plume-prediction} Mean of the Gaussian process.  
+        \subref{fig:plume-diff} The absolute value of the difference of the 
+        predicted and true distribution.  \subref{fig:plume-true} The true plume 
+        distribution.}\label{fig:plume}
+\end{figure}
 
 Given this discussion I decided to limit further experiments to the PDUCB 
 acquisition function as the other options seem to not a viable option (except 
@@ -360,8 +394,6 @@ $\gamma = \num{-1e-7}$ which also good results. Both scaling approaches
 from these results which one is better. Though, the automatic scaling is a bit 
 worse in terms of error, it has one less parameter which would be set according 
 to the range of concentration values.
-
-TODO example run visualizations
 
 \section{Evaluation in a Noisy Setting}\label{sec:noisy}
 It is important to verify that the methods for plume modelling also work in 
@@ -461,9 +493,9 @@ a bit faster after the plume has bee discovered.
         Search method &
         \multicolumn{1}{l}{Scaling} &
         \multicolumn{1}{c}{Mean} &
-        \multicolumn{1}{c}{Std} &
+        \multicolumn{1}{c}{SD} &
         \multicolumn{1}{c}{Mean} &
-        \multicolumn{1}{c}{Std} \\
+        \multicolumn{1}{c}{SD} \\
         & &
         \multicolumn{1}{c}{\si{\nano\gram\per\meter\cubed}} &
         \multicolumn{1}{c}{\si{\nano\gram\per\meter\cubed}} &

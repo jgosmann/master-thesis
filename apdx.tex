@@ -117,7 +117,8 @@ This is obvious from the inductive step for a full update.
     u\ped{PDUCB}(\vc x) &= u_1(\vc x) + s\ped{PDUCB}(\vc y) u_2(\vc x) \\
     u_1(\vc x) &= \del{1 - a} \cdot \ln\del{\mu_+(\vc x) + \varepsilon} 
     + a \cdot \ln \varepsilon \\
-    u_2(\vc x) &= \kappa \cdot \sigma^2(\vc x) + \gamma \cdot d^2(\vc x, \vc x')
+    u_2(\vc x) &= \kappa \cdot \del[1]{\sigma^2(\vc x) - \sigma\ped{n}^2} 
+    + \gamma \cdot d^2(\vc x, \vc x')
     \end{align*}
     with
     \begin{align*}

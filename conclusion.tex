@@ -6,9 +6,11 @@ the steep concentration gradients and high locality are the main problem.
 
 In this work DUCB has been adapted to PDUCB which could be shown to work 
 reasonable well also for plume dispersions. Nevertheless, there is still room 
-for improvement as the error is seldom reduced by more than TODO\SI{1}{\percent} 
-on average. The PDUCB algorithm could successfully be extended to multiple UAVs 
-to increase the speed of mapping the dispersion.
+for improvement as the error is seldom reduced by more than \SI{30}{\percent} on 
+average. Also, an automatic scaling was introduced which allows choosing the 
+PDUCB parameters independent of the actual concentrations. Finally, the PDUCB 
+algorithm was extended for the use with multiple UAVs. However, this did not 
+result in a better performance.
 
 Besides the modelling of the plume distribution, localizing the dispersion at 
 all is also an important problem. Noisy data does not allow to reliably estimate 

@@ -354,8 +354,6 @@ a multitude of effects like obstacles and local changes in wind.  That might
 make it impossible to derive valid structural assumptions for using 
 a non-stationary kernel.
 
-TODO read and maybe include non-stationary papers
-
 \section{Hyper-parameter Selection}
 Though Gaussian processes are non-parametric, the choice of the covariance 
 function will introduce hyper-parameters $\vc \theta$ (i.\,e.~the length scale) 
@@ -414,23 +412,66 @@ as for each update of the hyper-parameters $\tilde{\mat K}^{-1}$ has to be newly
 calculated.  Thus, in an online setting it is far more efficient to keep the 
 hyper-parameters fixed or only update them occasionally.
 
-\section{Active Learning}\label{sec:utility}
+\section{Active Learning and Bayesian Optimization}
 A setting in which a learning algorithm can freely choose the next training 
 input is called \newterm{active learning}. A general introduction to the topic 
-is provided by \textcite{Settles:2009vo}. Here, I will focus on how to realize 
-active learning in the context of Gaussian processes.
+is provided by \textcite{Settles:2009vo}. The \newtermAbbrev{Bayesian 
+    optimization}{BO} framework provides a method well suited for active 
+learning with Gaussian process. An extensive introduction to Bayesian 
+optimization is given by \textcite{Brochu:2010um}.
 
-In general, one defines a \newterm{utility} or \newterm{acquisition} function 
-$u(\vc x)$ indicating the expected benefit for choosing $\vc x$ as next training 
-sample. Hence, the optimal choice is $\argmax_{\vc x} u(\vc x)$. Equivalently, 
-it is possible to use the negative of a loss function $u(\vc x) = - \lambda(\vc 
-x)$.
+In short Bayesian optimization is a method for finding the maximum of an 
+objective function $f(\vc x)$. The only condition on $f(\vc x)$ is that it is 
+Lipschitz continuous, meaning that a constant $C$ exists, such that
+\begin{equation}
+    \abs{f(\vc x) - f(\vc x')} \leq C \abs{\vc x - \vc x'} \text{.}
+\end{equation}
+A closed form expression of $f(\vc x)$ may be unknown and it might be costly to 
+evaluate. Because of the latter Bayesian optimization tries to keep the number 
+of function evaluations small.
 
-The choice of $u(\vc x)$ influences the exploration-exploitation trade-off and 
-on which areas of the input space the learning will be focussed. In the 
-estimation of a plume distribution samples should be acquired mostly at places 
-with high concentrations, but once such an area is well estimated further 
-exploration should follow to possibly find further sources.
+The general BO algorithm can be described as follows: Given the prior beliefs 
+about the objective function $p(f)$ a sampling location $\vc x_t$ is chosen. The 
+sample acquired at $\vc x$ is used to obtain a posterior according to Bayes' 
+Theorem
+\begin{equation}
+    p(f|\mathcal{D}_{1:t}) \propto p(\mathcal{D}_{1:t} | f) p(f) \text{.}
+\end{equation}
+This posterior represents the updated beliefs about the objective function.
+
+The beliefs about the objective function can be expressed using Gaussian 
+processes. Adding further data points gives corresponds to obtaining an updated 
+posterior. The complete BO algorithm with Gaussian processes is stated in 
+Algorithm~\ref{algo:bo}.
+
+\begin{algorithm}[t]
+    \For{$t = 1, 2, \dots$}{
+        Find $\vc x_t$ by optimizing the acquisition function over the GP\@: 
+        $\vc x_t = \argmax_{\vc x} u(\vc x|\mathcal{D}_{1:t-1})$\;
+        Sample the objective function: $y_t = f(\vc x_t) + \varepsilon_t$\;
+        Augment the data $\mathcal{D}_{1:t} = \{\mathcal{D}_{1:t-1}, (\vc x_t, 
+        y_t)\}$ and update the GP\@.
+    }
+    \caption{Bayesian optimization algorithm using a Gaussian Process. Taken 
+        from \textcite[6]{Brochu:2010um}}\label{algo:bo}
+\end{algorithm}
+
+So far it is still open how the sampling location $\vc x_t$ is selected. For 
+that an \newterm{utility} or \newterm{acquisition}\footnote{The terms will be 
+    used interchangeable.} function $u(\vc x)$ indicating the expected benefit 
+for choosing $\vc x$ as next training sample.  Hence, the optimal choice is 
+$\argmax_{\vc x} u(\vc x)$.  Equivalently, it is possible to use the negative of 
+a loss function $u(\vc x) = - \lambda(\vc x)$. In the next section different 
+possible acquisition functions will be discussed in the context of plume 
+distribution modelling.
+
+\subsection{Acquisition Functions}\label{sec:utility}
+The choice of the acquisition function $u(\vc x)$ influences the 
+exploration-exploitation trade-off and on which areas of the input space the 
+learning will be focussed.  In the estimation of a plume distribution samples 
+should be acquired mostly at places with high concentrations, but once such an 
+area is well estimated further exploration should follow to possibly find 
+further sources.
 
 \Textcite{Marchant:2012wb} proposed the \newtermAbbrev{distance-based upper 
     confidence bound}{DUCB} for a similar scenario of environmental monitoring 
@@ -441,12 +482,17 @@ exploration should follow to possibly find further sources.
 \end{equation}
 The mean prediction $\mu(\vc x)$ and the predictive variance $\sigma^2(\vc x)$ 
 are obtained directly from the Gaussian process, $d(\vc x, \vc x')$ denotes the 
-Euclidean distance of $\vc x$ to the last sample location $\vc x'$. The 
-parameter $\kappa$ controls the exploration-exploitation balance. Higher values 
-give more importance to decreasing the predictive variance and lead to more 
-exploration. The parameter $\gamma \leq 0$ adjusts the distance penalty.  
+Euclidean distance of $\vc x$ to the last sample location $\vc x'$. For ease of 
+notation these functions are assumed to be unitless. Precisely this means that 
+$\mu(\vc x)$ is divided by \si{\gram\per\meter\cubed}, $\sigma^2(\vc x)$ by 
+\si{{\gram\squared\per\meter\tothe{6}}\squared}, and $d(\vc x, \vc x')$ by 
+\si{\meter}.
+
+The parameter $\kappa$ controls the exploration-exploitation balance.  Higher 
+values give more importance to decreasing the predictive variance and lead to 
+more exploration.  The parameter $\gamma \leq 0$ adjusts the distance penalty.  
 Favoring location near to the current UAV position might decrease the distance 
-travelled and save energy as well as time. The original DUCB formulation by 
+travelled and save energy as well as time.  The original DUCB formulation by 
 \textcite{Marchant:2012wb} did not include the scaling factor $s(\vc y)$. To 
 match that formulation it has to be set to $s\ped{DUCB}(\vc y) = 1$. Another 
 possible choice will be discussed below.
@@ -462,7 +508,8 @@ opposite to that, the spatial distribution of a gas plume is much more localized
 \begin{multline}
     u\ped{PDUCB}(\vc x) = \del{1 - a} \cdot \ln\del{\mu_+(\vc x) + \varepsilon} 
     + a \cdot \ln \varepsilon \\ + s\ped{PDUCB}(\vc y) \sbr{\kappa \cdot 
-        \sigma^2(\vc x) + \gamma \cdot d^2(\vc x, \vc x')}
+        \del[1]{\sigma^2(\vc x) -  \sigma\ped{n}^2} + \gamma \cdot d^2(\vc x, 
+        \vc x')}
 \end{multline}
 with
 \begin{align}
@@ -483,6 +530,10 @@ gradient based optimizers. However, due to the logarithm the function would not
 be differentiable for $\mu(\vc x) \rightarrow 0$. Thus, it is weighted with $(1 
 - a)$ and faded out to $\ln \varepsilon$ to restore differentiability (proof in 
 Appendix~\ref{sec:pducb-diff}).
+
+The noise variance $\sigma\ped{n}^2$ is subtracted from the predictive variance 
+as $\sigma^2(\vc x) \geq \sigma\ped{n}^2$ and this way $\kappa$ needs no 
+adjustment if the noise variance changes.
 
 A further change in PDUCB compared to DUCB is the squaring of the distance which 
 will reduce the penalty around $\vc x'$ (while increasing it further away).  
@@ -521,9 +572,10 @@ advance.  Thus, it would be helpful to set these parameters automatically from
 $\vc y$, the data seen so far.  This can be done by setting the scaling factor 
 $s(\vc y)$ defined for the respective acquisition functions as
 \begin{align}
-    s\ped{DUCB}(\vc y) &= \max \vc y \label{eqn:scale-ducb}\\
-    s\ped{PDUCB}(\vc y) &= \ln(\max \vc y + \varepsilon) - \ln \varepsilon 
-    \text{.} \label{eqn:scale-pducb}
+    s\ped{DUCB}(\vc y) &= \max \vc y \cdot \si{\meter\cubed\per\gram} 
+    \label{eqn:scale-ducb}\\
+    s\ped{PDUCB}(\vc y) &= \ln(\max \vc y \cdot \si{\meter\cubed\per\gram} 
+    + \varepsilon) - \ln \varepsilon \text{.} \label{eqn:scale-pducb}
 \end{align}
 The parameters $\kappa$ and $\gamma$ can then be set independent of the actual 
 values of $\vc y$.
@@ -558,7 +610,18 @@ utility function
         \sigma^2(\vc x)} + \sigma^2(\vc x) N\!\del{\eta; \mu(\vc x), 
         \sigma^2(\vc x)}\\ &\quad+ \gamma \cdot d^2(\vc x, \vc x') \text{.}
 \end{split} \end{align}
-TODO include multi-step look-ahead? process mixtures?
+This approach can extended to perform a look-ahead of multiple steps. However, 
+this was not done here.
+
+In Figure~\ref{fig:acqfns} a graphical comparison of the proposed utility 
+functions is given for a one-dimensional example. It can be seen that DUCB 
+heavily focusses on the function maximum without much exploration in other 
+areas. The GO acquisition function also acquires more samples around the 
+maximum, but reduces the uncertainty more equally over the domain. In comparison 
+to these two functions PDUCB seems to also focus around the maxima, but with 
+a wider exploration around those. In Chapter~\ref{sec:cmputility} I will more 
+closely look on how well these functions work to estimate a plume dispersion 
+with different parameter choices.
 
 \begin{figure}
     \centering
@@ -574,15 +637,6 @@ TODO include multi-step look-ahead? process mixtures?
         $s\ped{PDUCB}(\vc y) = 70$. The initial sample was always chosen at $x_0 
         = -7$.}\label{fig:acqfns}
 \end{figure}
-In Figure~\ref{fig:acqfns} a graphical comparison of the proposed utility 
-functions is given for a one-dimensional example. It can be seen that DUCB 
-heavily focusses on the function maximum without much exploration in other 
-areas. The GO acquisition function also acquires more samples around the 
-maximum, but reduces the uncertainty more equally over the domain. In comparison 
-to these two functions PDUCB seems to also focus around the maxima, but with 
-a wider exploration around those. In Chapter~\ref{sec:cmputility} I will more 
-closely look on how well these functions work to estimate a plume dispersion 
-with different parameter choices.
 
 \subsection{Multiple UAVs}\label{sec:multiple-uavs}
 Using more than one UAV might considerably speed up the estimation of a plume 
@@ -599,7 +653,7 @@ will be used where $\vc x_j$ is the position of the $j$-th UAV\@. This modified
 acquisition function basically introduces a penalty for locations close to other 
 UAVs to spread them out.
 
-\subsection{Bootstrapping}\label{sec:bootstrapping}
+\subsection{Initial Search Strategies}\label{sec:bootstrapping}
 As long as no minimal concentration has been measured all of the proposed 
 acquisition functions do not have a unique maximum. Though one could choose 
 sampling locations randomly, this might take a long time until the plume gets 
@@ -611,18 +665,20 @@ height.  Without noise this is sufficient to obtain enough information for
 a successful usage of the discussed acquisition functions.
 
 Considering noise a second strategy is needed as measurements of low 
-concentrations are not reliably anymore. This strategy consists of surrounding 
-the area at different heights until a criterion that a plume as been found is 
-fulfilled. The criterion employed here is that the maximum of all concentration 
-measurements $\max y_i$ for one surrounding has to be larger than $5\sigma(y)$ 
-with $\sigma(y)$ being the standard deviation of the $y_i$.
+concentrations are not reliably anymore. This strategy, in the following called 
+\newterm{complete search}, consists of surrounding the area at different heights 
+until a criterion that a plume as been found is fulfilled. The criterion 
+employed here is that the maximum of all concentration measurements $\max y_i$ 
+for one surrounding has to be larger than $5\sigma(y)$ with $\sigma(y)$ being 
+the standard deviation of the $y_i$.
 
-This second strategy may also take a long time before a plume has been found, 
+This complete search may also take a long time before a plume has been found, 
 but should be faster than random exploration. If the wind direction is known 
-(which is not the case in the standard QRSim scenarios), a third strategy can be 
-used.  It improves the second strategy by not doing complete surrounds of the 
-area, but only along the two area edges which are ``hit'' by the wind. Those are 
-the only two were the plume might be detected.
+(which is not the case in the standard QRSim scenarios), a third strategy called 
+\newterm{wind based search} can be used.  It improves the second strategy by not 
+doing complete surrounds of the area, but only along the two area edges which 
+are ``hit'' by the wind.  Those are the only two were the plume might be 
+detected.
 
 These bootstrapping strategies can be easily extended to multiple UAVs by 
 assigning different heights to each one.
