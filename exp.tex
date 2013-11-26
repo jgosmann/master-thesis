@@ -118,11 +118,11 @@ way-points were chosen with one of the acquisition functions discussed in
 Chapter~\ref{sec:utility}. The optimization of that functions has been described 
 in Chapter~\ref{sec:fnopt}.
 
-Each trial was allowed to run for a maximum of \SI{3000}{\second} in simulation 
-time. However, when a new target way-point was within \SI{3}{\meter} of the 
-previous one the UAV was considered to become stuck in a maximum of the 
-acquisition function and the simulation was stopped at that point to reduce 
-overall simulation time. A plume measurement was taken every second.
+Each trial was allowed to run until a maximum of \num{3000} plume measurements 
+was acquired. A plume measurement was taken every second. When a new target 
+way-point was within \SI{3}{\meter} of the previous one the UAV was considered 
+to become stuck in a maximum of the acquisition function and the simulation was 
+stopped at that point to reduce overall simulation time.
 
 The error measures were estimated as described in Chapter~\ref{sec:error}. The 
 samples for that where chosen from 1000 uniformly distributed sampling 
@@ -217,21 +217,19 @@ trajectories for the different acquisition functions.
     \centering
     \begin{errtbl}
         \errtblhead{RMISE}
-        DUCB & 1.25 & \num{-1e-07} & 249.47 & 154.87 & 0.29 & 0.20 \\
-        auto-scaled DUCB & 1.50 & \num{-1e-08} & 250.56 & 154.55 & 0.31 & 0.25 
-        \\
-        PDUCB & 0.10 & \num{-1e-09} & 191.16 & 198.60 & 0.18 & 0.13 \\
-        auto-scaled PDUCB & 0.10 & \num{-1e-07} & 190.73 & 180.43 & 0.18 & 0.12 \\
-        GO & 0.10 & \num{-1e-08} & 745.74 & 317.59 & 0.80 & 0.13 \\
+        DUCB & 1.25 & \num{-1e-07} & 261.27 & 184.79 & 0.29 & 0.20 \\
+        auto-scaled DUCB & 1.50 & \num{-1e-08} & 260.06 & 180.16 & 0.31 & 0.25 \\
+        PDUCB & 0.10 & \num{-1e-09} & 206.79 & 242.72 & 0.18 & 0.13 \\
+        auto-scaled PDUCB & 0.10 & \num{-1e-07} & 204.51 & 213.98 & 0.18 & 0.12 \\
+        GO & 0.10 & \num{-1e-08} & 770.91 & 376.38 & 0.80 & 0.13 \\
         \midrule
         \\
         \errtblhead{WRMISE}
-        DUCB & 1.25 & \num{-1e-07} & 115.25 & 109.04 & 0.21 & 0.22 \\
-        auto-scaled DUCB & 1.50 & \num{-1e-08} & 122.45 & 112.15 & 0.25 & 0.28 
-        \\
-        PDUCB & 0.10 & \num{-1e-06} & 91.73 & 122.39 & 0.13 & 0.14 \\
-        auto-scaled PDUCB & 0.10 & \num{-1e-07} & 92.62 & 120.08 & 0.13 & 0.13 \\
-        GO & 0.10 & \num{-1e-08} & 472.51 & 219.39 & 0.80 & 0.15 \\
+        DUCB & 1.25 & \num{-1e-07} & 121.46 & 122.79 & 0.21 & 0.22 \\
+        auto-scaled DUCB & 1.50 & \num{-1e-08} & 127.55 & 123.92 & 0.25 & 0.28 \\
+        PDUCB & 0.10 & \num{-1e-06} & 100.19 & 142.12 & 0.13 & 0.14 \\
+        auto-scaled PDUCB & 0.10 & \num{-1e-07} & 100.58 & 137.84 & 0.13 & 0.13 \\
+        GO & 0.10 & \num{-1e-08} & 489.22 & 258.44 & 0.80 & 0.15 \\
     \end{errtbl}
     \caption[Minimal error values G-NF-SS-SV.]{The minimal obtained error (RMISE 
         and WRMISE) for each acquisition function and the parameter values used 
@@ -267,19 +265,19 @@ trajectories for the different acquisition functions.
     \centering
     \begin{errtbl}
         \errtblhead{RMISE}
-        DUCB & 1.25 & \num{0.0} & 20.63 & 11.60 & 0.93 & 0.08 \\
-        auto-scaled DUCB & 2.00 & \num{-0.0001} & 18.45 & 10.97 & 0.83 & 0.13 \\
-        PDUCB & 0.50 & \num{0.0} & 16.55 & 11.76 & 0.68 & 0.18 \\
-        auto-scaled PDUCB & 1.25 & \num{-1e-06} & 16.62 & 11.87 & 0.68 & 0.19 \\
-        GO & 0.10 & \num{0.0} & 20.70 & 11.76 & 0.92 & 0.11 \\
+        DUCB & 1.25 & \num{0.0} & 16.68 & 7.73 & 0.93 & 0.08 \\
+        auto-scaled DUCB & 2.00 & \num{-0.0001} & 14.77 & 6.93 & 0.83 & 0.13 \\
+        PDUCB & 0.50 & \num{0.0} & 13.13 & 7.82 & 0.68 & 0.18 \\
+        auto-scaled PDUCB & 1.25 & \num{-1e-06} & 13.20 & 7.87 & 0.68 & 0.19 \\
+        GO & 0.10 & \num{0.0} & 16.74 & 7.91 & 0.92 & 0.11 \\
         \midrule
         \\
         \errtblhead{WRMISE}
-        DUCB & 0.50 & \num{-1e-05} & 14.11 & 10.03 & 0.93 & 0.14 \\
-        auto-scaled DUCB & 2.00 & \num{-0.0001} & 12.11 & 9.60 & 0.80 & 0.21 \\
-        PDUCB & 1.00 & \num{-1e-06} & 10.99 & 10.86 & 0.62 & 0.29 \\
-        auto-scaled PDUCB & 1.25 & \num{-1e-05} & 10.80 & 10.59 & 0.65 & 0.26 \\
-        GO & 0.10 & \num{0.0} & 14.06 & 9.96 & 0.93 & 0.12 \\
+        DUCB & 0.50 & \num{-1e-05} & 11.35 & 6.58 & 0.93 & 0.14 \\
+        auto-scaled DUCB & 2.00 & \num{-0.0001} & 9.66 & 6.11 & 0.80 & 0.21 \\
+        PDUCB & 1.00 & \num{-1e-06} & 8.79 & 7.67 & 0.62 & 0.29 \\
+        auto-scaled PDUCB & 1.25 & \num{-1e-05} & 8.44 & 7.02 & 0.65 & 0.26 \\
+        GO & 0.10 & \num{0.0} & 11.30 & 6.48 & 0.93 & 0.12 \\
     \end{errtbl}
     \caption[Minimal error values D-NF-MS-SV.]{The minimal obtained error (RMISE 
         and WRMISE) for each acquisition function and the parameter values used 
@@ -387,11 +385,23 @@ Instead of varying the length scale it was fixed to $\ell = \SI{5}{\meter}$ and
 the kernel variance $\sigma\ped{k}^2$ was varied from 
 \SIrange{1e-12}{1e-3}{\gram\squared\per\meter\tothe{6}}.
 
-The results are shown in Figure~TODO\@. The normalized error measures are 
-highest for low values of $\sigma\ped{k}^2$ approaching 1. For $\sigma\ped{k}^2 
-> \SI{1e-9}{\gram\squared\per\meter\tothe{6}}$ the WRMISE stays the same, but 
-the RMISE and QRSim reward slightly increase. This is even less pronounced for 
-multiple sources.
+The results are shown in Figure~\ref{fig:kvar}. The normalized error measures 
+are highest for low values of $\sigma\ped{k}^2$ approaching 1. For 
+$\sigma\ped{k}^2 > \SI{1e-9}{\gram\squared\per\meter\tothe{6}}$ the WRMISE stays 
+the same, but the RMISE and QRSim reward slightly increase. This is even less 
+pronounced for multiple sources.
+
+\begin{figure}
+    \centering
+    \includegraphics{plots/kvar}
+    \caption[Influence of the kernel variance]{The normalized error using the 
+        Mat\'ern kernel ($\nu = 3/2$) in dependence of the kernel variance..  
+        The rows correspond to the RMISE, WRMISE, and QRSim reward error 
+        measures.  The columns correspond to a single source Gaussian (G-SN-SS), 
+        and a single source Gaussian dispersion (D-SN-SS). Both scenarios were 
+        simulated with sensor noise.  Error bars represent the standard 
+        error.}\label{fig:kvar}
+\end{figure}
 
 As all error measures do have their minimum at $\sigma\ped{k}^2 
 = \SI{1e-9}{\gram\squared\per\meter\tothe{6}}$ or have almost reached it, this 
@@ -419,34 +429,107 @@ of course wind information which was read out from the QRSim simulator.
 Apart from these points the same methods as in the noiseless case 
 (Section~\ref{sec:cmputility}) were used including the same number of 20~trials.
 
-The results for a single source are summarized in Figure~\ref{fig:noisy-ss} and 
-Table~\ref{tbl:noisy-ss}.  All tested variants reduce the normalized RMISE to 
-approximately \num{0.75} with a similar standard deviation around \num{0.23}.  
-Using the wind based search the error starts to decrease earlier as less area 
-has to be covered.  Also the overall decrease seems to be a bit faster after the 
-plume has bee discovered.
+The results are shown in Figure~\ref{fig:noisy-ss} and Tables~\ref{tbl:noisy-ss} 
+and~\ref{tbl:noisy-ms}. All tested variants reduce the normalized RMISE to 
+a value between \numrange{0.70}{0.83} in both scenarios with a similar standard 
+deviation around \numrange{0.17}{0.24} in the single source scenario.  Using the 
+wind based search the error starts to decrease earlier in the single source 
+scenario as less area has to be covered.  Also the overall decrease seems to be 
+a bit faster after the plume has bee discovered.
 
 \begin{figure}
-    TODO
-    \caption[TODO]{TODO}\label{fig:noisy-ss}
+    \centering
+    \includegraphics{plots/noisy-sv}
+    \caption[Normalized error in scenarios with sensor noise]{Average normalized 
+        error over time in the single source dispersion (D-SN-SS-SV, top row) 
+        and multiple source dispersion scenario (D-SN-MS-SV, bottom row). Both 
+        including sensor noise.  The columns columns correspond to the RMISE, 
+        WRMISE and the QRSim reward as error meausure. Solid lines show the 
+        results using the complete search method, where as dashed lines used the 
+        wind based search.  Thick lines show PDUCB with automatic scaling 
+        opposed to a constant scaling shown by the thin 
+        lines.}\label{fig:noisy-ss}
 \end{figure}
 
+\newenvironment{errtblb}{\begin{tabular}{llSSSS}\toprule}{\bottomrule\end{tabular}}
+\newcommand*{\errtblheadb}[1]{
+        & &
+        \multicolumn{2}{c}{#1} &
+        \multicolumn{2}{c}{Norm.\ #1} \\
+        \cmidrule(lr){3-4} \cmidrule(lr){5-6}
+
+        Search method &
+        \multicolumn{1}{l}{Scaling} &
+        \multicolumn{1}{c}{Mean} &
+        \multicolumn{1}{c}{Std} &
+        \multicolumn{1}{c}{Mean} &
+        \multicolumn{1}{c}{Std} \\
+        & &
+        \multicolumn{1}{c}{\si{\nano\gram\per\meter\cubed}} &
+        \multicolumn{1}{c}{\si{\nano\gram\per\meter\cubed}} &
+        & \\ \midrule }
+
 \begin{table}
-    TODO
-    \caption[TODO]{TODO}\label{tbl:noisy-ss}
+    \centering
+    \begin{errtblb}
+        \errtblheadb{RMISE}
+        complete & constant & 4.06 & 2.60 & 0.75 & 0.24 \\
+        complete & auto & 4.16 & 2.83 & 0.75 & 0.23 \\
+        wind & constant & 3.90 & 2.43 & 0.72 & 0.21 \\
+        wind & auto & 3.95 & 2.69 & 0.75 & 0.23 \\
+        \midrule
+        \\
+        \errtblheadb{WRMISE}
+        complete & constant & 2.57 & 2.26 & 0.67 & 0.32 \\
+        complete & auto & 2.55 & 2.63 & 0.63 & 0.36 \\
+        wind & constant & 2.27 & 2.05 & 0.60 & 0.33 \\
+        wind & auto & 1.85 & 1.66 & 0.55 & 0.32 \\
+    \end{errtblb}
+    \caption[Final error values D-SN-SS-SV]{Final error values in the noisy 
+        single source Gaussian scenario (D-SN-SS-SV).}\label{tbl:noisy-ss}
 \end{table}
 
-Looking at the WRMISE it turns out that the wind based search decreases the 
-normalized error by about \SI{7}{\percent} additionally compared to the complete 
-search. Thus, the wind based search is able to better approximate the actual 
-plume without increasing the approximation error in other area.
+\begin{table}
+    \centering
+    \begin{errtblb}
+        \errtblheadb{RMISE}
+        complete & constant & 14.07 & 8.16 & 0.75 & 0.21 \\
+        complete & auto & 13.53 & 7.51 & 0.73 & 0.17 \\
+        wind & constant & 15.68 & 8.72 & 0.83 & 0.22 \\
+        wind & auto & 14.75 & 8.33 & 0.77 & 0.22 \\
+        \midrule
+        \\
+        \errtblheadb{WRMISE}
+        complete & constant & 9.02 & 7.36 & 0.70 & 0.29 \\
+        complete & auto & 13.53 & 7.51 & 0.73 & 0.17 \\
+        wind & constant & 9.99 & 6.96 & 0.77 & 0.24 \\
+        wind & auto & 14.75 & 8.33 & 0.77 & 0.22 \\
+    \end{errtblb}
+    \caption[Final error values D-SN-MS-SV]{Final error values in the noisy 
+        multiple source Gaussian scenario (D-SN-MS-SV).}\label{tbl:noisy-ms}
+\end{table}
 
-With regard to the WRMISE the automatic scaling seems to perform a bit better 
-(difference of \num{0.05} in the normalized error), but this is not the case for 
-the RMISE\@.
+Looking at the WRMISE for a single source it turns out that the wind based 
+search decreases the normalized error by about \SI{7}{\percent} additionally 
+compared to the complete search. Thus, the wind based search is able to better 
+approximate the actual plume without increasing the approximation error in other 
+areas. With regard to the WRMISE the automatic scaling seems to perform a bit 
+better (difference of \num{0.05} in the normalized error), but this is not the 
+case for the RMISE\@. Given multiple source the performance of the search 
+strategies is almost equal.  Also, the scaling method does not have 
+a significant influence.
 
-TODO multiple sources
-TODO discussion/conclusion
+In the QRSim reward estimation occurs again an artifact in the multiple source 
+scaling as already seen in Section~\ref{sec:cmputility}.
+
+The results show that PDUCB can also be applied in a noisy setting. In 
+comparison to a noiseless setting the error in the estimation slightly increases 
+as would be expected given the same amount of training samples. However a more 
+extensive search strategy has to applied in the beginning. Using wind 
+information a good estimation might be obtained more quickly, but the effect is 
+rather small if existent at all. Both, a constant scaling and the automatic 
+scaling perform equally. This makes the automatic scaling a better choice as it 
+requires to set less parameters.
 
 \section{Multiple UAVs}
 Finally, the performance of the PDUCB acquisition function with the extension 
@@ -454,6 +537,49 @@ for multiples UAVs (Chapter~\ref{sec:multiple-uavs}) has been evaluated. For
 this exactly the same methods as in the previous section were used with 
 exception of the scenario. This was replaced by the multiple UAV, multiple 
 source plume dispersion scenario (D-SN-MS-MV). Also, a number of different $\rho 
-\in TODO$ has been tested.
+\in \{10^{-i} | i = 5, \dots, 11\}$ has been tested.
 
-TODO
+Figure~\ref{fig:mv-err} shows the final normalized error in dependence of the 
+value of $\rho$. Unfortunately, it is not possible to identify one value which 
+is clearly better than others. Also, the normalized error is seldom decreased 
+below \num{0.8}. The best result is still obtained by the wind based search with 
+auto-scaled PDUCB\@. This is most prominent for the WRMISE\@.
+
+\begin{figure}
+    \centering
+    \includegraphics{plots/multiple-uav}
+    \caption[Normalized error using multiple UAVs]{The final normalized error 
+        using multiple UAVs in the multiple source scenario (D-SN-MS-MV). Each 
+        plot corresponds to a different error measure.Solid lines show the 
+        results using the complete search method, where as dashed lines used the 
+        wind based search.  Thick lines show PDUCB with automatic scaling 
+        opposed to a constant scaling shown by the thin 
+        lines.}\label{fig:mv-err}
+\end{figure}
+
+To understand why the performance of multiple UAVs is at best the same as of 
+a single one it helps to directly compare those two scenarios as done in 
+Figure~\ref{fig:sv-vs-mv}. The decrease of the error stops earlier with multiple 
+UAVs as the limit of training samples is faster reached with more UAVs sampling.  
+As the error is decreasing only slightly faster with multiple UAVs the 
+additional UAVs acquire samples in regions which do not add much to the overall 
+estimation of the plume.
+
+There are different reasons why that might be the case. The plume of a single 
+source has a small spatial extent (except along the wind direction). Only one 
+UAV can acquire samples in it without risking a collision with other UAVs.  
+Moreover, the initial search strategy might be a problem. After one plume has 
+been identified all vehicles switch to using the acquisition function. However, 
+this makes the discovery of further plumes somewhat random.
+
+In conclusion there is definitely room for improvement regarding the usage of 
+multiple UAVs.
+
+\begin{figure}
+    \centering
+    \includegraphics{plots/sv-vs-mv}
+    \caption[Comparing the usage of a single and multiple UAVs.]{Comparison of 
+        the average normalized RMISE over time for a single UAV (solid line) and 
+        multiple UAVs (dashed lines, each line is a different $\rho$). In both 
+        setting a total of \num{3000} samples was acquired.}\label{fig:sv-vs-mv}
+\end{figure}
