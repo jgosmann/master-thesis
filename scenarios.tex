@@ -1,25 +1,24 @@
 \chapter{The QRSim Plume Modelling Scenarios}
-The general plume modelling scenario as tackeled in this thesis is part of the 
+The general plume modeling scenario as tackeled in this thesis is part of the 
 QRSim quadrotors simulator \parencite{denardi2013rn}. Several task variations 
 were proposed from which I chose a selection and to which I added some 
 modifications of my own.  The task scenarios can be classified along four 
 dimensions: type of dispersion (G, D), presence of sensor noise (NF, SN), single 
 or multiple pollutant sources (SS, MS), single or multiple vehicles (SV, MV).
 
-As long as not otherwise noted location vectors in the following are in the NED 
-(north, east, down) reference frame in the following.  Hence, the height of 
-a location $\vc x = (x_1, x_2, x_3)\Tr$ is given by $-x_3$.
+As long as not otherwise noted location vectors are in the NED (north, east, 
+down) reference frame.  Hence, the height of a location $\vc x = (x_1, x_2, 
+x_3)\Tr$ is given by $-x_3$.
 
 The most simple scenario is a Gaussian (G) plume without wind as shown in 
-Figure~\ref{fig:SS-G}.  The pollutant is emited at a constant rate resulting in 
+Figure~\ref{fig:SS-G}.  The pollutant is emitted at a constant rate resulting in 
 a three-dimensional (potentially non-isotropic) Gaussian plume distribution.  
 Given a source location $\vc s$, covariance matrix $\mat \varSigma$, and 
 emission rate $Q$ in \si{\gram\per\second} the concentration $c(\vc x)$ at 
 location $\vc x$ is given as
 \begin{equation}
     c(\vc x) = Q \cdot \si{\second\per\meter^3} \cdot \exp\!\del{-\frac{1}{2} 
-        \cdot \si{\meter^{-2}} \cdot (\vc x - \vc s)\Tr \mat \varSigma^{-1} (\vc 
-        x - \vc s)}.
+        (\vc x - \vc s)\Tr \mat \varSigma^{-1} (\vc x - \vc s)}.
 \end{equation}
 
 \begin{figure}
@@ -30,7 +29,7 @@ location $\vc x$ is given as
     dispersion]{\includegraphics[width=4.5cm]{plots/vis_dispersion}\label{fig:SS-D}}%
     \subfigure[Multiple source 
     dispersion]{\includegraphics[width=4.5cm]{plots/vis_multi_dispersion}\label{fig:MS-D}}
-    \caption[Visualizations of plume dispersions.]{Visualization of different 
+    \caption[Visualizations of plume dispersions]{Visualization of different 
         plume dispersions. The rear boundaries of the volume show 
         two-dimensional projections of concentration maxima in the respective 
         directions. Axes scale is in meters.}
@@ -56,15 +55,15 @@ diffusion parameters to $a = \SI{0.33}{\meter\tothe{2 - \mathit{b}}}$ and $b
 over the interval \SIrange{0.1}{2.5}{\gram\per\second}.
 
 Sensor noise (SN) of the plume sensor is assumed to be additive and distributed 
-according to $\mathcal{N}(0, \sigma\ped{noise}^2)$. In the noise free (NF) 
+according to $\mathcal{N}(0, \sigma\ped{sn}^2)$. In the noise free (NF) 
 scenarios no noise was added to the measurements. The standard deviation 
-$\sigma\ped{noise}$ was set to $\SI{e-5}{\gram\per\meter\cubed}$ in the 
-scenarios including noise.  The QRSim default scenarios set it to 
+$\sigma\ped{sn}$ was set to $\SI{e-5}{\gram\per\meter\cubed}$ in the scenarios 
+including noise.  The QRSim default scenarios set it to 
 $\SI{e-2}{\gram\per\meter\cubed}$, but given the low default plume concentration 
 this would require roughly an averaging of 385 samples from one single location 
-to reduce the magnitude of the noise to the same level as the highest plume 
-concentration values (see Appendix~\ref{sec:decnoise}).  Hence, the default 
-scenario is not solvable in a feasible amount of simulation time.
+to reduce the magnitude of the noise below the magnitude of the concentration 
+values (see Appendix~\ref{sec:decnoise}).  Hence, the default scenario is not 
+solvable in a feasible amount of simulation time.
 
 The overall concentration $c(\vc x)$ for $n$ sources like in 
 Figure~\ref{fig:MS-D} is obtained by summing the individual contributions 

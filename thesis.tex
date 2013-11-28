@@ -26,7 +26,7 @@
 \usepackage{polyglossia}
 %\usepackage{ngerman}
 \usepackage[retain-unity-mantissa=false,exponent-product=\cdot]{siunitx}
-\usepackage{scrpage2}
+%\usepackage{scrpage2}
 \usepackage{setspace}
 \usepackage{subfigure}
 \usepackage{upgreek}
@@ -58,16 +58,7 @@
 %\lstset{basicstyle=\fontfamily{pcr}\selectfont, keywordstyle=\bfseries, language=C++}
 \sisetup{per-mode=symbol}
 
-\pagestyle{scrheadings}
-%\automark[section]{section}
-%\clearscrheadfoot{}
-%\ofoot{\pagemark}
-%\ifoot{\headmark}
-% FIXME remove git hash for final version
-\ifoot{\gitCommitterIsoDate{} \gitHash}
-%\ohead{}
-%\deftripstyle{mychapter}{}{}{}{}{}{\pagemark}
-%\renewcommand*{\chapterpagestyle}{mychapter}
+%\pagestyle{scrheadings}
 
 \newcommand{\vc}[1]{\bm{#1}}
 \newcommand{\vcc}[1]{\textbf{#1}}
@@ -103,6 +94,7 @@
 \newacronym{EU}{EU}{European Union}
 \newacronym{NED}{NED}{north, east, down}
 \newacronym{SD}{SD}{standard deviation}
+\newacronym{norm}{norm.}{normalized}
 \glsadd{GNFSSSV}
 \glsadd{DNFSSSV}
 \glsadd{DNFMSSV}
@@ -112,6 +104,7 @@
 \glsadd{EU}
 \glsadd{NED}
 \glsadd{SD}
+\glsadd{norm}
 
 \addbibresource{references.bib}
 
@@ -127,28 +120,71 @@
 \newcommand{\addsym}[3]{\newglossaryentry{#1}{sort={#1},name={\ensuremath{#2}},description={#3}}\glsadd{#1}}
 \newcommand{\addspecialsym}[4]{\newglossaryentry{#1}{sort={#2},name={\ensuremath{#3}},description={#4}}\glsadd{#1}}
 \addspecialsym{sim}{~}{\sim}{distributed according to}
+\addspecialsym{blockmat}{[]}{[\ ]}{matrix in block notation}
 \addsym{0}{\vc{0}}{null vector $(0, \dots, 0)\Tr$}
+\addsym{A}{\norm{\mat{A}}}{norm of $\mat A$}
+\addsym{Aij}{(\mat{A})_{ij}}{element of $\mat A$ at row $i$ and column $j$}
 \addsym{AT}{\mat{A}\Tr}{the transpose of $\mat A$}
-\addsym{det}{\det{}\mat{A}}{the determinant of $\mat A$}
+\addsym{BV}{\mathcal{BV}}{set of basis vectors}
+\addsym{cov}{\cov(\vc{x})}{covariance (matrix) of elements of $\vc{x}$}
+\addsym{Ct}{-\mat{C_t}}{with $t$ samples sparsely approximated covariance 
+    matrix}
+\addsym{cx}{c (\vc{x})}{true concentration distribution}
+\addsym{D}{\mathcal{D}}{set of combined training inputs and targets $(\vc x_i, 
+    y_i)$}
+\addsym{dxx}{d (\vc{x}, \vc{x}')}{Euclidean distance (unitless)}
+    \addsym{det}{\det{}\mat{A}}{the determinant of $\mat A$}
 \addsym{diagx}{
     \diag\vc{x}}{diagonal matrix with the elements of the vector $\vc x$}
 \addsym{diagA}{
     \diag\mat{A}}{vector with the diagonal elements of the matrix $\mat A$}
+\addsym{E}{E}{error measure}
+\addsym{Ehat}{\hat{E}}{estimate of an error}
+\addsym{F}{F}{normalized error}
+\addsym{Ktilde}{\tilde{\mat{K}}}{covariance matrix including the noise variance 
+    $\sigma\ped{n}^2$ on the diagonal}
+\addsym{k}{k (\vc{x}, \vc{x}')}{some kernel, usually used as covariance 
+    function}
+\addsym{K}{K (X, X')}{matrix of pairwise covariances of $\vc x \in X$ and $\vc 
+    x' \in X'$}
+\addsym{Kvz}{K_{\nu} (z)}{modified Bessel function}
+\addsym{L}{\mat{L}}{Cholesky factor (lower, triangular matrix)}
+\addsym{ln}{\ln}{natural logarithm}
+\addsym{N}{N (x; \mu, \sigma^2)}{
+    Gaussian probability density at $x$ with mean~$\mu$ and variance~$\sigma^2$}
 \addsym{Ncal}{\mathcal{N} (\vc{m}, \mat{\Sigma})}{
     multivariate normal distribution with mean $\vc m$ and covariance matrix 
     $\mat \Sigma$}
+\addsym{mslim}{\mslim}{mean square limit}
 \addsym{p}{p (x)}{probability or probability density of $x$}
-\addsym{xi}{x_i}{$i$-th component of the vector $\vc x$}
-\addsym{xy}{x | y}{conditional random variable $x$ given $y$}
-\addspecialsym{Gamma}{Γ}{\Gamma(\nu)}{Gamma function}
-\addsym{Kvz}{K_{\nu} (z)}{modified Bessel function}
-\addsym{A}{\norm{\mat{A}}}{norm of $\mat A$}
-\addsym{x}{\abs{\vc{x}}}{Euclidian ($L^2$) norm of $\vc x$}
-\addsym{N}{N (x; \mu, \sigma^2)}{
-    Gaussian probability density at $x$ with mean~$\mu$ and variance~$\sigma^2$}
+\addsym{R}{R}{QRSim reward}
+\addsym{sy}{s (\vc{y})}{Scaling factor in an acquisition function}
+\addsym{ux}{u (\vc{x})}{utility function}
+\addsym{V}{V}{the simulated volume}
+\addsym{x}{\vc{x}}{some location or input data}
+\addsym{X}{X}{set of training inputs}
+\addsym{Xasterisk}{X_*}{set of test inputs}
+\addsym{xabs}{\abs{\vc{x}}}{Euclidean ($L^2$) norm of $\vc x$}
 \addspecialsym{Phi}{Φ}{\Phi(x; \mu, \sigma^2)}{
     Gaussian cummulative distribution function at $x$ with mean~$\mu$ and 
     variance~$\sigma^2$}
+\addsym{xmean}{\bar{x}}{mean of the random variable $x$}
+\addsym{xi}{x_i}{$i$-th component of the vector $\vc x$}
+\addsym{xy}{x | y}{conditional random variable $x$ given $y$}
+\addsym{y}{\vc{y}}{vector of training targets}
+\addspecialsym{gamma}{γ}{\gamma}{distance penalty weighting}
+\addspecialsym{Gamma}{Γ}{\Gamma(\nu)}{Gamma function}
+\addspecialsym{kappa}{κ}{\kappa}{variance weighting}
+\addspecialsym{mu}{μ}{\mu(\vc{x})}{mean predicted by a Gaussian process 
+    (unitless)}
+\addspecialsym{sigma}{σ}{\sigma^2(\vc{x})}{variance predicted by a Gaussian 
+    process (unitless)}
+\addspecialsym{sigmas}{σk}{\sigma\ped{k}^2}{kernel process variance}
+\addspecialsym{sigman}{σn}{\sigma\ped{n}^2}{noise variance of the Gaussian 
+    process}
+\addspecialsym{sigmasn}{σsn}{\sigma\ped{sn}^2}{sensor noise variance}
+\addspecialsym{sigmat}{σt}{\sigma\ped{t}^2}{novelty of input $\vc x_t$}
+\addspecialsym{rho}{ρ}{\rho}{weighting of distance to other UAVs}
 
 \begin{document}
 \frontmatter
@@ -175,6 +211,7 @@
         Dr.~Andreas~Ruttor
     \end{center}
 \end{titlepage}
+\cleardoublepage{}
 
 \thispagestyle{empty}
 \begin{german}
@@ -198,35 +235,33 @@
 \section*{\abstractname}
 Recent scientific work explored the possibility to use mobile robots for 
 environmental monitoring. This includes for example the estimation of ozone 
-concentrations or locating the source of a pollutant plume. So far the modelling 
-of the complete spatial distribution of a plume (which has quite different 
-spatial characteristics compared to the ozone concentrations) has not been done.  
-In this work existing methods of Bayesian optimization, namely global 
-optimization (GO) and the distance based upper confidence bound (DUCB), were be 
-evaluated on this task.  Also, a new method---plume distance based upper 
-confidence bound (PDUCB)---and an extension to multiple robots is proposed.  All 
-methods were tested in simulations using the QRSim quadrotor simulator. The 
-existing methods were not able to solve the task satisfyingly, whereas the PDUCB 
-method was able to approximate plume distributions with noisy measurements 
-reasonably well.
+concentrations or locating the source of a pollutant plume. So far the modeling 
+of the complete spatial distribution of a plume (which has different spatial 
+characteristics compared to the ozone concentrations) has not been done.  In 
+this work existing methods of Bayesian optimization, namely global optimization 
+(GO) and the distance based upper confidence bound (DUCB), were be evaluated on 
+this task.  Also, a new method~-- plume distance based upper confidence bound 
+(PDUCB)~-- and an extension to multiple robots is proposed.  All methods were 
+tested in simulations using the QRSim quadrotor simulator. The existing methods 
+were not able to solve the task satisfyingly, whereas the PDUCB method was able 
+to approximate plume distributions with noisy measurements reasonably well.
 
 \begin{german}
 \section*{\abstractname}
 Neuere wissenschaftliche Arbeiten haben die Möglichkeit untersucht mobile 
-Roboter zur Umweltüberwachung einzusetzen. Die beinhaltet die Vermessung von 
+Roboter zur Umweltüberwachung einzusetzen. Dies beinhaltet die Vermessung von 
 Ozonkonzentrationen und die Lokalisierung der Quelle einer Gasfahne. Bisher 
 wurde jedoch nicht versucht die komplette räumliche Verteilung einer Gasfahne 
-(welche deutlich andere räumliche Charisitika im Vergleich zu 
-Ozonkonzentrationen hat) zu bestimmen.  In dieser Arbeit wurde die Anwendbarkeit 
-globaler Optimierung (GO) und der distanzbasierte obere Konfidenzgrenze (DUCB), 
-bestehende Methoden Bayes'scher Optimierung, für diese Aufgabe beurteilt.  
-Weiterhin wird eine neue Methode~-- die distanzbasierte obere Konfidenzgrenze 
-für Gasfahnen (PDUCB)~-- sowie eine Erweiterung für mehrere Roboter 
-vorgeschlagen. Alle Methoden wurden in Simulationen mit dem QRSim 
-Quadrotorsimulator getestet. Die bestehenden Methoden waren nicht in der Lage 
-die Aufgabe zufriedenstellend zu lösen, wohingegen die PDUCB-Methode in der Lage 
-war die Verteilungen der Gasausbreitung angemessen gut mit verrauschten 
-Messungen anzunähern.
+(welche andere räumliche Charisitika im Vergleich zu Ozonkonzentrationen hat) zu 
+bestimmen.  In dieser Arbeit wurde die Anwendbarkeit globaler Optimierung (GO) 
+und der distanzbasierten oberen Konfidenzgrenze (DUCB), bestehende Methoden 
+Bayes'scher Optimierung, für diese Aufgabe beurteilt.  Weiterhin wird eine neue 
+Methode~-- die distanzbasierte obere Konfidenzgrenze für Gasfahnen (PDUCB)~-- 
+sowie eine Erweiterung für mehrere Roboter vorgeschlagen. Alle Methoden wurden 
+in Simulationen mit dem QRSim Quadrotorsimulator getestet. Die bestehenden 
+Methoden waren nicht in der Lage die Aufgabe zufriedenstellend zu lösen, 
+wohingegen die PDUCB-Methode in der Lage war die Verteilungen der Gasausbreitung 
+angemessen gut mit verrauschten Messungen anzunähern.
 \end{german}
 \vspace*{\fill}
 

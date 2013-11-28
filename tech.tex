@@ -6,7 +6,7 @@ after giving short general overview of the implementation.
 \section{Implementation}
 All simulations were performed with QRSim \parencite{denardi2013rn}, a quadrotor 
 simulator developed specifically to test high level tasks. It supports multiple 
-UAVs which are simulated with realistic dynamics of the platform. Also, equipped 
+UAVs, which are simulated with realistic platform dynamics.  Also, equipped 
 sensors (e.\,g.~GPS, IMU) are simulated with different sources of inaccuracies.  
 This includes wind influencing the vehicles as well as the plume dispersions.
 
@@ -88,5 +88,5 @@ defined at the boundaries of the simulated volume. When an UAV enters this
 margin in one dimension the corresponding velocity component will be set to $\pm 
 \vc v_{\max}$.
 
-A target $\vc t_i$ is considered to be reached when $\abs{\vc t_i - x_i} 
+A target $\vc t_i$ is considered to be reached when $\abs{\vc t_i - \vc x_i} 
 < \SI{3}{\meter}$.

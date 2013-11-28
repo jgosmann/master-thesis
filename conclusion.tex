@@ -1,18 +1,18 @@
 \chapter{Conclusion}
-Gaussian processes have been used before in modelling of spatial data and 
+Gaussian processes have been used before in modeling of spatial data and 
 environmental monitoring. However, previous approaches, namely DUCB, do not work 
 well for plume dispersions as the simulation experiments have shown. Presumably, 
 the steep concentration gradients and high locality are the main problem.
 
 In this work DUCB has been adapted to PDUCB which could be shown to work 
-reasonable well also for plume dispersions. Nevertheless, there is still room 
-for improvement as the error is seldom reduced by more than \SI{30}{\percent} on 
+reasonable well for plume dispersions. Nevertheless, there is still room for 
+improvement as the error is seldom reduced by more than \SI{30}{\percent} on 
 average. Also, an automatic scaling was introduced which allows choosing the 
 PDUCB parameters independent of the actual concentrations. Finally, the PDUCB 
 algorithm was extended for the use with multiple UAVs. However, this did not 
 result in a better performance.
 
-Besides the modelling of the plume distribution, localizing the dispersion at 
+Besides the modeling of the plume distribution, localizing the dispersion at 
 all is also an important problem. Noisy data does not allow to reliably estimate 
 a concentration gradient. This requires to use a systematic search approach.  
 Incorporating information of the wind direction speed up the search. Once 
@@ -25,17 +25,17 @@ trial basis would also allow a closer match of the prediction to the plume
 dispersion.
 
 Besides that, the prediction quality might be improved if wind information is 
-considered and included in the covariance function. Some pointer in that 
+considered and included in the covariance function. Some pointers in that 
 direction, though for a different algorithm, are given by 
 \textcite{Reggente:2009ti}. In general non-stationary kernels could improve the 
 prediction, but they come at the cost of more hyper-parameters and prior 
 assumptions about the plume dispersion which might be violated.
 
 In summary, the basic applicability of Gaussian processe with a PDUCB 
-acquisition function for plume distribution modelling has been shown. However, 
+acquisition function for plume distribution modeling has been shown. However, 
 there is quite a number of possibilities of improvement left for future work.  
 Also, it should be shown in future work that the proposed methods work in a real 
 world scenario as only simulations have been performed. Further interesting 
 research directions following from this work would be the inclusion and handling 
-of obstacles or the modelling of time-varying plume distributions.
+of obstacles or the modeling of time-varying plume distributions.
 

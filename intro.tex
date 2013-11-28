@@ -1,21 +1,22 @@
 \chapter{Introduction}
 Environmental monitoring is used to ensure water and air pollution levels are in
 compliance with governmental regulations \parencite[i.\,e.][]{Anonymous:1996ui}, 
-to monitor ozone concentrations and climate change,  as well as surveillance of 
+to monitor ozone concentrations and climate change, or for surveillance of 
 industrial facilities for leakages of pollutants to just name a few 
 applications.
 
-In many of these scenarios it is feasible to have a static sensor network.  It 
-is, therefore, not surprising the research on optimal sensor placement at fixed 
-locations exists \parencite[e.\,g.][]{Osborne:2008hi, Guestrin:2005cq, Wang:kz}.  
-However, better results might be obtainable using mobile robots which can move 
-to interesting areas and acquire more precise data there. Moreover, in some 
-scenarios like disaster response, where timely information is needed, it might 
-not be possible to first deploy an extensive sensor network. In this case mobile 
-robots allow here to quickly identify the interesting regions. The problem of 
-autonomously choosing the best locations for data acquisition is known as 
-\newterm{active learning}. \textcite{Marchant:2012wb} also used the term 
-\newtermAbbrev{intelligent environmental monitoring}{IEM}.
+In many of these scenarios it is feasible to have a static sensor network.  
+Therefore, it is not surprising that research on optimal sensor placement at 
+fixed locations exists \parencite[e.\,g.][]{Osborne:2008hi, Guestrin:2005cq, 
+    Wang:kz}.  However, better results might be obtainable using mobile robots 
+which can move to interesting areas and acquire more precise data there.  
+Moreover, in some scenarios like disaster response, where timely information is 
+needed, it might not be possible to first deploy an extensive sensor network. In 
+this case mobile robots allow here to quickly identify the interesting regions.  
+The problem of autonomously choosing the best locations for data acquisition is 
+known as \newterm{active learning}. In the setting of environmental surveillance 
+\textcite{Marchant:2012wb} also used the term \newtermAbbrev{intelligent 
+    environmental monitoring}{IEM}.
 
 In this work, I focus on a scenario proposed as part of the CompLACS project in 
 \textcite{denardi2013rn}: One or more sources emit a gaseous substance or 
@@ -24,7 +25,7 @@ has to be estimated with autonomously controlled \pabbrev{unmanned aerial
     vehicle}{UAV}. The rather steep concentration gradients and small spatial 
 extend orthogonal to the main dispersion axis add to the difficulty of this 
 problem.  With a few UAVs it is not possible to cover the whole volume of 
-investigation using a regular pattern densely enough in a timely manner.  It is 
+investigation using a regular pattern densely in a timely manner.  It is 
 necessary to focus on measurements in specific areas.  Furthermore, measurement 
 noise has to be taken into consideration.
 
@@ -40,23 +41,24 @@ real world applications with inaccurate data.  Instead they propose to build
 a statistical model with the gas concentration measurements as random variables.
 
 A widely used statistical model for spatial or spatio-temporal data are 
-\newterm{Gaussian processes}\footnote{In geospatial statistics the modelling 
+\newterm{Gaussian processes}\footnote{In geospatial statistics the modeling 
     with Gaussian processes is also known as \newterm{kriging}.}. In several 
-works \parencite[e.\,g.][]{Stachniss:2008vz, Marchant:2012wb} the modelled data 
+works \parencite[e.\,g.][]{Stachniss:2008vz, Marchant:2012wb} the modeled data 
 were actually gas concentrations. Also, there exists some prior work on actively 
 selecting the sampling locations. \Textcite{Stranders:2008wl} do this for 
 discrete locations; \textcite{Singh:2010wt} and \textcite{Marchant:2012wb} for 
 continuous locations. However, none of these approaches is optimal for plume 
-dispersions.
+dispersions. This work will porpose and evaluate the improved PDUCB method for 
+the given task.
 
-The thesis is organized as follows. First, a description of the plume modelling 
+The thesis is organized as follows. First, a description of the plume modeling 
 scenarios will be given establishing the background of this work.  
 Chapter~\ref{sec:gp} will give a general introduction into Gaussian Processes 
-and discusses some topics specifically related to the modelling of plume 
+and discusses some topics specifically related to the modeling of plume 
 distributions as online updates and active learning. Following in 
 Chapter~\ref{sec:error} a number of error measures will be introduced needed to 
 evaluate different approaches. Some further details on how the algorithms were 
 implemented are given in Chapter~\ref{sec:tech}. The results of a number of 
 simulation experiments are presented in Chapter~\ref{sec:exp}, before providing 
-a short outlook on modelling time-varying plume distributions in 
+a short outlook on modeling time-varying plume distributions in 
 Chapter~\ref{sec:timevarying}. Finally, a conclusion will be given.

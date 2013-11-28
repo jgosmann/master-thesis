@@ -1,7 +1,7 @@
 \chapter{Error Measures}\label{sec:error}
 To be able to compare different statistical models some kind of performance 
 measure, usually in the form of an error measure, is needed. In the plume 
-modelling task one is interested in the deviation of the predicted mean 
+modeling task one is interested in the deviation of the predicted mean 
 concentrations $\mu(\vc x)$ from the true ones $c(\vc x)$. When using the $L^2$ 
 norm and integrating over the complete task volume $V$ the \newtermAbbrev{root 
     mean integrated square error}{RMISE}
@@ -14,22 +14,23 @@ with
     v = \int_V \dif\vc x
 \end{equation}
 is obtained. However, it can be assumed that accurate predictions are more 
-important where the concentrations is actually high 
-\parencite[c.p.][]{Marchant:2012wb}. Thus, it might be beneficial to introduce 
-a weighting factor $w(\vc x)$ to
+important where the concentration is actually high 
+\parencite[cp.][]{Marchant:2012wb}. Thus, it might be beneficial to introduce 
+a weighting factor $w(\vc x)$ to give the \newtermAbbrev{weighted root mean 
+    integrated square error}{WRMISE}
 \begin{equation}
     E\ped{WRMISE} = \sqrt{\frac{1}{v} \int_V \del{c(\vc x) - \mu(\vc x)}^2 w(\vc 
         x) \dif\vc x} \text{,}
 \end{equation}
-the \newtermAbbrev{weighted root mean integrated square error}{WRMISE}, with
+with
 \begin{equation}
-    w(\vc x) = \frac{c(\vc x) - \min c(\vc x')}{\max c(\vc x') - \min c(\vc x')} 
-    \text{.}
+    w(\vc x) = \frac{c(\vc x) - \min_{\vc x'} c(\vc x')}{\max_{\vc x'} c(\vc x') 
+        - \min_{\vc x'} c(\vc x')} \text{.}
 \end{equation}
-Note that in areas with concentration of almost or even exactly zero the WISE 
+Note that in areas with concentration of almost or even exactly zero the WRMISE 
 will always be close to zero and thus allowing the model to make highly 
-inaccurate predictions. Therefore, the WISE should not be used as sole measure 
-in plume modelling. Using both errors it is possible to ensure good overall fit 
+inaccurate predictions. Therefore, the WRMISE should not be used as sole measure 
+in plume modeling. Using both errors it is possible to ensure good overall fit 
 of the prediction without large inaccuracies and to compare which model has the 
 better fit in the interesting areas.
 
@@ -54,8 +55,8 @@ determine the bandwidth parameter of the KDE\@. In this work Scott's Rule
 \parencite{Scott:2009tl} was used.
 
 \section{Selecting Samples for Error Approximation}\label{sec:mh}
-Up to now it is still open how to select the $x_i$ for approximating the error 
-measures.  Using a regularly spaced grid, it is either likely to miss the 
+Up to now it is still open how to select the $\vc x_i$ for approximating the 
+error measures.  Using a regularly spaced grid, it is either likely to miss the 
 important areas as the plume is quite localized, or it is so fine grained that 
 the evaluation of the error takes a long time. Thus, I used a slightly modified 
 \abbrev{Metropolis-Hastings}{MH} algorithm to accumulate samples in areas with 
@@ -64,7 +65,7 @@ a high concentration.
 The standard Metropolis-Hastings \parencite{Chib:1994ud} is used to sample from 
 a probability distribution $P(\vc x)$ given only a function $f(\vc x)$ 
 proportional to $P(\vc x)$. It starts at a random location $\vc x_1$.  Then in 
-each iteration $i > 0$ a new candidate location $\vc x_*$ is picked from 
+each iteration $i > 1$ a new candidate location $\vc x_*$ is picked from 
 a symmetric\footnote{$Q(\vc a | \vc b) = Q(\vc b | \vc a)$} proposal 
 distribution and an acceptance ratio $\xi = f(\vc x_*) / f(\vc x_i)$ is 
 calculated. The candidate $\vc x_*$ is accepted as $\vc x_{i + 1} = \vc x_*$ 
@@ -93,12 +94,12 @@ source locations. Unfortunately, given a plume dispersion
 source location. To circumvent this, the initial location $\vc x_1$ should be 
 excluded from the samples.
 
-In case of multiple sources it should be started from each source location and 
-the resulting sets should be joined. The concentration between sources can be 
-rather low making it unlikely to switch from one plume to another. Also, the 
-Metropolis-Hastings algorithm is unlikely to sample in low concentration areas, 
-especially in some distance to the plumes. Thus, a number of uniformly sampled 
-locations should be added.
+In case of multiple sources the sampling should be started from each source 
+location and the resulting sets should be joined. The concentration between 
+sources can be rather low making it unlikely to switch from one plume to 
+another. Also, the Metropolis-Hastings algorithm is unlikely to sample in low 
+concentration areas, especially in some distance to the plumes. Thus, a number 
+of uniformly sampled locations should be added.
 
 To ``smooth'' out the samples around the plumes even more one can use only every 
 $k$-th sample of the Metropolis-Hastings algorithm and use the remaining samples 
@@ -106,15 +107,15 @@ as center of Gaussian distributions and draw $k$ more samples from each of
 these.
 
 \section{QRSim Reward}\label{sec:qrsim-reward}
-The plume modelling scenarios in \textcite{denardi2013rn} themselves define 
+The plume modeling scenarios in \textcite{denardi2013rn} themselves define 
 a reward
 \begin{equation}
     R = - \sum_{i = 1}^n \del{c(\vc x) - \mu(\vc x)}^2
 \end{equation}
 as a performance measure. This is essentially the negative of 
-$\hat{E}\ped{RMISE}^2$ without normalization. Thus, with a non uniform sampling 
-this reward will give a biased estimate attributing more importance to areas 
-with more sample locations.
+$\hat{E}\ped{RMISE}^2$ without normalization for the sampling density. Thus, 
+with a non uniform sampling this reward will give a biased estimate attributing 
+more importance to areas with more sample locations.
 
 The set of $\vc x_i$ used to calculate the reward in QRSim consists ouf of two 
 parts. One-fifth is sampled uniformly over the whole volume whereas the 
@@ -150,13 +151,13 @@ For a reliable comparison of the models it is not sufficient to compare them
 based on a single trial. A good model should provide a low error in different 
 trials.
 
-In the plume modelling scenarios the concentration density and spatial extend of 
+In the plume modeling scenarios the concentration density and spatial extend of 
 the plume varies. The error measures directly depend upon the absolute 
 concentration values and, therefore, also depend on the specific trial.
 
 Directly averaging the error over trials would give a higher weighting to trials 
 with high concentration densities or a large plume extend. A good plume 
-modelling method should adapt to the concentration levels and be more precise 
+modeling method should adapt to the concentration levels and be more precise 
 for lower overall concentrations. To achieve a fair weighting of the trials the 
 error can be normalized as
 \begin{equation}
@@ -170,6 +171,6 @@ over trials each trial is weighted equally.
 
 The normalized error $F$ has also the advantage of being readily interpretable.  
 For $F > 1$ the prediction is worse than an all zero prediction.  This should 
-for not happen with a viable modelling method. For $F < 1$ the prediction is 
-better than an all zero prediction and the error has been decreased by $(1 - F) 
-\cdot \SI{100}{\percent}$.
+not happen with a viable modeling method. For $F < 1$ the prediction is better 
+than an all zero prediction and the error has been decreased by $(1 - F) \cdot 
+\SI{100}{\percent}$.

@@ -2,13 +2,13 @@
 A vast number of regression methods have been proposed in the machine learning 
 literature. In this work I use Gaussian Processes as these have been 
 successfully used in a number of studies related to spatial and environmental 
-monitoring including the modelling of gas distributions 
+monitoring including the modeling of gas distributions 
 \parencite[e.\,g.][]{Stranders:2008wl, Marchant:2012wb, Stachniss:2008vz}.  
 Gaussian Processes exhibit a number of desirable features. They are 
-non-parametric, non-linear and therefore do not require any assumptions about 
-the underlying functions or limitations of the search space.  Also, they provide 
-an estimate of the predictive uncertainties which can be used for a natural 
-exploration-exploitation trade-off.
+non-parametric and non-linear. Therefore, they do not require any assumptions 
+about the class of underlying functions or limitations of the search space.  
+Also, they provide an estimate of the predictive uncertainties which can be used 
+for a natural exploration-exploitation trade-off.
 
 In the remainder of this chapter I will discuss the essentials of Gaussian 
 Process regression. A more thorough introduction can be found in 
@@ -30,7 +30,7 @@ x)$. It is completely specified by the mean function $m(\vc x)$ and covariance
 function $k(\vc x, \vc x')$. Usually, though not necessarily, the mean function 
 is taken to be zero. In most scenarios the choice of the covariance function is 
 much more interesting as it controls features like the smoothness of the 
-predicted underlying function. I will discuss this topic regarding the modelling 
+predicted underlying function. I will discuss this topic regarding the modeling 
 problem on hand in Section~\ref{sec:covfn}.
 
 We can now formulate the joint Gaussian prior distribution of the observed 
@@ -45,8 +45,8 @@ training targets and the predicted values $\vc f_*$ at unseen locations $X_*$
 Here $K(X, X')$ are matrices with the elements $(i, j)$ being the covariances 
 $k(\vc x_i, \vc x'_j)$ evaluated for all pairs $\vc x_i \in X$ and $\vc x'_j \in 
 X'$. In the following I will use $\tilde{\mat K} = K(X, X) + \sigma\ped{n}^2 
-\mat I$ as a shorter notation. By conditioning on the observations one obtains 
-the predictive distribution for $\vc f_*$ as
+\mat I$ as a shorter notation. By conditioning on the observations the 
+predictive distribution for $\vc f_*$ is obtained as
 \begin{align}
     \vc f_* | X, \vc y, X_* &\sim \mathcal{N}(\bar{\vc f_*}, \cov(\vc 
     f_*))\text{, with}\\
@@ -66,12 +66,12 @@ process.
     \caption[Gaussian process example]{Example of a one-dimensional Gaussian 
         process (using the squared exponential covariance function with 
         a length scale of 1, $\sigma\ped{n}^2 = 0$) conditioned on five training 
-        points: \subref{fig:ex-gp} shows the mean $\bar{\vc f_*}$ and predictive 
-        standard deviation $\sigma(X_*)$; \subref{fig:ex-gp-sample} shows three 
-        functions sampled from the process.}\label{fig:ex-gp-main}
+        points $X$: \subref{fig:ex-gp} shows the mean $\bar{\vc f_*}$ and 
+        predictive standard deviation $\sigma(X_*)$; \subref{fig:ex-gp-sample} 
+        shows three functions sampled from the process.}\label{fig:ex-gp-main}
 \end{figure}
 
-Even though $K$ is a symmetric, positive-definite matrix it can be 
+Even though $\tilde{\mat K}$ is a symmetric, positive-definite matrix it can be 
 ill-conditioned\footnote{The condition $\kappa(\mat A)$ of a matrix $\mat A$ is 
     defined as $\kappa(\mat A) = \|\mat A\| \|\mat A^{-1}\|$. Using the 
     $L^2$-norm this corresponds to $\kappa(\mat A) = \lambda_1/\lambda_n$,
@@ -79,15 +79,15 @@ ill-conditioned\footnote{The condition $\kappa(\mat A)$ of a matrix $\mat A$ is
     $\lambda_n$. If the condition number $\kappa(\mat A)$ is too large, the 
     matrix is near-singular and ill-conditioned.} and lead to numerical 
 instabilities. This happens especially for close-by input data points as they 
-occur in a sequential scenario like the plume modelling here.
+occur in a sequential scenario like the plume modeling here.
 
 There are two commonly implemented approaches to counteract the problem of 
-ill-conditioning \parencite[cp.]{Sacks:1989cv, Neal:1997tj, Booker:1999wz, 
+ill-conditioning \parencite[cp.][]{Sacks:1989cv, Neal:1997tj, Booker:1999wz, 
     Gramacy:2008es}. Firstly, instead of using a general matrix inversion 
 algorithm one can utilize the symmetry and positive-definiteness of 
 $\tilde{\mat{K}}$ by doing a Cholesky decomposition. This yields a lower, 
 triangular matrix $\mat L$ satisfying $\tilde{\mat K} = \mat L\mat L\Tr$. The 
-inverse can the be calculated as $\tilde{\mat K}^{-1} = (\mat L^{-1})\Tr \mat 
+inverse can then be calculated as $\tilde{\mat K}^{-1} = (\mat L^{-1})\Tr \mat 
 L^{-1}$.  Secondly, a well conditioned $\tilde{\mat K}$ can be ensured by adding 
 a nugget $g > 0$ (also known as jitter) to the diagonal of the covariance 
 matrix. This will increase all eigenvalues by the same value and thus improve 
@@ -99,8 +99,8 @@ the target less precisely and to become smoother.
 A naive implementation requires a $O\!\del[1]{\del[0]{n + N}^3}$ matrix 
 inversion whenever new data points are added to the Gaussian Process with $N$ 
 being the total number of data points collected so far and $n$ being the number 
-of new data points.  However, it is possible to do online updates where only 
-a $n \times n$ matrix has to be inverted.  This reduces the complexity of the 
+of new data points.  However, it is possible to do online updates where only an 
+$n \times n$ matrix has to be inverted.  This reduces the complexity of the 
 matrix inversion to $O(n^3)$ and the overall complexity including the necessary 
 matrix multiplications to $O(n \max\{n^2, N^2\})$.
 
@@ -134,7 +134,7 @@ The Cholesky factorization can also be written with block matrices
 and comparison with equation~(\ref{eqn:tilde_K_prime}) gives the following 
 relations:
 \begin{align}
-    \mat A &= K(X', X) \del{\mat L\Tr}^{-1} \\
+    \mat A &= K(X', X) \del[1]{\mat L\Tr}^{-1} \\
     \mat B \mat B\Tr &= K(X', X') + \sigma\ped{n}^2\mat{\mathrm{I}} - K(X', 
     X)\tilde{\mat{K}}^{-1}K(X, X')
 \end{align}
@@ -152,8 +152,8 @@ following relation for the inverse of the updated Cholesky factor:
 \end{equation}
 
 \section{Sparse Approximations}
-Despite online updates there is an quadratic increase in the complexity for 
-adding new training data points to a Gaussian process. This efficiency problem 
+Despite online updates there is a quadratic increase in the complexity with 
+adding more training data points to a Gaussian process. This efficiency problem 
 can be alleviated by using a sparse approximation. A number of different methods 
 has been proposed \parencites[chapter~8 
 in][]{Rasmussen:2006vz}{QuinoneroCandela:2005wp}. Unfortunately, these methods 
@@ -186,49 +186,50 @@ associated with the $i$-th basis vector is given by
                 \vc{y}}_i}}{\del[1]{\tilde{\mat{K}}_{t+1}^{-1}}_{ii}} \text{.}
 \end{equation}
 
-The basis vector deletion requires downdating the covariance matrix 
-$\tilde{\mat{K}}_{t+1}$ and performing a reduced updated with the deleted basis 
-vector. Unfortunately, as shown in Appendix~\ref{sec:sparse-gp-apdx} the 
-calculation of $-\mat C_t$ is based on the Cholesky factors and downdating based 
-on Cholesky factorization or a matrix obtained from the factorization is known 
-to be numerical unstable \parencite{Bjorck:1994dz}, especially when the 
-correlation of the training inputs is high. Using other factorizations like the 
-QR factorization a more stable downdating algorithm can be obtained.  However, 
-this comes at the cost of the initial factorization being numerical more 
-unstable.  Also, it would be possible to directly downdate 
-$\tilde{\mat{K}}_{t+1}$ and recalculate the Cholesky factorization. Yet, this 
-leads to cubic instead of quadratic complexity for downdating.
+The basis vector deletion requires downdating the approximate covariance matrix 
+$-\mat C_{t+1}$ and performing a reduced updated with the deleted basis vector.  
+Unfortunately, as shown in Appendix~\ref{sec:sparse-gp-apdx} the calculation of 
+$-\mat C_t$ is based on the Cholesky factors and downdating based on Cholesky 
+factorization or a matrix obtained from the factorization is known to be 
+numerical unstable \parencite{Bjorck:1994dz}, especially when the correlation of 
+the training inputs is high. Using other factorizations like the QR 
+factorization a more stable downdating algorithm can be obtained.  However, this 
+comes at the cost of the initial factorization being numerical more unstable.  
+Also, it would be possible to directly downdate $\tilde{\mat{K}}_{t+1}$ and 
+recalculate the Cholesky factorization. Yet, this leads to cubic instead of 
+quadratic complexity for downdating.
 
 It turned out that these issues with numerical stability do not make this sparse 
 online approximation a viable option for plume distribution estimation. The 
 collected samples are highly correlated and make downdating the Cholesky factor 
 too unstable, while using a more stable method impairs performance below the 
 non-sparse Gaussian process level. By resigning from deleting basis vector and 
-only using reduced updates based on the novelty $\tilde{\sigma}^2_{t+1}$ one 
-does not gain much. It only considers the spatial relation of inputs, but not 
-the actual error in prediction at those locations. Hence, one would either still 
-use almost all data for full updates or use not enough full updates in areas of 
-high concentration where a close sampling is necessary. Luckily, the performance 
-of the non-sparse Gaussian processes was sufficient as at most only a few 
-thousand training inputs were used.
+only using reduced updates based on the novelty $\tilde{\sigma}^2_{t+1}$ not 
+much is gained. The novelty only considers the spatial relation of inputs, but 
+not the actual error in prediction at those locations. Hence, one would either 
+still use almost all data for full updates or use not enough full updates in 
+areas of high concentration where a close sampling is necessary. Luckily, the 
+performance of the non-sparse Gaussian processes was sufficient as at most only 
+a few thousand training inputs were used.
 
 \section{Covariance Functions}\label{sec:covfn}
-The choice of the covariance function determines the assumptions about the 
-functions learned with a Gaussian process. Hence, it is quite important. In this 
-chapter, I will discuss some widely used covariance functions and considerations 
-to take into account. A more thorough discussion including further covariance 
-functions is to be found in \textcite[Chapter 4]{Rasmussen:2006vz} on which this 
-section is based.
+The choice of the covariance function determines the assumptions about the most 
+probable functions learned with a Gaussian process. Hence, it is important for 
+reaching the best performance.  In this chapter, I will discuss some widely used 
+covariance functions and considerations to take into account. A more thorough 
+discussion including further covariance functions is to be found in 
+\textcite[Chapter 
+4]{Rasmussen:2006vz} on which this section is based.
 
-A valid covariance function $k(\vc x, \vc x')$ has to be a kernel 
-\parencite{Cressie:1993uu} satisfying semi-positive definiteness
+A valid covariance function $k(\vc x, \vc x')$ is a kernel satisfying 
+positive-definiteness
 \begin{equation}
     \int f(\vc x) k(\vc x, \vc x') f(\vc x') \dif \vc x \dif \vc x' \geq 
     0 \text{.}
 \end{equation}
 This ensures that the kernel's Gram matrix for a set of inputs $\cbr{x_i 
     | i = 1, \dots, n}$ with entries $\mat K_{ij} = k(\vc x_i, \vc x_j)$ is also 
-semi-positive definite and therefore a valid, invertible covariance matrix.
+positive-definite and therefore a valid, invertible covariance matrix.
 
 The \newterm{smoothness} of the Gaussian process is also determined by the 
 covariance function.  This is formalized in the notion of how many times it is 
@@ -267,7 +268,7 @@ $\vc 0$.
 A common default choice is the \newtermAbbrev{squared exponential}{SE} kernel 
     defined as
 \begin{equation}
-    k\ped{SE}(r) = \sigma\ped{k}^2 \exp\del{-\frac{r^2}{-2\ell^2}}
+    k\ped{SE}(r) = \sigma\ped{k}^2 \exp\!\del{-\frac{r^2}{-2\ell^2}}
 \end{equation}
 with the desired process variance $\sigma\ped{k}^2$ and length scale $\ell$. It 
 produces infinitely MS differentiable Gaussian processes. This can, actually, be 
@@ -286,14 +287,14 @@ The resulting Gaussian process will be $k$ times MS differentiable for $k
 
 Typically, only the kernels with $2\nu \in \cbr{1, 2, 3}$ are used.  Usually it 
 is not possible to tell which kernel leads to a better fit for larger $\nu$ from 
-the noisy data.  Half-integer values are used as the kernel function will become 
-quite simple:
+the noisy data.  Half-integer values are used as the kernel functions will 
+become quite simple:
 \begin{align}
     k_{5/2}(r) &= \sigma\ped{k}^2 \del{1 + \frac{r\sqrt{5}}{\ell} 
-        + \frac{5r^2}{3\ell^2}} \exp\del{-\frac{r\sqrt{5}}{\ell}} \\
+        + \frac{5r^2}{3\ell^2}} \exp\!\del{-\frac{r\sqrt{5}}{\ell}} \\
     k_{3/2}(r) &= \sigma\ped{k}^2 \del{1 + \frac{r\sqrt{3}}{\ell}} 
-    \exp\del{-\frac{r\sqrt{3}}{\ell}} \\
-    k_{1/2}(r) &= k_{\exp}(r) = \sigma\ped{k}^2 \exp\del{-\frac{r}{\ell}}
+    \exp\!\del{-\frac{r\sqrt{3}}{\ell}} \\
+    k_{1/2}(r) &= k_{\exp}(r) = \sigma\ped{k}^2 \exp\!\del{-\frac{r}{\ell}}
 \end{align}
 From these kernel functions $k_{\nu=1/2}(r)$ is also known as the 
 \newterm{exponential kernel}. Furthermore, note that for $\nu \rightarrow 
@@ -309,26 +310,26 @@ covariance functions can be found in Figure~\ref{fig:kernels}.
 
 \subsection{Non-stationary Covariance Functions}
 Many phenomena, including the concentrations of gas plumes, are not stationary.  
-Already a Gaussian density function exhibits different optimal length scales 
-(see Figure~\ref{fig:gp-length scale}).  With a long length scale the predicted 
-mean can considerably deviate from the target function as shown for positive $x$ 
-in the figure. With a short length scale a relatively good fit is obtained.  
-However, the predictive variance along the tail towards negative $x$ is 
-overestimated as the actual rate of change in this area is quite low.
+Already a Gaussian density function exhibits different optimal length scales.  
+With a long length scale the predicted mean can considerably deviate from the 
+target function as shown for positive $x$ in Figure~\ref{fig:gp-length-scale}.  
+With a short length scale a good fit is obtained.  However, the predictive 
+variance along the tail towards negative $x$ is overestimated as the actual rate 
+of change in this area is low.
 
 \begin{figure}
     \centering
     \includegraphics{plots/gp-lengthscale}
-    \caption[Length-scale influence]{Influence of the kernel length scale on the 
+    \caption[Length scale influence]{Influence of the kernel length scale on the 
         Gaussian process. In both plots the Mat\'ern kernel with $\nu = 3/2$ was 
         used. On the left a short length scale of $\ell = 1$ was used, whereas 
         a longer length scale of $\ell = 10$ was used on the right.
-    }\label{fig:gp-length scale}
+    }\label{fig:gp-length-scale}
 \end{figure}
 
-Non-stationary covariance functions can alleviate this problem. Moreover, they 
+Non-stationary covariance functions can lessen this problem. Moreover, they 
 allow to model discontinuities at specific places. However, the usage of 
-non-stationary covariance functions for the given plume modelling problem is far 
+non-stationary covariance functions for the given plume modeling problem is far 
 from straightforward and might need more prior knowledge than one is willing to 
 assume (in simulations) or effectively has.  One would probably have to use 
 different kernels depending on the scenario (wind/no wind, number of sources) 
@@ -338,20 +339,21 @@ non-stationarity of the plume.
 
 Methods for selecting such parameters will be discussed in the next section.  
 Unfortunately, the cost of these methods grows with the number of parameters 
-which for non-stationary kernels will be larger. Matters are complicated even 
-more as it is usually desirable to have a differentiable kernel to be able to 
-use gradient-based optimizers. Moreover, In an active learning scenario there is 
-a limited amount of data in the beginning making the correct estimation of 
-parameters like the source position virtually impossible.
+which for non-stationary kernels will be larger than for stationary kernels.  
+Matters are complicated even more as it is usually desirable to have 
+a differentiable kernel to be able to use gradient-based optimizers. Moreover, 
+In an active learning scenario there is a limited amount of data in the 
+beginning making the correct estimation of parameters like the source position 
+virtually impossible.
 
-It has also taken into account that non-stationary kernels might not be agnostic 
-to the structure of the modelled function. Such a covariance function will lead 
-to better results if the function matches the structural assumptions of the 
-kernel. However, if that is not the case, the results will probably be worse 
-than with stationary kernel agnostic to the structure. Especially when modelling 
-a plume distribution in a real world scenario one would have to consider 
-a multitude of effects like obstacles and local changes in wind.  That might 
-make it impossible to derive valid structural assumptions for using 
+It also has to be taken into account that non-stationary kernels might not be 
+agnostic to the structure of the modeled function. Such a covariance function 
+will lead to better results if the function matches the structural assumptions 
+of the kernel. However, if that is not the case, the results will probably be 
+worse than with stationary kernel agnostic to the structure. Especially when 
+modeling a plume distribution in a real world scenario one would have to 
+consider a multitude of effects like obstacles and local changes in wind.  That 
+might make it impossible to derive valid structural assumptions for using 
 a non-stationary kernel.
 
 \section{Hyper-parameter Selection}
@@ -365,15 +367,15 @@ split into two sets $\mathcal{D}_0$ and $\mathcal{D}_*$. The set $\mathcal{D}_0$
 is used to train Gaussian processes with different covariance functions and 
 hyper-parameters. For each model the generalization error $E\ped{G}$ over the 
 test set $\mathcal{D}_*$ will be evaluated the parameters with the minimal 
-generalization error will be chosen. The error measure can be chosen freely, 
-with the root mean square error being a typical choice (see also 
-Chapter~\ref{sec:error}).
+generalization error will be chosen. The error measure can be chosen freely with 
+respect to what should be considered a good model. The root mean square erroris 
+a typical choice (see also Chapter~\ref{sec:error}).
 
 If the amount of available data is limited, it is common to use 
 \newterm{$k$-fold cross validation} where $\mathcal{D}$ is split into $k$ 
 disjoint subsets $\mathcal{D}_i$ of equal size and the generalization error will 
-be calculated from $k$ models using the respective $\mathcal{D}_i$ as test set 
-and the other sets as training data.
+be calculated from $k$ different models using the respective $\mathcal{D}_i$ as 
+test set and the other sets as training data.
 
 The third possibility is to find $\argmax_{\vc \theta} p(\vc\theta | \vc y, X, 
 \mathcal{H}_i)$, wherein
@@ -427,12 +429,12 @@ Lipschitz continuous, meaning that a constant $C$ exists, such that
     \abs{f(\vc x) - f(\vc x')} \leq C \abs{\vc x - \vc x'} \text{.}
 \end{equation}
 A closed form expression of $f(\vc x)$ may be unknown and it might be costly to 
-evaluate. Because of the latter Bayesian optimization tries to keep the number 
+evaluate. Because of the latter, Bayesian optimization tries to keep the number 
 of function evaluations small.
 
 The general BO algorithm can be described as follows: Given the prior beliefs 
 about the objective function $p(f)$ a sampling location $\vc x_t$ is chosen. The 
-sample acquired at $\vc x$ is used to obtain a posterior according to Bayes' 
+sample acquired at $\vc x_t$ is used to obtain a posterior according to Bayes' 
 Theorem
 \begin{equation}
     p(f|\mathcal{D}_{1:t}) \propto p(\mathcal{D}_{1:t} | f) p(f) \text{.}
@@ -440,7 +442,7 @@ Theorem
 This posterior represents the updated beliefs about the objective function.
 
 The beliefs about the objective function can be expressed using Gaussian 
-processes. Adding further data points gives corresponds to obtaining an updated 
+processes. Adding further data points corresponds to obtaining an updated 
 posterior. The complete BO algorithm with Gaussian processes is stated in 
 Algorithm~\ref{algo:bo}.
 
@@ -458,12 +460,12 @@ Algorithm~\ref{algo:bo}.
 
 So far it is still open how the sampling location $\vc x_t$ is selected. For 
 that an \newterm{utility} or \newterm{acquisition}\footnote{The terms will be 
-    used interchangeable.} function $u(\vc x)$ indicating the expected benefit 
-for choosing $\vc x$ as next training sample.  Hence, the optimal choice is 
-$\argmax_{\vc x} u(\vc x)$.  Equivalently, it is possible to use the negative of 
-a loss function $u(\vc x) = - \lambda(\vc x)$. In the next section different 
-possible acquisition functions will be discussed in the context of plume 
-distribution modelling.
+    used interchangeable in the following.} function $u(\vc x)$ indicating the 
+expected benefit for choosing $\vc x$ as next training sample.  Hence, the 
+optimal choice is $\argmax_{\vc x} u(\vc x)$.  Equivalently, it is possible to 
+use the negative of a loss function $u(\vc x) = - \lambda(\vc x)$. In the next 
+section different possible acquisition functions will be discussed in the 
+context of plume distribution modeling.
 
 \subsection{Acquisition Functions}\label{sec:utility}
 The choice of the acquisition function $u(\vc x)$ influences the 
@@ -474,8 +476,8 @@ area is well estimated further exploration should follow to possibly find
 further sources.
 
 \Textcite{Marchant:2012wb} proposed the \newtermAbbrev{distance-based upper 
-    confidence bound}{DUCB} for a similar scenario of environmental monitoring 
-    where ozone concentrations over US territory were to be measured:
+    confidence bound}{DUCB} for a scenario of environmental monitoring where 
+ozone concentrations over US territory were to be measured:
 \begin{equation}
     u\ped{DUCB}(\vc x) = \mu(\vc x) + s\ped{DUCB}(\vc y) \sbr{\kappa \cdot 
         \sigma^2(\vc x) + \gamma \cdot d(\vc x, \vc x')}
@@ -485,8 +487,7 @@ are obtained directly from the Gaussian process, $d(\vc x, \vc x')$ denotes the
 Euclidean distance of $\vc x$ to the last sample location $\vc x'$. For ease of 
 notation these functions are assumed to be unitless. Precisely this means that 
 $\mu(\vc x)$ is divided by \si{\gram\per\meter\cubed}, $\sigma^2(\vc x)$ by 
-\si{{\gram\squared\per\meter\tothe{6}}\squared}, and $d(\vc x, \vc x')$ by 
-\si{\meter}.
+\si{{\gram\squared\per\meter\tothe{6}}}, and $d(\vc x, \vc x')$ by \si{\meter}.
 
 The parameter $\kappa$ controls the exploration-exploitation balance.  Higher 
 values give more importance to decreasing the predictive variance and lead to 
@@ -497,14 +498,14 @@ travelled and save energy as well as time.  The original DUCB formulation by
 match that formulation it has to be set to $s\ped{DUCB}(\vc y) = 1$. Another 
 possible choice will be discussed below.
 
-Though, the ozone concentration scenario appears to be quite similar to the 
-plume modelling problem at hand one should note a certain difference. The ozone 
-concentration is a quite smooth distribution as \textcite{Marchant:2012wb} used 
-the squared exponential covariance function to obtain reasonable results. In 
+Though, the ozone concentration scenario appears to be similar to the plume 
+modeling problem at hand one should note a certain difference. The ozone 
+concentration is a smooth distribution as \textcite{Marchant:2012wb} used the 
+squared exponential covariance function to obtain reasonable results. In 
 opposite to that, the spatial distribution of a gas plume is much more localized 
 \parencite[this was also noted by][]{Stachniss:2008vz}. Thus, I propose the 
 \newtermAbbrev{plume distance-based upper confidence bound}{PDUCB} acquisition 
-    function inspired by DUCB, but adjusted:
+function inspired by DUCB, but adjusted:
 \begin{multline}
     u\ped{PDUCB}(\vc x) = \del{1 - a} \cdot \ln\del{\mu_+(\vc x) + \varepsilon} 
     + a \cdot \ln \varepsilon \\ + s\ped{PDUCB}(\vc y) \sbr{\kappa \cdot 
@@ -577,7 +578,7 @@ $s(\vc y)$ defined for the respective acquisition functions as
     s\ped{PDUCB}(\vc y) &= \ln(\max \vc y \cdot \si{\meter\cubed\per\gram} 
     + \varepsilon) - \ln \varepsilon \text{.} \label{eqn:scale-pducb}
 \end{align}
-The parameters $\kappa$ and $\gamma$ can then be set independent of the actual 
+The parameters $\kappa$ and $\gamma$ can then be set independently of the actual 
 values of $\vc y$.
 
 A third potential acquisition function, also balancing exploration and 
@@ -610,8 +611,8 @@ utility function
         \sigma^2(\vc x)} + \sigma^2(\vc x) N\!\del{\eta; \mu(\vc x), 
         \sigma^2(\vc x)}\\ &\quad+ \gamma \cdot d^2(\vc x, \vc x') \text{.}
 \end{split} \end{align}
-This approach can extended to perform a look-ahead of multiple steps. However, 
-this was not done here.
+This approach can be extended to perform a look-ahead of multiple steps.  
+However, this was not done here.
 
 In Figure~\ref{fig:acqfns} a graphical comparison of the proposed utility 
 functions is given for a one-dimensional example. It can be seen that DUCB 
@@ -668,9 +669,9 @@ Considering noise a second strategy is needed as measurements of low
 concentrations are not reliably anymore. This strategy, in the following called 
 \newterm{complete search}, consists of surrounding the area at different heights 
 until a criterion that a plume as been found is fulfilled. The criterion 
-employed here is that the maximum of all concentration measurements $\max y_i$ 
-for one surrounding has to be larger than $5\sigma(y)$ with $\sigma(y)$ being 
-the standard deviation of the $y_i$.
+employed here is that the maximum of all concentration measurements $\max_i y_i$ 
+for one surrounding has to be larger than $5\sigma(y_i)$ with $\sigma(y_i)$ 
+being the standard deviation of the $y_i$.
 
 This complete search may also take a long time before a plume has been found, 
 but should be faster than random exploration. If the wind direction is known 
@@ -684,7 +685,8 @@ These bootstrapping strategies can be easily extended to multiple UAVs by
 assigning different heights to each one.
 
 Most of the samples acquired during this bootstrapping process do not improve 
-the plume distribution. Thus, most of them were discarded to improve efficiency.  
-Only the measurements from surrounding the area for the last time before the 
-plume was identified were used for the training of the Gaussian process.
+the estimation of the plume distribution. Thus, most of them were discarded to 
+improve efficiency.  Only the measurements from surrounding the area for the 
+last time before the plume was identified were used for the training of the 
+Gaussian process.
 
