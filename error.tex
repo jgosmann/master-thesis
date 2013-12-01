@@ -57,14 +57,14 @@ determine the bandwidth parameter of the KDE\@. In this work Scott's Rule
 \section{Selecting Samples for Error Approximation}\label{sec:mh}
 Up to now it is still open how to select the $\vc x_i$ for approximating the 
 error measures.  Using a regularly spaced grid, it is either likely to miss the 
-important areas as the plume is quite localized, or it is so fine grained that 
-the evaluation of the error takes a long time. Thus, I used a slightly modified 
-\abbrev{Metropolis-Hastings}{MH} algorithm to accumulate samples in areas with 
-a high concentration.
+important areas as the plume is relatively localized, or it is so fine grained 
+that the evaluation of the error takes a long time. Thus, I used a slightly 
+modified \abbrev{Metropolis-Hastings}{MH} algorithm to accumulate samples in 
+areas with a high concentration.
 
 The standard Metropolis-Hastings \parencite{Chib:1994ud} is used to sample from 
-a probability distribution $P(\vc x)$ given only a function $f(\vc x)$ 
-proportional to $P(\vc x)$. It starts at a random location $\vc x_1$.  Then in 
+a probability distribution $p(\vc x)$ given only a function $f(\vc x)$ 
+proportional to $p(\vc x)$. It starts at a random location $\vc x_1$.  Then in 
 each iteration $i > 1$ a new candidate location $\vc x_*$ is picked from 
 a symmetric\footnote{$Q(\vc a | \vc b) = Q(\vc b | \vc a)$} proposal 
 distribution and an acceptance ratio $\xi = f(\vc x_*) / f(\vc x_i)$ is 
@@ -86,13 +86,12 @@ samples towards the concentration tails where the concentration is already low
 but spatially close to high concentrations.  Thus, the approximation around the 
 concentration slope can be expected to be better.
 
-A further change concerns the initial location $\vc x_1$. Choosing at randomly 
+A further change concerns the initial location $\vc x_1$. Choosing at random 
 might place it in an area with zero concentration which renders the acceptance 
-ratio $r$ undefined. Hence, it is better to base the initial location near the 
-source locations. Unfortunately, given a plume dispersion 
-(Equation~\ref{eqn:plumedisp}) the plume concentration is undefined at the 
-source location. To circumvent this, the initial location $\vc x_1$ should be 
-excluded from the samples.
+ratio $\xi$ undefined. Hence, it is better to base the initial location near 
+a source location. A placement directly at the source location is not possible 
+given that a plume dispersion (Equation~\ref{eqn:plumedisp}) is undefined that 
+place.
 
 In case of multiple sources the sampling should be started from each source 
 location and the resulting sets should be joined. The concentration between 
@@ -114,19 +113,19 @@ a reward
 \end{equation}
 as a performance measure. This is essentially the negative of 
 $\hat{E}\ped{RMISE}^2$ without normalization for the sampling density. Thus, 
-with a non uniform sampling this reward will give a biased estimate attributing 
+with a non-uniform sampling this reward will give a biased estimate attributing 
 more importance to areas with more sample locations.
 
 The set of $\vc x_i$ used to calculate the reward in QRSim consists ouf of two 
-parts. One-fifth is sampled uniformly over the whole volume whereas the 
+parts. One-fifth is sampled uniformly over the whole volume, whereas the 
 remaining samples are taken uniformly from the areas where the concentration 
 exceeds the limit $c_{\min} = Q \cdot 10^{-3} \cdot 
 \si{\second\per\meter\cubed}$.
 
 The bias introduced by that towards the interesting regions is not necessarily 
 bad. The same is done in the WRMISE\@. Unfortunately, the sampling strategy will 
-not sample at the low side of a (steep) concentration boundary and will give an 
-bad estimate of the reward around those boundaries. In contrast to that, the 
+not sample at the low side of a (steep) concentration boundary and will give 
+a bad estimate of the reward around those boundaries. In contrast to that, the 
 Metropolis-Hastings based sampling algorithm acquires also some samples in the 
 low concentration area around a high concentration.  This difference is 
 visualized in Figure~\ref{fig:err-sampling}.
@@ -151,12 +150,12 @@ For a reliable comparison of the models it is not sufficient to compare them
 based on a single trial. A good model should provide a low error in different 
 trials.
 
-In the plume modeling scenarios the concentration density and spatial extend of 
+In the plume modeling scenarios the concentration density and spatial extent of 
 the plume varies. The error measures directly depend upon the absolute 
 concentration values and, therefore, also depend on the specific trial.
 
 Directly averaging the error over trials would give a higher weighting to trials 
-with high concentration densities or a large plume extend. A good plume 
+with high concentration densities or a large plume extent. A good plume 
 modeling method should adapt to the concentration levels and be more precise 
 for lower overall concentrations. To achieve a fair weighting of the trials the 
 error can be normalized as

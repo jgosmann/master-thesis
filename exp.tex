@@ -6,26 +6,26 @@ compare the different acquisition functions based on the noise-free scenarios.
 Subsequently, the performance of PDUCB was evaluated on the noisy scenarios and 
 using multiple UAVs.
 
-Note that in all calculations of error measures predicted concentration values 
+Note that, in all calculations of error measures, predicted concentration values 
 below zero were set to exactly 0 as a negative concentration is physically not 
 possible.
 
 \section{Best Covariance Function for Plume Modelling}\label{sec:bestkernel}
-To obtain the best covariance function including its parameters to approximate 
-a plume distribution these were evaluated using the test set method. For each of 
-the single source Gaussian (G-NF-SS-SV), the single source dispersion 
-(D-NF-SS-SV), and the multiple source dispersion (D-NF-MS-SV), all without 
-noise, 50 random instances were created. For each instance a set of sampling 
-locations was generated using the Metropolis-Hastings based technique described 
-in Chapter~\ref{sec:mh}. Herein, every fifth Metropolis-Hastings sample was used 
-in the final set and was used as mean of Gaussian with a standard deviation 
-$\sigma = \SI{6}{\meter}$ to draw five more samples to include in the final set.  
-The proposal distribution of the Metropolis-Hastings algorithm was also 
-a Gaussian with standard deviation $\sigma = \SI{6}{\meter}$. In addition, 1000 
-uniformly samples were added to the final set of samples. All samples outside of 
-the scenario volume were dismissed. From all kept sample points 1000 were 
-randomly selected for training and the rest was used as test set to determine 
-the error.
+To determine the best covariance function including its parameters to 
+approximate a plume distribution the different functions were evaluated using 
+the test set method.  For each of the single source Gaussian (G-NF-SS-SV), the 
+single source dispersion (D-NF-SS-SV), and the multiple source dispersion 
+(D-NF-MS-SV), all without noise, 50 random instances were created. For each 
+instance a set of sampling locations was generated using the Metropolis-Hastings 
+based technique described in Chapter~\ref{sec:mh}. Herein, every fifth 
+Metropolis-Hastings sample was used in the final set and was used as mean of 
+Gaussian with a standard deviation $\sigma = \SI{6}{\meter}$ to draw five more 
+samples to include in the final set.  The proposal distribution of the 
+Metropolis-Hastings algorithm was also a Gaussian with standard deviation 
+$\sigma = \SI{6}{\meter}$.  In addition, 1000 uniformly samples were added to 
+the final set of samples. All samples outside of the scenario volume were 
+dismissed. From all kept sample points 1000 were randomly selected for training 
+and the rest was used as test set to determine the error.
 
 Obtaining the training samples in this way should roughly mirror a good sampling 
 with an UAV with many samples in the areas of high concentration and a few in 
@@ -69,12 +69,13 @@ more dense sampling) a good fit is still obtained, but around that area the
 prediction gets worse. Thus, the steep concentration gradients around the plume 
 are not well captured in that case.
 
-The results give also an idea how good of a fit can be expected at best when 
-using an UAV instead of direct sampling. Whereas the normalized error decreases 
-to nearly zero for the single source Gaussian, it stays above 0.6 for the 
-dispersion scenario with the more localized plume distribution. The reward error 
-measure is decreased to lower levels, but this is likely to underestimation of 
-the error at the plume boundaries as argued in Chapter~\ref{sec:qrsim-reward}.
+The results give also an idea about how good of a fit can be expected at best 
+when using an UAV instead of direct sampling. Whereas the normalized error 
+decreases to nearly zero for the single source Gaussian, it stays above 0.6 for 
+the dispersion scenario with the more localized plume distribution. The reward 
+error measure is decreased to lower levels, but this is likely to 
+underestimation of the error at the plume boundaries as argued in 
+Chapter~\ref{sec:qrsim-reward}.
 
 Besides the error measures the log likelihood of each trained Gaussian process 
 was calculated. In Figure~\ref{fig:loglikelihood} the average over trials is 
@@ -89,10 +90,10 @@ overestimate it.
     \includegraphics{plots/loglikelihood}
     \caption[Log likelihood in dependence of the covariance function and length 
     scale]{The average log likelihood of the training data in dependence of the 
-        length scale using different kernels.  Each of the three plots shows the 
-        noise free scenario of the single source Gaussian (G-NF-SS), single 
-        source Gaussian dispersion (D-NF-SS), and multiple source Gaussian 
-        dispersion (D-NF-MS).  Error bars represent the standard 
+        length scale using different kernels.  Each of the three plots shows one 
+        of the single source Gaussian (G-NF-SS), single source Gaussian 
+        dispersion (D-NF-SS), and multiple source Gaussian dispersion (D-NF-MS) 
+        without sensor noise.  Error bars represent the standard 
         error.}\label{fig:loglikelihood}
 \end{figure}
 
@@ -119,8 +120,8 @@ For each given scenario 20~trials were performed. In each run the UAV first
 surrounded the simulation area in a height of \SI{40}{\meter} with a margin of 
 \SI{10}{\meter} to the boundaries of the simulated volume. After that further 
 way-points were chosen with one of the acquisition functions discussed in 
-Chapter~\ref{sec:utility}. The optimization of that functions has been described 
-in Chapter~\ref{sec:fnopt}.
+Chapter~\ref{sec:utility}. The optimization of those functions has been 
+described in Chapter~\ref{sec:fnopt}.
 
 Each trial was allowed to run until a maximum of \num{3000} plume measurements 
 was acquired. A plume measurement was taken every second. When a new target 
@@ -129,22 +130,22 @@ to become stuck in a maximum of the acquisition function and the simulation was
 stopped at that point to reduce overall simulation time.
 
 The error measures were estimated as described in Chapter~\ref{sec:error}. The 
-samples for that where chosen from 1000 uniformly distributed sampling 
-locations, every tenth of 4200 locations from the Metropolis-Hastings algorithm 
-with Gaussian proposal distribution with standard deviation $\sigma 
-= \SI{10}{\meter}$, and 10 more locations sampled from the proposal distribution 
-for each of included Metropolis-Hastings samples.
+samples for that were 1000 uniformly distributed sampling locations, every tenth 
+of 4200 locations from the Metropolis-Hastings algorithm with Gaussian proposal 
+distribution with standard deviation $\sigma = \SI{10}{\meter}$, and 10 more 
+locations sampled from the proposal distribution for each of the included 
+Metropolis-Hastings samples.
 
 I tested all three utility functions proposed in Chapter~\ref{sec:utility}: 
 DUCB, PDUCB (with $\varepsilon = 10^{-30}$), and GO\@. DUCB was tested with 
 a constant scaling factor of $s\ped{DUCB}(\vc y) = 1$ and the automatic scaling 
 in Equation~\ref{eqn:scale-ducb}.  PDUCB was tested with a constant scaling 
 factor of $s\ped{PDUCB}(\vc y) = 70$ and the automatic scaling in 
-Equation~\ref{eqn:scale-pducb}.  Furthermore, I performed a parameter search 
-over $\kappa \in \cbr{0.1, 0.5, 
+Equation~\ref{eqn:scale-pducb}.  Furthermore, a parameter search over the 
+weighting factors $\kappa \in \cbr{0.1, 0.5, 
 0.75, 1, 1.25, 1.5, 2}$ and $\gamma \in \cbr{0} \cup \cbr{-10^p | p = -9, -8, 
-  \dots, -2}$. Note that for the GO utility function the $\kappa$ parameter has 
-no effect.
+  \dots, -2}$ was performed. Note that for the GO utility function the $\kappa$ 
+parameter has no effect.
 
 Figure~\ref{fig:psearch-G-NF-SS-SV}--\ref{fig:psearch-D-NF-MS-SV} visualize the 
 normalized error for the different scenarios.  The respective parameters and 
@@ -292,13 +293,14 @@ example UAV trajectory for the PDUCB acquisition function.
 \begin{figure}
     \centering
     \includegraphics{plots/errtrace-nf}
-    \caption[Time-course of the error reduction (G-NF-SS-SV)]{The normalized 
-        RMISE in the single source Gaussian scenario (G-NF-SS-SV) over 
-        simulation time.  Each individual plot corresponds to one utility 
-        function and scaling.  The auto-scaled versions use the scaling factor 
-        defined in Equations~\ref{eqn:scale-ducb} and~\ref{eqn:scale-pducb}, in 
-        contrast to a constant scaling factor. The $\gamma$ parameter is coded 
-        by hue and the $\kappa$ parameter by lightness.}\label{fig:errtrace-nf}
+    \caption[Time-course of the error reduction (G-NF-SS-SV)]{The trial averaged 
+        normalized RMISE in the single source Gaussian scenario (G-NF-SS-SV) 
+        over simulation time. For each $\gamma$ the $\kappa$ resulting in the 
+        minimal final error was chosen.  Each individual plot corresponds to one 
+        utility function and scaling.  The auto-scaled versions use the scaling 
+        factor defined in Equations~\ref{eqn:scale-ducb} 
+        and~\ref{eqn:scale-pducb}, in contrast to a constant scaling 
+        factor.}\label{fig:errtrace-nf}
 \end{figure}
 
 \begin{figure}
@@ -314,10 +316,10 @@ This is a rich dataset from which a number of insights can be gained. First of
 all it can be noted that the normalized QRSim reward attributes almost always 
 a better performance to the algorithms than the other two error measures.  This 
 is consistent with the argument in Chapter~\ref{sec:qrsim-reward} that the 
-reward may be underestimated at concentration boundaries. Moreover, there seems 
-to occur some kind of artifact leading to a very low QRSim reward for one 
-parameter setting ($\kappa = 1.25, \gamma = -10^{-6}$) in the multiple source 
-scenario.
+negative reward may be underestimated at concentration boundaries. Moreover, 
+there seems to occur some kind of artifact leading to a very low QRSim reward 
+for one parameter setting ($\kappa = 1.25, \gamma = -10^{-6}$) in the multiple 
+source scenario.
 
 Turning to the actual utility functions it can be noted that the GO function 
 does not perform very well.  Even in the single source Gaussian scenario the 
@@ -325,7 +327,7 @@ RMISE is only reduced by about \SI{20}{\percent} and in the other two scenarios
 it performs even worse.
 
 Comparing DUCB and PDUCB the latter one consistently performs better with 
-a reduction in the RMISE and WRMISE by at least additional \SI{8}{\percent} and 
+a reduction of the RMISE and WRMISE by at least additional \SI{8}{\percent} and 
 in the dispersion scenarios even more.  Despite that, the standard deviation of 
 PDUCB is almost always higher than that of DUCB in the dispersion scenarios.
 
@@ -357,8 +359,8 @@ constant for the rest of the simulation time.
 
 These results show that PDUCB outperforms the DUCB and GO acquisition functions 
 and in addition is robust against a non-optimal choice of parameters. The 
-especially bad performance of the GO utility function is not too surprising at 
-its intended use is to find a function maximum and not building a correct model 
+especially bad performance of the GO utility function is not too surprising as 
+its intended use is to find a function maximum and not to build a correct model 
 of the function (respectively plume concentration).  DUCB works reasonable well 
 for the simple case of a Gaussian distribution, but fails for the more localized 
 dispersions.
@@ -366,7 +368,7 @@ dispersions.
 The PDUCB performance might not seem to be too impressive in the dispersion 
 scenarios, too. However, one has to keep in mind that even in 
 Section~\ref{sec:bestkernel} with much more samples the RMISE could not be 
-reduced to less than \SI{61}{\percent}.  Also, the qualitatively the plume is 
+reduced to less than \SI{61}{\percent}.  Also, qualitatively the plume is 
 predicted at the correct location as Figure~\ref{fig:plume} shows, despite some 
 deviance of the exact concentration values. The largest difference to the true 
 distribution is close to the source at the concentration maximum.
@@ -386,17 +388,17 @@ distribution is close to the source at the concentration maximum.
 \end{figure}
 
 Given this discussion I decided to limit further experiments to the PDUCB 
-acquisition function. The other options seem not to be a viable option (except 
-maybe for the single source Gaussian). As smaller values of $\kappa$ seem to 
-provide slightly better results, but it should not be below $1$ as argued, 
-a value of $\kappa = 1.25$ was selected. The penalty distance seems to slightly 
-improve the results up to \num{-1e-5}. However, to prevent to fall in the area 
-where the performs then quickly decreases, it was set to a value of $\gamma 
-= \num{-1e-7}$ which also good results. Both scaling approaches (constant or 
-automatic) where used in further experiments as it is not clear from these 
-results which one is better. Though, the automatic scaling is a bit worse in 
-terms of error, it has one less parameter which would be set according to the 
-range of concentration values.
+acquisition function. The other utility functions seem not to be a viable option 
+(except maybe in the single source Gaussian scenario). As smaller values of 
+$\kappa$ seem to provide slightly better results, but it should not be below $1$ 
+as argued, a value of $\kappa = 1.25$ was selected. The penalty distance seems 
+to slightly improve the results up to \num{-1e-5}. However, to prevent to fall 
+in the area where the performance then quickly decreases, it was set to a value 
+of $\gamma = \num{-1e-7}$ which provided also good results. Both scaling 
+approaches (constant or automatic) were used in further experiments as it is not 
+clear from these results which one is better. Though, the automatic scaling is 
+a bit worse in terms of error, it has one less parameter which has to be set 
+according to the range of concentration values.
 
 \section{Evaluation in a Noisy Setting}\label{sec:noisy}
 It is important to verify that the methods for plume modeling also work in 
@@ -442,7 +444,7 @@ As all error measures do have their minimum at $\sigma\ped{k}^2
 = \SI{1e-9}{\gram\squared\per\meter\tothe{6}}$ or have almost reached it, this 
 value has been used in the following.
 
-\subsection{Simulation of the Scenarios Including Noise}
+\subsection{Simulation of the Scenarios Including Sensor Noise}
 Using the kernel variance of $\sigma\ped{k}^2 
 = \SI{1e-9}{\gram\squared\per\meter\tothe{6}}$ determined in the previous 
 section the PDUCB method was evaluated in the single and multiple source plume 
@@ -475,14 +477,14 @@ a bit faster after the plume has bee discovered.
 \begin{figure}
     \centering
     \includegraphics{plots/noisy-sv}
-    \caption[Normalized error in sensor noise scenarios]{Average normalized 
-        error over time in the single source dispersion (D-SN-SS-SV, top row) 
-        and multiple source dispersion scenario (D-SN-MS-SV, bottom row). Both 
-        including sensor noise.  The columns columns correspond to the RMISE, 
-        WRMISE and the QRSim reward as error meausure. Solid lines show the 
-        results using the complete search method, where as dashed lines used the 
-        wind based search.  Thick lines show PDUCB with automatic scaling 
-        opposed to a constant scaling shown by the thin 
+    \caption[Normalized error in sensor noise scenarios]{Trial averaged 
+        normalized error over time in the single source dispersion (D-SN-SS-SV, 
+        top row) and multiple source dispersion scenario (D-SN-MS-SV, bottom 
+        row). Both scenarios include sensor noise.  The columns correspond to 
+        the RMISE, WRMISE and the QRSim reward as error meausure.  Solid lines 
+        show the results using the complete search method, whereas dashed lines 
+        used the wind based search.  Thick lines show PDUCB with automatic 
+        scaling opposed to a constant scaling shown by the thin 
         lines.}\label{fig:noisy-ss}
 \end{figure}
 
@@ -520,8 +522,9 @@ a bit faster after the plume has bee discovered.
         wind & constant & 2.27 & 2.05 & 0.60 & 0.33 \\
         wind & auto & 1.85 & 1.66 & 0.55 & 0.32 \\
     \end{errtblb}
-    \caption[Final error values (D-SN-SS-SV)]{Final error values in the noisy 
-        single source Gaussian scenario (D-SN-SS-SV).}\label{tbl:noisy-ss}
+    \caption[Trial averaged final error values (D-SN-SS-SV)]{Trial averaged 
+        final error values in the noisy single source Gaussian scenario 
+        (D-SN-SS-SV).}\label{tbl:noisy-ss}
 \end{table}
 
 \begin{table}
@@ -540,8 +543,9 @@ a bit faster after the plume has bee discovered.
         wind & constant & 9.99 & 6.96 & 0.77 & 0.24 \\
         wind & auto & 14.75 & 8.33 & 0.77 & 0.22 \\
     \end{errtblb}
-    \caption[Final error values (D-SN-MS-SV)]{Final error values in the noisy 
-        multiple source Gaussian scenario (D-SN-MS-SV).}\label{tbl:noisy-ms}
+    \caption[Trial averaged final error values (D-SN-MS-SV)]{Trial averaged 
+        final error values in the noisy multiple source Gaussian scenario 
+        (D-SN-MS-SV).}\label{tbl:noisy-ms}
 \end{table}
 
 Looking at the WRMISE for a single source it turns out that the wind based 
@@ -555,7 +559,8 @@ strategies is almost equal.  Also, the scaling method does not have
 a significant influence.
 
 In the QRSim reward estimation occurs again an artifact in the multiple source 
-scaling as already seen in Section~\ref{sec:cmputility}.
+scaling as already seen in Section~\ref{sec:cmputility} resulting in 
+a normalized reward larger than one.
 
 The results show that PDUCB can also be applied in a noisy setting. In 
 comparison to a noiseless setting the error in the estimation slightly increases 
@@ -585,12 +590,12 @@ first experiment the QRSim reward underestimates the error.
     \centering
     \includegraphics{plots/multiple-uav}
     \caption[Normalized error using multiple UAVs in dependence of $\rho$]{The 
-        final normalized error using multiple UAVs in the multiple source 
-        scenario (D-SN-MS-MV).  Each plot corresponds to a different error 
-        measure. Solid lines show the results using the complete search method, 
-        where as dashed lines used the wind based search.  Thick lines show 
-        PDUCB with automatic scaling opposed to a constant scaling shown by the 
-        thin lines.}\label{fig:mv-err}
+        trial averaged final normalized error using multiple UAVs in the 
+        multiple source scenario (D-SN-MS-MV).  Each plot corresponds to 
+        a different error measure. Solid lines show the results using the 
+        complete search method, where as dashed lines used the wind based 
+        search.  Thick lines show PDUCB with automatic scaling opposed to 
+        a constant scaling shown by the thin lines.}\label{fig:mv-err}
 \end{figure}
 
 To understand why the performance of multiple UAVs is at best the same as of 
@@ -617,5 +622,6 @@ multiple UAVs.
     \caption[Comparison of single and multiple UAV performance]{Comparison of 
         the average normalized RMISE over time for a single UAV (solid line) and 
         multiple UAVs (dashed lines, each line is a different $\rho$). In both 
-        setting a total of \num{3000} samples was acquired.}\label{fig:sv-vs-mv}
+        settings a total of \num{3000} samples was 
+        acquired.}\label{fig:sv-vs-mv}
 \end{figure}

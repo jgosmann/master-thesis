@@ -49,10 +49,11 @@ penetration, and neglegible variation in topography) the analytic expression
 \end{multline}
 can be derived for the concentration \parencite{Stockie:2011fd}. Note that the 
 coordinates $\vc x'$ and $\vc s'$ are expressed in the wind frame of reference.  
-In the scenario the wind speed is set to $u = \SI{3}{\meter\per\second}$ and the 
-diffusion parameters to $a = \SI{0.33}{\meter\tothe{2 - \mathit{b}}}$ and $b 
-= 0.86$.  The emission rate $Q$ is randomly chosen from a uniform distribution 
-over the interval \SIrange{0.1}{2.5}{\gram\per\second}.
+In the dispersion scenarios the wind speed is set to $u 
+= \SI{3}{\meter\per\second}$ and the diffusion parameters to $a 
+= \SI{0.33}{\meter\tothe{2 - \mathit{b}}}$ and $b = 0.86$.  The emission rate 
+$Q$ is randomly chosen from a uniform distribution over the interval 
+\SIrange{0.1}{2.5}{\gram\per\second}.
 
 Sensor noise (SN) of the plume sensor is assumed to be additive and distributed 
 according to $\mathcal{N}(0, \sigma\ped{sn}^2)$. In the noise free (NF) 
@@ -67,7 +68,7 @@ solvable in a feasible amount of simulation time.
 
 The overall concentration $c(\vc x)$ for $n$ sources like in 
 Figure~\ref{fig:MS-D} is obtained by summing the individual contributions 
-$c_i(\vc x)$ for each source:
+$c_i(\vc x)$ of each source:
 \begin{equation}
     c(\vc x) = \sum_{i = 1}^n c_i(\vc x)
 \end{equation}
@@ -84,8 +85,8 @@ This gives a number of possible scenarios from which I focussed on the following
 in this work:
 \begin{itemize}
     \item In Chapter~\ref{sec:cmputility} I discuss the noise free, single 
-        vehicles scenarios G-NF-SS-SV, D-NF-SS-SV, and D-NF-MS-SV\@. The first 
-        is equivalent to the scenario 3A in \textcite{denardi2013rn}.
+        vehicle scenarios G-NF-SS-SV, D-NF-SS-SV, and D-NF-MS-SV\@. The first is 
+        equivalent to the scenario 3A in \textcite{denardi2013rn}.
     \item In Chapter~\ref{sec:noisy} I consider the dispersion scenarios with 
         noise D-SN-SS-SV and D-SN-MS-SV\@. Except for the amount of noise these 
         correspond to scenarios 3B and 3C in \textcite{denardi2013rn}.

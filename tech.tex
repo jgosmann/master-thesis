@@ -1,7 +1,7 @@
 \chapter{Technical Details}\label{sec:tech}
 To implement the discussed algorithms in a functioning system some further 
-details have to be taken in consideration. I will discuss these in the following 
-after giving short general overview of the implementation.
+details have to be taken into consideration. I will discuss these in the 
+following after giving a short general overview of the implementation.
 
 \section{Implementation}
 All simulations were performed with QRSim \parencite{denardi2013rn}, a quadrotor 
@@ -40,10 +40,10 @@ functions.
 
 Noisy plume measurements produce a large number of local maxima in the utility 
 function. Hence, in those scenarios the optimization has to be performed 
-multiple times using some additional starting points. Those were chosen from 
-Gaussian distributions with a standard deviation of \SI{5}{\meter} centered on 
-the current UAV position and the location of the maximal recorded plume 
-measurement. From each of these Gaussian five additional starting locations for 
+multiple times using some additional starting points. For this Gaussian 
+distributions with a standard deviation of \SI{5}{\meter} centered on the 
+current UAV position and the location of the maximal recorded plume measurement 
+were used.  From each of these Gaussian five additional starting locations for 
 the optimization were sampled.
 
 \section{UAV Control}

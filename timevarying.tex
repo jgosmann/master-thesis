@@ -42,13 +42,13 @@ Finally, let me discuss two properties of Gaussian processes to take into
 account when modeling time-varying plume distributions. When using a zero mean 
 prior (as it is usually done), the predicted concentration mean will decay to 
 zero over time (assuming $k(t, t') \rightarrow 0$ for $\abs{t - t'} \rightarrow 
-\infty$). However, in certain scenarios (like puff dispersions) it is likely to 
-measure an increased concentration again at a location in the future if this was 
-the case once before at that location. It might be a good idea to adjust the 
-mean prior based on the measurements to prevent a decay of the mean prediction.  
-Note that the covariance function remains unchanged and the uncertainty at that 
-location will still increase with time indicating that the measurement should be 
-repeated.
+\infty$). However, in certain scenarios (like puff dispersions) it is likely 
+that an increased concentration is measured again at a location in the future if 
+this was the case once before at that location. It might be a good idea to 
+adjust the mean prior based on the measurements to prevent a decay of the mean 
+prediction.  Note that the covariance function remains unchanged and the 
+uncertainty at that location will still increase with time indicating that the 
+measurement should be repeated.
 
 The performance in time-varying scenarios might be impaired by the property that 
 Gaussian processes have no notion of directionality of time. This follows from 
@@ -56,5 +56,5 @@ the (required) symmetry of the covariance function which does not allow to
 differentiate between $t < t'$ and $t > t'$. Hence, a kernel might model the 
 path along which a plume travels, but not the direction. Along that direction 
 the plume is likely to broaden because of dispersion. Respectively it gets more 
-concentrated in the opposite direction. Effects like this can not be modeled 
+concentrated in the opposite direction. Effects like this cannot be modeled 
 except for the overall statistics.

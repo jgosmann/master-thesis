@@ -1,5 +1,5 @@
 \chapter{Gaussian Processes}\label{sec:gp}
-A vast number of regression methods have been proposed in the machine learning 
+A vast number of regression methods has been proposed in the machine learning 
 literature. In this work I use Gaussian Processes as these have been 
 successfully used in a number of studies related to spatial and environmental 
 monitoring including the modeling of gas distributions 
@@ -10,8 +10,8 @@ about the class of underlying functions or limitations of the search space.
 Also, they provide an estimate of the predictive uncertainties which can be used 
 for a natural exploration-exploitation trade-off.
 
-In the remainder of this chapter I will discuss the essentials of Gaussian 
-Process regression. A more thorough introduction can be found in 
+In the remainder of this chapter the essentials of Gaussian Process regression 
+will be discussed.  A more thorough introduction can be found in 
 \textcite{Rasmussen:2006vz}.
 
 Let $X = \{\vc x_i | i = 1, \dots, n\}$ be a set of training inputs and $\vc 
@@ -44,8 +44,8 @@ training targets and the predicted values $\vc f_*$ at unseen locations $X_*$
 \end{equation}
 Here $K(X, X')$ are matrices with the elements $(i, j)$ being the covariances 
 $k(\vc x_i, \vc x'_j)$ evaluated for all pairs $\vc x_i \in X$ and $\vc x'_j \in 
-X'$. In the following I will use $\tilde{\mat K} = K(X, X) + \sigma\ped{n}^2 
-\mat I$ as a shorter notation. By conditioning on the observations the 
+X'$. In the following $\tilde{\mat K} = K(X, X) + \sigma\ped{n}^2 \mat I$ will 
+be used as a shorter notation. By conditioning on the observations the 
 predictive distribution for $\vc f_*$ is obtained as
 \begin{align}
     \vc f_* | X, \vc y, X_* &\sim \mathcal{N}(\bar{\vc f_*}, \cov(\vc 
@@ -61,14 +61,14 @@ process.
 
 \begin{figure}
     \centering
-    \subfigure[]{\includegraphics{plots/gp}\label{fig:ex-gp}}%
+    \subfigure[]{\includegraphics{plots/gp}\label{fig:ex-gp}}\hspace{0.5cm}%
     \subfigure[]{\includegraphics{plots/gp_sample}\label{fig:ex-gp-sample}}
     \caption[Gaussian process example]{Example of a one-dimensional Gaussian 
         process (using the squared exponential covariance function with 
         a length scale of 1, $\sigma\ped{n}^2 = 0$) conditioned on five training 
-        points $X$: \subref{fig:ex-gp} shows the mean $\bar{\vc f_*}$ and 
-        predictive standard deviation $\sigma(X_*)$; \subref{fig:ex-gp-sample} 
-        shows three functions sampled from the process.}\label{fig:ex-gp-main}
+        points $X$: \subref{fig:ex-gp} shows the mean $\mu(x)$ and predictive 
+        standard deviation $\sigma(X_*)$; \subref{fig:ex-gp-sample} shows three 
+        functions sampled from the process.}\label{fig:ex-gp-main}
 \end{figure}
 
 Even though $\tilde{\mat K}$ is a symmetric, positive-definite matrix it can be 
@@ -148,7 +148,7 @@ following relation for the inverse of the updated Cholesky factor:
             \mat L^{-1} & \mat 0 \\ -\mat B^{-1} K(X', X)\tilde{\mat K}^{-1} 
             & \mat B^{-1}
         \end{array}
-    \right] \label{eqn:invChol}
+    \right]\label{eqn:invChol}
 \end{equation}
 
 \section{Sparse Approximations}
@@ -162,7 +162,7 @@ case in an online scenario. An exception to this is the online approximation by
 \textcite{Csato:2002fp}.
 
 They replace the inverse covariance matrix $\tilde{\mat K}_t^{-1}$ in 
-Equation~\ref{eqn:covpred} after $t$ updates by $-\mat C_t$. Normal (full) 
+Equation~\ref{eqn:covpred} after $t$ updates with $-\mat C_t$. Normal (full) 
 online updates are performed as discussed in the previous section by updating 
 $-\mat C_t$ respectively the Cholesky factor $\mat L_t^{-1}$.\footnote{The 
     original paper formulates the update a bit different. The equivalence for 
@@ -170,8 +170,7 @@ $-\mat C_t$ respectively the Cholesky factor $\mat L_t^{-1}$.\footnote{The
 the ``novelty''
 \begin{equation}
     \tilde{\sigma}^2_{t+1} = k(\vc x_*, \vc x_*) + \sigma\ped{n}^2 
-    \mat{\mathrm{I}} - K\!\del{\{\vc x_*\}, X_t} \tilde{\mat K}_t^{-1} 
-    K\!\del{X_t, \{\vc x_*\}}
+    - K\!\del{\{\vc x_*\}, X_t} \tilde{\mat K}_t^{-1} K\!\del{X_t, \{\vc x_*\}}
 \end{equation}
 of a new input $\vc x_*$ is below a threshold $\epsilon\ped{tol}$, a reduced 
 update will be performed. The reduced update leaves the size of $\mat C_t$ 
@@ -202,7 +201,7 @@ quadratic complexity for downdating.
 It turned out that these issues with numerical stability do not make this sparse 
 online approximation a viable option for plume distribution estimation. The 
 collected samples are highly correlated and make downdating the Cholesky factor 
-too unstable, while using a more stable method impairs performance below the 
+too unstable, while using a more stable method impairs efficiency below the 
 non-sparse Gaussian process level. By resigning from deleting basis vector and 
 only using reduced updates based on the novelty $\tilde{\sigma}^2_{t+1}$ not 
 much is gained. The novelty only considers the spatial relation of inputs, but 
@@ -231,11 +230,11 @@ This ensures that the kernel's Gram matrix for a set of inputs $\cbr{x_i
     | i = 1, \dots, n}$ with entries $\mat K_{ij} = k(\vc x_i, \vc x_j)$ is also 
 positive-definite and therefore a valid, invertible covariance matrix.
 
-The \newterm{smoothness} of the Gaussian process is also determined by the 
-covariance function.  This is formalized in the notion of how many times it is 
-\newtermAbbrev{mean square}{MS}\newterm{ differentiable}.  A process $f(\vc x)$ 
-is differentiable if the mean square limit denoted by $\mslim$ in the mean 
-square derivative exists. The MS derivative is given by
+The \newterm{smoothness} of the Gaussian process is determined by the covariance 
+function.  This is formalized in the notion of how many times the process $f(\vc 
+x)$ is \newtermAbbrev{mean square}{MS}\newterm{ differentiable}.  It is 
+differentiable if the mean square limit denoted by $\mslim$ in the mean square 
+derivative exists. The MS derivative is given by
 \begin{equation}
     \dpd{f(\vc x)}{x_i} = \mslim_{h \rightarrow 0} \frac{f(\vc x + h\vcc e_i) 
     - f(\vc x)}{h}
@@ -279,16 +278,16 @@ smoothness with a parameter $\nu$. Using the modified Bessel function $K_{\nu}$
 it is given by
 \begin{equation}
     k_{\nu}(r) = \sigma\ped{k}^2 \frac{2^{1-\nu}}{\Gamma(\nu)} 
-    \del{\frac{r\sqrt{2\nu}}{\ell}}^{\nu} K_{\nu} 
-    \del{\frac{r\sqrt{2\nu}}{\ell}}
+    \del{\frac{r\sqrt{2\nu}}{\ell}}^{\nu} 
+    K_{\nu}\!\del{\frac{r\sqrt{2\nu}}{\ell}} \text{.}
 \end{equation}
 The resulting Gaussian process will be $k$ times MS differentiable for $k 
 < \nu$. The parameter $\ell$ denotes again the characteristic length scale.
 
 Typically, only the kernels with $2\nu \in \cbr{1, 2, 3}$ are used.  Usually it 
 is not possible to tell which kernel leads to a better fit for larger $\nu$ from 
-the noisy data.  Half-integer values are used as the kernel functions will 
-become quite simple:
+the noisy data.  To simplify the function half-integer values are used as the 
+kernel functions will become:
 \begin{align}
     k_{5/2}(r) &= \sigma\ped{k}^2 \del{1 + \frac{r\sqrt{5}}{\ell} 
         + \frac{5r^2}{3\ell^2}} \exp\!\del{-\frac{r\sqrt{5}}{\ell}} \\
@@ -298,14 +297,18 @@ become quite simple:
 \end{align}
 From these kernel functions $k_{\nu=1/2}(r)$ is also known as the 
 \newterm{exponential kernel}. Furthermore, note that for $\nu \rightarrow 
-\infty$ the squared exponential kernel is recovered. A plot of the different 
-covariance functions can be found in Figure~\ref{fig:kernels}.
+\infty$ the squared exponential kernel is recovered. A plot comparing the 
+different covariance functions can be found in Figure~\ref{fig:kernels}.
 
 \begin{figure}
     \centering
-    \includegraphics{plots/kernels}
-    \caption[Covariance functions]{Plot of stationary covariance functions with 
-        $\sigma_k^2 = 1, \ell = 1$.}\label{fig:kernels}
+    \subfigure[]{\includegraphics{plots/kernels}\label{fig:kernels-kern}}
+    \subfigure[]{\includegraphics{plots/kernsamples}\label{fig:kernels-kernsamples}}
+    \caption[Covariance functions]{Comparison of covariance functions.  
+        \subref{fig:kernels-kern} Plot of stationary covariance functions with 
+        $\sigma_k^2 = 1, \ell = 1$. \subref{fig:kernels-kernsamples} One 
+        function sampled for each of the covariance functions from a Gaussian 
+        Process prior with $m(\vc x) = 0$.}\label{fig:kernels}
 \end{figure}
 
 \subsection{Non-stationary Covariance Functions}
@@ -338,11 +341,11 @@ the non-stationarity of the kernel could not relate to the actual
 non-stationarity of the plume.
 
 Methods for selecting such parameters will be discussed in the next section.  
-Unfortunately, the cost of these methods grows with the number of parameters 
+Unfortunately, the cost of these methods grows with the number of parameters, 
 which for non-stationary kernels will be larger than for stationary kernels.  
 Matters are complicated even more as it is usually desirable to have 
 a differentiable kernel to be able to use gradient-based optimizers. Moreover, 
-In an active learning scenario there is a limited amount of data in the 
+in an active learning scenario there is a limited amount of data in the 
 beginning making the correct estimation of parameters like the source position 
 virtually impossible.
 
@@ -350,7 +353,7 @@ It also has to be taken into account that non-stationary kernels might not be
 agnostic to the structure of the modeled function. Such a covariance function 
 will lead to better results if the function matches the structural assumptions 
 of the kernel. However, if that is not the case, the results will probably be 
-worse than with stationary kernel agnostic to the structure. Especially when 
+worse than with stationary kernels agnostic to the structure. Especially when 
 modeling a plume distribution in a real world scenario one would have to 
 consider a multitude of effects like obstacles and local changes in wind.  That 
 might make it impossible to derive valid structural assumptions for using 
@@ -366,9 +369,9 @@ With the \newterm{test set method} all data available $\mathcal{D}$ will be
 split into two sets $\mathcal{D}_0$ and $\mathcal{D}_*$. The set $\mathcal{D}_0$ 
 is used to train Gaussian processes with different covariance functions and 
 hyper-parameters. For each model the generalization error $E\ped{G}$ over the 
-test set $\mathcal{D}_*$ will be evaluated the parameters with the minimal 
+test set $\mathcal{D}_*$ will be evaluated and the parameters with the minimal 
 generalization error will be chosen. The error measure can be chosen freely with 
-respect to what should be considered a good model. The root mean square erroris 
+respect to what should be considered a good model. The root mean square error is 
 a typical choice (see also Chapter~\ref{sec:error}).
 
 If the amount of available data is limited, it is common to use 
@@ -461,10 +464,10 @@ Algorithm~\ref{algo:bo}.
 So far it is still open how the sampling location $\vc x_t$ is selected. For 
 that an \newterm{utility} or \newterm{acquisition}\footnote{The terms will be 
     used interchangeable in the following.} function $u(\vc x)$ indicating the 
-expected benefit for choosing $\vc x$ as next training sample.  Hence, the 
-optimal choice is $\argmax_{\vc x} u(\vc x)$.  Equivalently, it is possible to 
-use the negative of a loss function $u(\vc x) = - \lambda(\vc x)$. In the next 
-section different possible acquisition functions will be discussed in the 
+expected benefit for choosing $\vc x$ as next training sample is used.  Hence, 
+the optimal choice is $\argmax_{\vc x} u(\vc x)$.  Equivalently, it is possible 
+to use the negative of a loss function $u(\vc x) = - \lambda(\vc x)$. In the 
+next section different possible acquisition functions will be discussed in the 
 context of plume distribution modeling.
 
 \subsection{Acquisition Functions}\label{sec:utility}
@@ -492,7 +495,7 @@ $\mu(\vc x)$ is divided by \si{\gram\per\meter\cubed}, $\sigma^2(\vc x)$ by
 The parameter $\kappa$ controls the exploration-exploitation balance.  Higher 
 values give more importance to decreasing the predictive variance and lead to 
 more exploration.  The parameter $\gamma \leq 0$ adjusts the distance penalty.  
-Favoring location near to the current UAV position might decrease the distance 
+Favoring locations near to the current UAV position might decrease the distance 
 travelled and save energy as well as time.  The original DUCB formulation by 
 \textcite{Marchant:2012wb} did not include the scaling factor $s(\vc y)$. To 
 match that formulation it has to be set to $s\ped{DUCB}(\vc y) = 1$. Another 
@@ -518,7 +521,7 @@ with
     \mu_+(\vc x) &= \max\cbr{0, \mu(\vc x)}
 \end{align}
 
-Using the logarithm of the prediction mean makes this utility function sensitive 
+Using the logarithm of the process mean makes this utility function sensitive 
 for small concentration changes in areas of low concentration. These can hint 
 towards areas with higher concentration.  Being sensitive to the same absolute 
 change for high concentrations is not as important. As the concentration might 
@@ -547,22 +550,21 @@ Apart from some explicit values, \textcite{Marchant:2012wb} do not discuss how
 to choose the parameters $\kappa$ and $\gamma$. Nevertheless, some observations 
 can be made for both DUCB and PDUCB\@. Firstly, one should choose $\kappa \cdot 
 \max \sigma^2(\vc x) > \max \mu(\vc x)$. Otherwise, one can get stuck in a local 
-maximum as the mean prediction term might get larger than the predictive 
-variance term anywhere in the input space. Even though it can be a good strategy 
-to exploit maxima first, exploration should continue once the distribution 
-around the maximum is accurately known. A too small $\kappa$ is also problematic 
-as it prevents any exploitation. Secondly, $\abs{\gamma}$ should not be too 
-large or the distance penalty would dominate and also lead to one getting stuck 
-in one position $\vc x = \vc x'$. Thirdly, $\varepsilon$ influences the 
-sensitivity for low concentrations and should therefore be small, but large 
-enough to prevent numerical problems in the evaluation of the logarithm. A value 
-of $\varepsilon = 10^{-30}$ seems to work well (see Chapter~\ref{sec:exp}). 
-Finally, it should be noted that PDUCB needs a different scaling 
-$s\ped{PDUCB}(\vc y)$ because the logarithm of the mean prediction is used. 
-Assuming $\mu(\vc x)$ will be in the range \numrange{0}{1}, the range of the 
-logarithmic mean prediction term will be $\ln(1) - \ln(\varepsilon) \approx 70$. 
-Thus, setting $s\ped{PDUCB}(\vc y) = 70$ will make the other parameters of DUCB 
-and PDUCB roughly comparable.
+maximum as the mean term might get larger than the predictive variance term 
+anywhere in the input space. Even though it can be a good strategy to exploit 
+maxima first, exploration should continue once the distribution around the 
+maximum is accurately known. A too small $\kappa$ is also problematic as it 
+prevents any exploitation. Secondly, $\abs{\gamma}$ should not be too large or 
+the distance penalty would dominate and also lead to one getting stuck in one 
+position $\vc x = \vc x'$. Thirdly, $\varepsilon$ influences the sensitivity for 
+low concentrations and should therefore be small, but large enough to prevent 
+numerical problems in the evaluation of the logarithm. A value of $\varepsilon 
+= 10^{-30}$ seems to work well (see Chapter~\ref{sec:exp}).  Finally, it should 
+be noted that PDUCB needs a different scaling $s\ped{PDUCB}(\vc y)$ because the 
+logarithm of the mean prediction is used.  Assuming $\mu(\vc x)$ will be in the 
+range \numrange{0}{1}, the range of the logarithmic mean prediction term will be 
+$\ln(1) - \ln(\varepsilon) \approx 70$.  Thus, setting $s\ped{PDUCB}(\vc y) 
+= 70$ will make the other parameters of DUCB and PDUCB roughly comparable.
 
 Typically, one knows the spatial dimensions of the input space which allows to 
 estimate a reasonable $\gamma$ in relation to $\kappa$ as the maximal predictive 
@@ -643,10 +645,10 @@ with different parameter choices.
 Using more than one UAV might considerably speed up the estimation of a plume 
 distribution. For that reason I propose a method to extend the target selection 
 with an acquisition function $u(\vc x)$ to multiple UAVs. To not impair the 
-performance of the original utility function one UAV will be selected as 
-a \newterm{master UAV} and uses exactly $u(\vc x)$. Without loss of generality 
-we can assign the index $i = 1$ to that UAV\@. For all other UAVs with $i > 1$ 
-the following modified acquisition function
+performance of the original utility function one mobile robot will be selected 
+as a \newterm{master UAV} and uses exactly $u(\vc x)$. Without loss of 
+generality we can assign the index $i = 1$ to that UAV\@. For all other vehicles 
+with $i > 1$ the following modified acquisition function
 \begin{equation}
     u_i(\vc x) = u(\vc x) + \rho \sum_{j = 1,\ i \neq j}^n d^2(\vc x, \vc x_j)
 \end{equation}
