@@ -29,6 +29,7 @@
 %\usepackage{scrpage2}
 \usepackage{setspace}
 \usepackage{subfigure}
+\usepackage{tikz}
 \usepackage{upgreek}
 %\usepackage{xcolor}
 %\usepackage{xr-hyper}
@@ -193,15 +194,22 @@
 \begin{document}
 \frontmatter
 \begin{titlepage}
+    \begin{tikzpicture}[remember picture, overlay]
+        \node [xshift=30mm,yshift=-20mm] at (current page.north west) [below 
+        right]
+        {\includegraphics[height=62pt]{BCCN_logo_name_b}};
+    \end{tikzpicture}
     \begin{center}
         \vspace*{2.5cm}
-        \textsf{\Large Master Thesis}\\
-        \vspace{1cm}
+        \begin{spacing}{2}
+        \textsf{\Large Master Thesis\\Computational Neuroscience}\\
+        \end{spacing}
+        \vspace{1.0cm}
         \begin{spacing}{2.5}
             \textsf{\textbf{\huge Gaussian Processes for Plume Distribution 
                     Estimation with UAVs}}
         \end{spacing}
-        \vspace{1cm}
+        \vspace{1.0cm}
         \Large
         \begin{spacing}{1.5}
             Jan Gosmann\\
@@ -220,6 +228,7 @@
 \thispagestyle{empty}
 \begin{german}
     \vspace*{\fill}
+    \section*{Eidesstattliche Versicherung}
     \noindent Hiemit erkläre ich, dass ich die vorliegende Arbeit selbstständig 
     und eigenhändig sowie ohne unerlaubte fremde Hilfe und ausschließlich unter 
     Verwendung der aufgeführten Quellen und Hilfsmittel angefertigt habe.
